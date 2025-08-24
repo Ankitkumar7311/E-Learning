@@ -1,7 +1,7 @@
-import Backgroud from "../components/Background";
-import picBg from "../asset/home.png"
+import Background from "../components/Background";
+import picBg from "../assets/home.png"
 
-const HomePage = () => {
+const HomePage = ({children}) => {
 
 
 
@@ -11,7 +11,7 @@ const HomePage = () => {
 
       
         <header className="h-24 w-full">
-         
+         {children}
         </header>
 
   
