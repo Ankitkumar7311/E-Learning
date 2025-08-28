@@ -8,6 +8,8 @@ import Community from './components/Community';
 import News from './components/News';
 import About from './components/About';
 import Login from './components/Login';
+import AdminNavBar from './components/AdminNavBar';
+import AdminDashboard from './components/AdminDashboard';
 
 const App = () => {
   return (
@@ -22,7 +24,10 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
       </Routes>
+       <AdminNavBar/>
+      <AdminDashboard/>
     </Router>
+    
   );
 };
 
