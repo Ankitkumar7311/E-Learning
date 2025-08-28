@@ -11,6 +11,7 @@ import Login from './components/Login';
 import AdminNavBar from './components/AdminNavBar';
 import AdminDashboard from './components/AdminDashboard';
 import Formss from './components/Form';
+import SearchFaculty from './components/SearchFaculty';
 
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
       </Routes>
        <AdminNavBar/>
       <AdminDashboard/>
+      <SearchFaculty/>
     </Router>
     
   );
