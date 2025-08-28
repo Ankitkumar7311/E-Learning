@@ -10,9 +10,9 @@ import About from './components/About';
 import Login from './components/Login';
 import AdminNavBar from './components/AdminNavBar';
 import AdminDashboard from './components/AdminDashboard';
-import Formss from './components/Form';
 import SearchFaculty from './components/SearchFaculty';
 import TeacherTable from './components/TeacherTable';
+import Profile from './components/teacherprofile/Profile';
 
 
 const App = () => {
@@ -28,12 +28,13 @@ const App = () => {
         <Route path="/news" element={<News />} />
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
-        
       </Routes>
-       <AdminNavBar/>
+      
+      <AdminNavBar/>
       <AdminDashboard/>
       <SearchFaculty/>
       <TeacherTable/>
+      <Profile/>
     </Router>
     
   );
