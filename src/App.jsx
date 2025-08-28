@@ -12,6 +12,7 @@ import AdminNavBar from './components/AdminNavBar';
 import AdminDashboard from './components/AdminDashboard';
 import Formss from './components/Form';
 import SearchFaculty from './components/SearchFaculty';
+import TeacherTable from './components/TeacherTable';
 
 
 const App = () => {
@@ -32,6 +33,7 @@ const App = () => {
        <AdminNavBar/>
       <AdminDashboard/>
       <SearchFaculty/>
+      <TeacherTable/>
     </Router>
     
   );

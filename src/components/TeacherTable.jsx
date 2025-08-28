@@ -1,6 +1,6 @@
 
 import React from "react";
-import tableBg from "../asset/Table_backGround.png"
+import tableBg from "../assets/Table_backGround.png"
 const Table = () => {
 
     return (
