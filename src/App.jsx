@@ -13,6 +13,7 @@ import AdminDashboard from './components/admin_profile/AdminDashboard';
 import SearchFaculty from './components/admin_profile/SearchFaculty';
 import TeacherTable from './components/admin_profile/TeacherTable';
 import Profile from './components/admin_profile/Profile';
+import Add from './components/admin_profile/Add';
 
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
       <SearchFaculty/>
       <TeacherTable/>
       <Profile/>
+      <Add/>
 
 
     </Router>
