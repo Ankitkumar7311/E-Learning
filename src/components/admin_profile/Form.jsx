@@ -1,5 +1,5 @@
 import { useState } from "react";
-import cardpic from "../assets/card.png";
+import cardpic from "../../assets/card.png";
 
 const Form = () => {
   const [formData, setFormData] = useState({

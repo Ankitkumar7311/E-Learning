@@ -1,6 +1,6 @@
 import React from 'react';
 // You can replace this with your actual logo file
-import logo from '../assets/Ellipse.png';
+import logo from '../../assets/Ellipse.png';
 const AdminNavBar = () => {
   return (
     <nav className="flex items-center justify-between bg-white p-3 shadow-xl ">

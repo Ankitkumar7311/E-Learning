@@ -1,18 +1,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Form } from 'react-router-dom';
-import NavBar from './components/NavBar';
-import HomePage from './components/HomePage';
-import Courses from './components/Courses';
-import Universities from './components/Universities';
-import Community from './components/Community';
-import News from './components/News';
-import About from './components/About';
-import Login from './components/Login';
-import AdminNavBar from './components/AdminNavBar';
-import AdminDashboard from './components/AdminDashboard';
-import SearchFaculty from './components/SearchFaculty';
-import TeacherTable from './components/TeacherTable';
-import Profile from './components/teacherprofile/Profile';
+import NavBar from './components/admin_profile/NavBar';
+import HomePage from './components/admin_profile/HomePage';
+import Courses from './components/admin_profile/Courses';
+import Universities from './components/admin_profile/Universities';
+import Community from './components/admin_profile/Community';
+import News from './components/admin_profile/News';
+import About from './components/admin_profile/About';
+import Login from './components/admin_profile/Login';
+import AdminNavBar from './components/admin_profile/AdminNavBar';
+import AdminDashboard from './components/admin_profile/AdminDashboard';
+import SearchFaculty from './components/admin_profile/SearchFaculty';
+import TeacherTable from './components/admin_profile/TeacherTable';
+import Profile from './components/admin_profile/Profile';
 
 
 const App = () => {
@@ -35,6 +35,8 @@ const App = () => {
       <SearchFaculty/>
       <TeacherTable/>
       <Profile/>
+
+
     </Router>
     
   );

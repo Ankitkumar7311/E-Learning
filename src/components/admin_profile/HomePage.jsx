@@ -1,6 +1,6 @@
 import React from "react";
 import Background from "./Background";
-import picBg from "../assets/home.png";
+import picBg from "../../assets/home.png";
 
 const HomePage = () => {
   return (

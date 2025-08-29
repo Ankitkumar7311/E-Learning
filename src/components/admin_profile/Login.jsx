@@ -1,6 +1,6 @@
 import React from "react";
-import academic from "../assets/academic.png";
-import curveBg from "../assets/Curve.png";
+import academic from "../../assets/academic.png";
+import curveBg from "../../assets/Curve.png";
 
 import Form from "./Form";
 

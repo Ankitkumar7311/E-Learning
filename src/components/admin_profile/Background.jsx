@@ -1,5 +1,5 @@
 import React from "react";
-import curveBg from "../assets/Curve.png"; 
+import curveBg from "../../assets/Curve.png"; 
 
 const Background = ({ children }) => {
    return (
