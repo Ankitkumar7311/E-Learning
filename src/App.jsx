@@ -14,6 +14,7 @@ import SearchFaculty from './components/admin_profile/SearchFaculty';
 import TeacherTable from './components/admin_profile/TeacherTable';
 import Profile from './components/admin_profile/Profile';
 import Add from './components/admin_profile/Add';
+import RegulationForm from './components/admin_profile/Regulation';
 
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
       <TeacherTable/>
       <Profile/>
       <Add/>
+      <RegulationForm/>
 
 
     </Router>
