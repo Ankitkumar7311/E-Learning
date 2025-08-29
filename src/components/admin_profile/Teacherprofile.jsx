@@ -1,4 +1,4 @@
-import faculty from "../assets/faculty.jpg"
+import faculty from "../../assets/faculty.jpg"
 
 let Teacherprofile=()=>{
     return <>
