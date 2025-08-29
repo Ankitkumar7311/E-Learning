@@ -17,6 +17,7 @@ import Add from './components/admin_profile/Add';
 import RegulationForm from './components/admin_profile/Regulation';
 import AddRemoveFaculty from './components/admin_profile/AddRemoveFaculty';
 import Teacherprofile from './components/admin_profile/Teacherprofile';
+import StudentProfile from './components/admin_profile/StudentProfile';
 
 
 const App = () => {
@@ -43,7 +44,7 @@ const App = () => {
       <AddRemoveFaculty/>
       <RegulationForm/>
       <Teacherprofile/>
-
+      <StudentProfile/>
 
     </Router>
     
