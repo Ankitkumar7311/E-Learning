@@ -15,6 +15,7 @@ import TeacherTable from './components/admin_profile/TeacherTable';
 import Profile from './components/admin_profile/Profile';
 import Add from './components/admin_profile/Add';
 import RegulationForm from './components/admin_profile/Regulation';
+import AddRemoveFaculty from './components/admin_profile/AddRemoveFaculty';
 
 
 const App = () => {
@@ -38,6 +39,7 @@ const App = () => {
       <TeacherTable/>
       <Profile/>
       <Add/>
+      <AddRemoveFaculty/>
       <RegulationForm/>
 
 
