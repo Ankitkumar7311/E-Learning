@@ -35,11 +35,11 @@ const App = () => {
         <Route path="/login" element={<Login />} />
       </Routes>
       
-      <AdminNavBar/>
+      <AdminNavBar/>  
       <AdminDashboard/>
       {/* <SearchFaculty/> */}
       {/* <TeacherTable/> */}
-      {/* <Profile/> */}
+      <Profile/>
       {/* <Add/> */}
       {/* <AddRemoveFaculty/> */}
       {/* <RegulationForm/> */}
