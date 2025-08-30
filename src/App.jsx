@@ -36,13 +36,13 @@ const App = () => {
       
       <AdminNavBar/>
       <AdminDashboard/>
-      <SearchFaculty/>
-      <TeacherTable/>
-      <Profile/>
-      <Add/>
-      <AddRemoveFaculty/>
-      <RegulationForm/>
-      <Teacherprofile/>
+      {/* <SearchFaculty/> */}
+      {/* <TeacherTable/> */}
+      {/* <Profile/> */}
+      {/* <Add/> */}
+      {/* <AddRemoveFaculty/> */}
+      {/* <RegulationForm/> */}
+      {/* <Teacherprofile/> */}
 
 
     </Router>
