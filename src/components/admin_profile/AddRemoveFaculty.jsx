@@ -2,7 +2,7 @@ import React from 'react';
 
 const AddRemoveFaculty = () => {
   return (
-    <section className="h-[660px] w-[900px] border border-indigo-600 mx-auto shadow rounded-xl">
+    <section className="h-[635px] w-[900px]  mx-auto shadow rounded-xl">
       <div className=" bg-gray-100 p-8 flex flex-col items-center justify-center space-y-8 rounded-xl">
         {/* Container for the top two cards */}
         <div className="flex flex-col md:flex-row gap-8">
@@ -13,22 +13,22 @@ const AddRemoveFaculty = () => {
               <input
                 type="text"
                 placeholder="Enter Faculty Name"
-                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 text-gray-700 bg-blue-100"
+                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 text-gray-700 bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               />
               <input
                 type="text"
                 placeholder="Enter Faculty Id"
-                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700"
+                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               />
               <input
                 type="email"
                 placeholder="Enter Faculty Email"
-                className="w-full  h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700"
+                className="w-full  h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               />
               <input
                 type="password"
                 placeholder="Enter Password"
-                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700"
+                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               />
               <button className="w-[200px] h-[50px] bg-yellow-500 text-white self-center hover:bg-yellow-600 font-bold py-3 rounded-[20px]">
                 Add
@@ -43,13 +43,13 @@ const AddRemoveFaculty = () => {
               <input
                 type="text"
                 placeholder="Enter Roll Number"
-                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700"
+                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               />
               <input
                 type="text"
                 placeholder="Name (Auto)"
                 disabled
-                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700"
+                className="w-full h-[50px] p-3 border border-gray-300 rounded-2xl inset-shadow-sm inset-shadow-indigo-400 bg-blue-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               />
               <button className="w-[200px] h-[50px] bg-yellow-500 text-white self-center hover:bg-yellow-600 font-bold py-3 rounded-[20px]">
                 Remove
@@ -61,7 +61,7 @@ const AddRemoveFaculty = () => {
         {/* View Faculty List Card */}
         <div>
           <div className="bg-white p-6 rounded-2xl shadow-md  w-96">
-            <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-[20px] transition duration-300 ease-in-out">
+            <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-lg transition duration-300 ease-in-out">
               View
               <br />
               Faculty List
