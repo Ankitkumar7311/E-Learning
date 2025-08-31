@@ -41,7 +41,7 @@ const App = () => {
         >
           <Route path="add-remove-faculty" element={<AddRemoveFaculty />} />
           <Route path="add-remove-student" element={<Add />} />
-          <Route path="view-faculty-student" element={[<SearchFaculty/> , <SearchStudents/>]} />
+          <Route path="view-faculty-student" element={[<SearchFaculty/>]} />
          
           <Route path="regulation" element={<RegulationForm />} />
         </Route>

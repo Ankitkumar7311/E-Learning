@@ -1,8 +1,10 @@
 import React from 'react';
+import SearchStudents from '../admin_profile/SearchStudents'
+import App from '../admin_profile/SearchStudents';
 
 const TeacherSearch = () => {
   return (
-    <div className="p-6 bg-gray-100 min-h-screen w-full flex items-start justify-center">
+    <div className="p-6 bg-gray-100 min-h-screen w-full flex flex-col gap-20 items-center justify-center">
       <div className="bg-white rounded-lg shadow-xl p-8 max-w-4xl w-full">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-800">Search for teacher:</h1>
@@ -12,7 +14,7 @@ const TeacherSearch = () => {
             <span className="text-lg font-medium text-gray-800"> Master List</span>
           </div>
         </div>
-        <hr />
+        <hr/>
         <br />
         {/* Search by List Section */}
         <div className="mb-8">
@@ -71,6 +73,7 @@ const TeacherSearch = () => {
           </div>
         </div>
       </div>
+      <SearchStudents/>
     </div>
   );
 };
