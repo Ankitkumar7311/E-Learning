@@ -7,8 +7,9 @@ const TeacherSearch = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-800">Search for teacher:</h1>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full bg-yellow-400"></div>
-            <span className="text-lg font-medium text-gray-800">Master List</span>
+           
+           <input type="radio" />
+            <span className="text-lg font-medium text-gray-800"> Master List</span>
           </div>
         </div>
         <hr />

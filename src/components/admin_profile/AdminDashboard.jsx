@@ -1,14 +1,7 @@
-// src/components/AdminDashboard.js
-import React from 'react';
-import { FaDollarSign, FaFolder, FaFileUpload } from 'react-icons/fa';
-import { useNavigate, Routes, Route } from "react-router-dom";
-import AddRemoveFaculty from "./AddRemoveFaculty";
-import Add from "./Add";
-import Regulation from "./Regulation";
+import React from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { FaDollarSign, FaFolder, FaFileUpload } from "react-icons/fa";
 
-/**
- * Reusable Action Button
- */
 const ActionButton = ({ icon, text, onClick }) => {
   return (
     <button
@@ -21,9 +14,6 @@ const ActionButton = ({ icon, text, onClick }) => {
   );
 };
 
-/**
- * Admin Dashboard with internal routing
- */
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
@@ -32,7 +22,6 @@ const AdminDashboard = () => {
       <main className="p-4 sm:p-8">
         <div className="max-w-screen-xl mx-auto">
           <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200">
-            
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Quick Actions:</h2>
 
             {/* Action Buttons */}
@@ -40,29 +29,31 @@ const AdminDashboard = () => {
               <ActionButton
                 icon={<FaDollarSign size={28} className="text-white" />}
                 text="Add Faculty / Remove Faculty"
-                onClick={() => navigate("add-faculty")}
+                onClick={() => navigate("add-remove-faculty")}
               />
               <ActionButton
                 icon={<FaFolder size={28} className="text-white" />}
-                text="Add Student / Remove Student"
-                onClick={() => navigate("add-student")}
+                text="View Faculty & Students"
+                onClick={() => navigate("view-faculty-student")}
               />
+
+<ActionButton
+                icon={<FaFolder size={28} className="text-white" />}
+                text="Add Student / Remove Student"
+                onClick={() => navigate("add-remove-student")}
+              />
+
               <ActionButton
                 icon={<FaFileUpload size={28} className="text-white" />}
                 text="Add Regulations"
-                onClick={() => navigate("add-regulation")}
+                onClick={() => navigate("regulation")}
               />
             </div>
 
-            {/* Nested Routes (render components here) */}
+            {/* Nested routes render yaha hoga */}
             <div className="mt-10">
-              <Routes>
-                <Route path="add-faculty" element={<AddRemoveFaculty />} />
-                <Route path="add-student" element={<Add />} />
-                <Route path="add-regulation" element={<Regulation />} />
-              </Routes>
+              <Outlet />
             </div>
-
           </div>
         </div>
       </main>

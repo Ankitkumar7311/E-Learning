@@ -8,8 +8,8 @@ const Login = () => {
   return (
     <>
       <section
-        className="h-[470px] bg-no-repeat bg-cover w-full flex items-center justify-center"
-        style={{ backgroundImage: `url(${curveBg})` }}
+        className="w-[70vw] h-[50vh] bg-no-repeat bg-cover w-full flex items-center justify-center mt-[10%]"
+        style={{ backgroundImage: `url(${curveBg})` , height:"70vh" }}
       >
         <div
           className="bg-white/70 backdrop-blur-md rounded-3xl shadow-lg w-[1000px] h-[465px] p-6 flex flex-col justify-center   bg-no-repeat bg-[length:100%_100%]

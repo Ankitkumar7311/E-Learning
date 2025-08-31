@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Form } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/admin_profile/NavBar';
 import HomePage from './components/admin_profile/HomePage';
 import Courses from './components/admin_profile/Courses';
@@ -10,44 +10,45 @@ import About from './components/admin_profile/About';
 import Login from './components/admin_profile/Login';
 import AdminNavBar from './components/admin_profile/AdminNavBar';
 import AdminDashboard from './components/admin_profile/AdminDashboard';
-import SearchFaculty from './components/admin_profile/SearchFaculty';
-import TeacherTable from './components/admin_profile/TeacherTable';
-import Profile from './components/admin_profile/Profile';
+import AddRemoveFaculty from './components/admin_profile/AddRemoveFaculty';
 import Add from './components/admin_profile/Add';
 import RegulationForm from './components/admin_profile/Regulation';
-import AddRemoveFaculty from './components/admin_profile/AddRemoveFaculty';
-import Teacherprofile from './components/admin_profile/Teacherprofile';
+import SearchFaculty from './components/admin_profile/SearchFaculty'
 import StudentProfile from './components/admin_profile/StudentProfile';
-
-
+import SearchStudents from './components/admin_profile/SearchStudents';
 const App = () => {
   return (
     <Router>
-      <NavBar />
-      
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/universities" element={<Universities />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/news" element={<News />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/login" element={<Login />} />
+        {/* Public routes */}
+        <Route path="/" element={<><NavBar /><HomePage /></>} />
+        <Route path="/universities" element={<><NavBar /><Universities /></>} />
+        <Route path="/courses" element={<><NavBar /><Courses /></>} />
+        <Route path="/community" element={<><NavBar /><Community /></>} />
+        <Route path="/news" element={<><NavBar /><News /></>} />
+        <Route path="/about" element={<><NavBar /><About /></>} />
+        <Route path="/login" element={<><NavBar /><Login /></>} />
+
+        {/* Admin dashboard with nested routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <>
+              <AdminNavBar />
+              <AdminDashboard />  {/* Yaha Outlet use karna hoga */}
+            </>
+          }
+        >
+          <Route path="add-remove-faculty" element={<AddRemoveFaculty />} />
+          <Route path="add-remove-student" element={<Add />} />
+          <Route path="view-faculty-student" element={[<SearchFaculty/> , <SearchStudents/>]} />
+         
+          <Route path="regulation" element={<RegulationForm />} />
+        </Route>
       </Routes>
-      
-      <AdminNavBar/>  
-      <AdminDashboard/>
-      {/* <SearchFaculty/> */}
-      {/* <TeacherTable/> */}
-      <Profile/>
-      {/* <Add/> */}
-      {/* <AddRemoveFaculty/> */}
-      {/* <RegulationForm/> */}
-      {/* <Teacherprofile/> */}
-
-
+      {/* <SearchStudents/>
+      <StudentProfile/> */}
     </Router>
-    
   );
 };
 
