@@ -27,7 +27,7 @@ const Form = () => {
 
   return (
     <section
-      className="absolute top-10 left-145 w-[320px] h-100 pl-6 pr-1 pt-2 bg-cover bg-no-repeat rounded-2xl "
+      className="absolute top-10 left-145 w-[420px] h-[450px] pl-6 pr-1 pt-2 bg-cover bg-no-repeat rounded-2xl ml-[350px] mt-[80px] "
       style={{ backgroundImage: `url(${cardpic})` }}
     >
       <h1 className="text-4xl font-roboto font-medium mb-2">Login</h1>
@@ -36,8 +36,8 @@ const Form = () => {
         Welcome onboard with us!
       </h4>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <label className="font-medium mb-1">Email ID</label>
           <input
             type="text"

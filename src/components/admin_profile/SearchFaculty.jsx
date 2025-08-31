@@ -18,7 +18,7 @@ const TeacherSearch = () => {
         <div className="mb-8">
           <h2 className="text-lg font-medium text-gray-700 mb-4">Search by List:</h2>
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 ">
-            <select className="flex-1 w-full h-[40px]  sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200">
+            <select className="flex-1 w-full h-[40px]  sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
               <option value="" disabled selected hidden>Select Course</option>
               <option value="python">Python</option>
               <option value="java">Java</option>
@@ -29,13 +29,13 @@ const TeacherSearch = () => {
               <option value="databases">Databases</option>
               <option value="algorithms">Algorithms</option>
             </select>
-            <select className="flex-1 w-full sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg inset-shadow-sm inset-shadow-indigo-500 ">
+            <select className="flex-1 w-full sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg inset-shadow-sm inset-shadow-indigo-500 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
               <option value="" disabled selected hidden>Select Batch</option>
               <option value="batch_a">Batch A</option>
               <option value="batch_b">Batch B</option>
               <option value="batch_c">Batch C</option>
             </select>
-            <select className="flex-1 sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg inset-shadow-sm inset-shadow-indigo-500 ">
+            <select className="flex-1 sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg inset-shadow-sm inset-shadow-indigo-500 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
               <option value="" disabled selected hidden>Select Branch</option>
               <option value="branch_1">Branch 1</option>
               <option value="branch_2">Branch 2</option>
@@ -57,12 +57,12 @@ const TeacherSearch = () => {
             <input 
               type="text" 
               placeholder="Enter Roll Number" 
-              className="flex-1 w-[] sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg inset-shadow-sm inset-shadow-indigo-500 "
+              className="flex-1 w-[] sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg inset-shadow-sm inset-shadow-indigo-500 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             />
             <input 
               type="text" 
               placeholder="Name (Auto)" 
-              className="flex-1 w-full h-[40px] sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg shadow-sm inset-shadow-sm inset-shadow-indigo-500 "
+              className="flex-1 w-full h-[40px] sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg shadow-sm inset-shadow-sm inset-shadow-indigo-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               readOnly 
             />
             <button className="flex items-center justify-center w-full h-[40px] sm:w-auto px-6 py-3 text-lg font-medium text-white bg-yellow-500 rounded-full shadow-md hover:bg-yellow-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">
