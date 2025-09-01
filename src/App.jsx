@@ -22,6 +22,7 @@ import StudentProfile from './components/admin_profile/StudentProfile';
 import Profile from './components/admin_profile/Profile.jsx';
 import EditMaterial from './EditMaterial.jsx';
 import UploadPdf from './UploadPdf.jsx';
+import UpdateTeach from './components/admin_profile/UpdateTeach.jsx';
 const App = () => {
   return (
     
@@ -75,6 +76,8 @@ const App = () => {
           <Route path="regulation" element={<RegulationForm />} />
           
   </Route>
+
+<UpdateTeach/>
       </Routes>
 
       {/* <SearchStudents/>
@@ -82,6 +85,8 @@ const App = () => {
       <EditMaterial/>
       <UploadPdf/>
     </Router>
+
+  
     
   );
 };
