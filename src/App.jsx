@@ -19,8 +19,9 @@ import StudentLogin from './components/admin_profile/StudentLogin.jsx';
 import TeacherLogin from './components/admin_profile/TeacherLogIn.jsx';
 import Teacherprofile from './components/admin_profile/Teacherprofile.jsx';
 import StudentProfile from './components/admin_profile/StudentProfile';
-
 import Profile from './components/admin_profile/Profile.jsx';
+import EditMaterial from './EditMaterial.jsx';
+import UploadPdf from './UploadPdf.jsx';
 const App = () => {
   return (
     
@@ -72,13 +73,14 @@ const App = () => {
           <Route path="add-remove-student" element={<Add />} />
           <Route path="view-faculty-student" element={<SearchFaculty/>} />
           <Route path="regulation" element={<RegulationForm />} />
-
+          
   </Route>
-
-
       </Routes>
+
       {/* <SearchStudents/>
       <StudentProfile/> */}
+      <EditMaterial/>
+      <UploadPdf/>
     </Router>
     
   );
