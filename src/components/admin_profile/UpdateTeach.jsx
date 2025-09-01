@@ -1,7 +1,7 @@
 import React from 'react'
-import AdminNavBar from './AdminNavBar'
+
 import Profileleft from './Profileleft'
-import teacher  from "../assets/teacher.jpg"
+import teacher  from "../../assets/teacher.jpg"
 import FacultyPanel from './FacultyPanel'
 
 

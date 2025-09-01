@@ -13,19 +13,19 @@ import AdminDashboard from './components/admin_profile/AdminDashboard';
 import AddRemoveFaculty from './components/admin_profile/AddRemoveFaculty';
 import Add from './components/admin_profile/Add';
 import RegulationForm from './components/admin_profile/Regulation';
-import SearchFaculty from './components/admin_profile/SearchFaculty'
+import SearchFaculty from './components/admin_profile/SearchFaculty';
 import SearchStudents from './components/admin_profile/SearchStudents';
 import StudentLogin from './components/admin_profile/StudentLogin.jsx';
 import TeacherLogin from './components/admin_profile/TeacherLogIn.jsx';
 import Teacherprofile from './components/admin_profile/Teacherprofile.jsx';
 import StudentProfile from './components/admin_profile/StudentProfile';
 import Profile from './components/admin_profile/Profile.jsx';
-import EditMaterial from './EditMaterial.jsx';
-import UploadPdf from './UploadPdf.jsx';
+import EditMaterial from './components/admin_profile/EditMaterial';
+import UploadPdf from './components/admin_profile/UploadPdf';
 import UpdateTeach from './components/admin_profile/UpdateTeach.jsx';
+
 const App = () => {
   return (
-    
     <Router>
       <Routes>
         {/* Public routes */}
@@ -37,57 +37,37 @@ const App = () => {
         <Route path="/about" element={<><NavBar /><About /></>} />
         <Route path="/login" element={<><NavBar /><Login /></>} />
 
+        {/* Login pages */}
+        <Route path="/student-login" element={<><NavBar /><StudentLogin /></>} />
+        <Route path="/teacher-login" element={<><NavBar /><TeacherLogin /></>} />
+
+        {/* Profiles */}
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/teacher-profile" element={<Teacherprofile />} />
+        <Route path="/student-profile" element={<StudentProfile />} />
+
         {/* Admin dashboard with nested routes */}
         <Route
           path="/dashboard"
           element={
             <>
               <AdminNavBar />
-              <AdminDashboard />  {/* Yaha Outlet use karna hoga */}
+              <AdminDashboard />
             </>
           }
         >
           <Route path="add-remove-faculty" element={<AddRemoveFaculty />} />
           <Route path="add-remove-student" element={<Add />} />
-          <Route path="view-faculty-student" element={[<SearchFaculty/>]} />
+          <Route path="view-faculty-student" element={<SearchFaculty />} />
           <Route path="regulation" element={<RegulationForm />} />
         </Route>
 
-            {/* Login pages */}
-        <Route path="/login" element={<><NavBar /><Login /></>} />
-        <Route path="/student-login" element={<><NavBar /><StudentLogin /></>} />
-        <Route path="/teacher-login" element={<><NavBar /><TeacherLogin /></>} />
-              
-        {/* Profiles */}
-        <Route path="/profile" element={<Profile/>} />
-
-                
-        {/* search teacher Profiles */}
-        <Route path="/teacher-profile" element={<Teacherprofile/>} />
-        
-        {/* search teacher Profiles */}
-        <Route path="/student-profile" element={<StudentProfile/>} />
-
-        {/* Admin dashboard */}
-        <Route path="/dashboard" element={<><AdminNavBar /><AdminDashboard /></>} >
-          <Route path="add-remove-faculty" element={<AddRemoveFaculty />} />
-          <Route path="add-remove-student" element={<Add />} />
-          <Route path="view-faculty-student" element={<SearchFaculty/>} />
-          <Route path="regulation" element={<RegulationForm />} />
-          
-  </Route>
-
-<UpdateTeach/>
+        {/* Extra features */}
+        <Route path="/update-teach" element={<UpdateTeach />} />
+        <Route path="/edit-material" element={<EditMaterial />} />
+        <Route path="/upload-pdf" element={<UploadPdf />} />
       </Routes>
-
-      {/* <SearchStudents/>
-      <StudentProfile/> */}
-      <EditMaterial/>
-      <UploadPdf/>
     </Router>
-
-  
-    
   );
 };
 
