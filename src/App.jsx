@@ -21,6 +21,7 @@ import Teacherprofile from './components/admin_profile/Teacherprofile.jsx';
 import StudentProfile from './components/admin_profile/StudentProfile';
 
 import Profile from './components/admin_profile/Profile.jsx';
+import UpdateTeach from './components/admin_profile/UpdateTeach.jsx';
 const App = () => {
   return (
     
@@ -75,11 +76,13 @@ const App = () => {
 
   </Route>
 
-
+<UpdateTeach/>
       </Routes>
       {/* <SearchStudents/>
       <StudentProfile/> */}
     </Router>
+
+  
     
   );
 };
