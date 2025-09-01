@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const App = () => {
+      const navigate = useNavigate();
+  
   const [course, setCourse] = useState('');
   const [batch, setBatch] = useState('');
   const [branch, setBranch] = useState('');
@@ -14,14 +17,20 @@ const App = () => {
 
   const handleSearch = () => {
     console.log("Search by List:", { course, batch, branch });
+    navigate("/student-profile");
+
   };
 
   const handleFilter = () => {
     console.log("Apply Filter:", { paymentStatus, regStatus, verification });
+        navigate("/student-profile");
+
   };
 
   const handleSpecificSearch = () => {
     console.log("Specific Search:", { rollNumber, name, fatherName });
+        navigate("/student-profile");
+
   };
 
   return (

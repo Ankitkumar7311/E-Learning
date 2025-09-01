@@ -30,7 +30,7 @@ let ProfileRight = () => {
 
   return (
     <>
-<div className="w-full max-w-4xl mx-auto bg-white shadow-md rounded-xl p-8 border">
+<div className="w-full max-w-4xl mx-auto bg-white shadow-md rounded-xl p-8 ">
         {/* section 1 */}
         <section
           id="section1"

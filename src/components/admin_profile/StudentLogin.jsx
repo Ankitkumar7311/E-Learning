@@ -14,9 +14,7 @@ const StudentLogin = () => {
     e.preventDefault();
     console.log(formData);
     setFormData({ email: "", password: "" });
-    // Redirect to student profile instead of admin dashboard
-    navigate("/student-profile");
-  };
+    };
 
   return (
     <section

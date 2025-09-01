@@ -15,7 +15,7 @@ const TeacherLogin = () => {
     console.log(formData);
     setFormData({ email: "", password: "" });
     // Redirect to teacher profile
-    navigate("/teacher-profile");
+    navigate("/profile");
   };
 
   return (
@@ -90,7 +90,7 @@ const TeacherLogin = () => {
             </form>
 
             <p className="text-xs sm:text-sm md:text-base mt-2">
-              Have Admin Access?{" "}
+              Have Admin Access?
               <b className="hover:underline cursor-pointer" onClick={() => navigate("/login")}>
                 LogIn as an Admin
               </b>

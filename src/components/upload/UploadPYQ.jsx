@@ -87,6 +87,7 @@ const UploadPYQ = () => {
             Submit Now
           </button>
         </div>
+        <input type="file" />
       </form>
     </div>
   );

@@ -1,8 +1,15 @@
 import React from 'react';
 import SearchStudents from '../admin_profile/SearchStudents'
+import { useNavigate } from "react-router-dom";
 import App from '../admin_profile/SearchStudents';
 
 const TeacherSearch = () => {
+    const navigate = useNavigate();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Redirect to teacher profile
+    navigate("/teacher-profile");
+  };
   return (
     <div className="p-6 bg-gray-100 min-h-screen w-full flex flex-col gap-20 items-center justify-center">
       <div className="bg-white rounded-lg shadow-xl p-8 max-w-4xl w-full">
@@ -43,7 +50,7 @@ const TeacherSearch = () => {
               <option value="branch_2">Branch 2</option>
               <option value="branch_3">Branch 3</option>
             </select>
-            <button className="flex items-center justify-center w-[200px] h-[40px] sm:w-auto px-6 py-3 text-lg font-medium text-white bg-yellow-500 rounded-full shadow-md hover:bg-yellow-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">
+            <button onClick={handleSubmit} className="flex items-center justify-center w-[200px] h-[40px] sm:w-auto px-6 py-3 text-lg font-medium text-white bg-yellow-500 rounded-full shadow-md hover:bg-yellow-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">
               Search
               <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -67,7 +74,7 @@ const TeacherSearch = () => {
               className="flex-1 w-full h-[40px] sm:w-auto p-2 text-gray-700 bg-[#D8E7F5] border border-gray-300 rounded-lg shadow-sm inset-shadow-sm inset-shadow-indigo-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               readOnly 
             />
-            <button className="flex items-center justify-center w-full h-[40px] sm:w-auto px-6 py-3 text-lg font-medium text-white bg-yellow-500 rounded-full shadow-md hover:bg-yellow-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">
+            <button onClick={handleSubmit} className="flex items-center justify-center w-full h-[40px] sm:w-auto px-6 py-3 text-lg font-medium text-white bg-yellow-500 rounded-full shadow-md hover:bg-yellow-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">
               Apply
             </button>
           </div>
