@@ -21,8 +21,8 @@ const Form = () => {
   return (
     <div
       className="
-        absolute md:top-5 md:right-15 w-[70vw] sm:w-[70vw] md:w-[40%]
-        rounded-2xl p-4 sm:p-6 overflow-y-auto
+        absolute md:top-15 md:right-15 w-[70vw] sm:w-[70vw] md:w-[40%]
+        rounded-2xl pt-10 sm:p-4 overflow-y-auto
         bg-no-repeat bg-cover bg-center
       "
       style={{ backgroundImage: `url(${cardpic})`, maxHeight: "90%" }}

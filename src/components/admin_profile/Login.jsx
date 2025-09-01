@@ -3,20 +3,15 @@ import academic from "../../assets/academic.png";
 import curveBg from "../../assets/Curve.png";
 
 import Form from "./Form";
+import Background from "./Background";
 
 const Login = () => {
   return (
-    <section
-      className="w-full flex items-center justify-center bg-no-repeat bg-cover px-2"
-      style={{ backgroundImage: `url(${curveBg})` }}
-    >
+    <>
+    <Background>
       <div
         className="
-          relative rounded-4xl shadow-xl overflow-hidden
-          w-[92vw] sm:w-[90vw] md:w-[90vw] lg:w-[90vw] xl:w-[70vw] max-w-[1500vw]
-          md:aspect-[16/9]
-          bg-no-repeat bg-cover bg-center
-        "
+        relative h-[100vh] w-[100%] rounded-4xl shadow-xl  "
         style={{ backgroundImage: `url(${academic})` }}
       >
         {/* DARK OVERLAY */}
@@ -34,11 +29,11 @@ const Login = () => {
             A digital bridge between students and teachers, where teachers share knowledge and students access notes with ease.
           </p>
         </div>
-
         {/* FORM */}
         <Form />
       </div>
-    </section>
+    </Background>
+    </>
   );
 };
 
