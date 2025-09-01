@@ -16,6 +16,9 @@ import RegulationForm from './components/admin_profile/Regulation';
 import SearchFaculty from './components/admin_profile/SearchFaculty'
 import StudentProfile from './components/admin_profile/StudentProfile';
 import SearchStudents from './components/admin_profile/SearchStudents';
+import StudentLogin from './components/admin_profile/StudentLogin.jsx';
+import TeacherLogin from './components/admin_profile/TeacherLogIn.jsx';
+import Teacherprofile from './components/admin_profile/Teacherprofile.jsx';
 const App = () => {
   return (
     <Router>
@@ -41,10 +44,28 @@ const App = () => {
         >
           <Route path="add-remove-faculty" element={<AddRemoveFaculty />} />
           <Route path="add-remove-student" element={<Add />} />
-          <Route path="view-faculty-student" element={[<SearchFaculty/> , <SearchStudents/>]} />
+          <Route path="view-faculty-student" element={[<SearchFaculty/>]} />
          
           <Route path="regulation" element={<RegulationForm />} />
         </Route>
+
+            {/* Login pages */}
+        <Route path="/login" element={<><NavBar /><Login /></>} />
+        <Route path="/student-login" element={<><NavBar /><StudentLogin /></>} />
+        <Route path="/teacher-login" element={<><NavBar /><TeacherLogin /></>} />
+              
+        {/* Profiles */}
+        <Route path="/student-profile" element={<StudentProfile />} />
+        <Route path="/teacher-profile" element={<Teacherprofile/>} />
+              
+        {/* Admin dashboard */}
+        <Route path="/dashboard" element={<><AdminNavBar /><AdminDashboard /></>} >
+          <Route path="add-remove-faculty" element={<AddRemoveFaculty />} />
+          <Route path="add-remove-student" element={<Add />} />
+          <Route path="view-faculty-student" element={<SearchFaculty/>} />
+          <Route path="regulation" element={<RegulationForm />} />
+  </Route>
+
       </Routes>
       {/* <SearchStudents/>
       <StudentProfile/> */}

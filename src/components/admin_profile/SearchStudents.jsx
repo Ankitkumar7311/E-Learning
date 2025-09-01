@@ -30,26 +30,26 @@ const App = () => {
         
         {/* Header with Master List */}
         <div className="flex justify-between items-center pb-4 border-b border-gray-300">
-          <h2 className="text-xl font-semibold text-gray-700">Search for students:</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">Search for students:</h2>
           <div className="flex items-center space-x-2">
-            <span className="text-gray-600">Master List</span>
-            <input
+             <input
               type="radio"
               checked={isMasterList}
               onChange={() => setIsMasterList(!isMasterList)}
               className="form-radio h-4 w-4 text-orange-500 rounded-full border-gray-300 focus:ring-orange-500 cursor-pointer"
             />
+            <span className="text-lg font-medium text-gray-800">Master List</span>
           </div>
         </div>
 
         {/* Search by List Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-700">Search by List:</h3>
+          <h3 className="text-lg font-medium text-gray-800">Search by List:</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <select
               value={course}
               onChange={(e) => setCourse(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 bg-[#D8E7F5]  "
             >
               <option value="">Select Course</option>
               <option value="course1">Course 1</option>
@@ -58,7 +58,7 @@ const App = () => {
             <select
               value={batch}
               onChange={(e) => setBatch(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 bg-[#D8E7F5] "
             >
               <option value="">Select Batch</option>
               <option value="batch1">Batch 1</option>
@@ -67,7 +67,7 @@ const App = () => {
             <select
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 bg-[#D8E7F5] "
             >
               <option value="">Select Branch</option>
               <option value="branch1">Branch 1</option>
@@ -75,7 +75,7 @@ const App = () => {
             </select>
             <button
               onClick={handleSearch}
-              className="w-full px-4 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center space-x-2"
+              className="w-[200px] py-2 bg-yellow-500  text-white font-semibold rounded-full shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center space-x-2"
             >
               <span>Search</span>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -87,12 +87,12 @@ const App = () => {
 
         {/* Apply Filter Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-700">Apply Filter:</h3>
+          <h3 className="text-lg font-medium text-gray-800">Apply Filter:</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <select
               value={paymentStatus}
               onChange={(e) => setPaymentStatus(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 bg-[#D8E7F5]"
             >
               <option value="">Payment Status</option>
               <option value="paid">Paid</option>
@@ -101,7 +101,7 @@ const App = () => {
             <select
               value={regStatus}
               onChange={(e) => setRegStatus(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 bg-[#D8E7F5]"
             >
               <option value="">Reg. Status</option>
               <option value="registered">Registered</option>
@@ -110,7 +110,7 @@ const App = () => {
             <select
               value={verification}
               onChange={(e) => setVerification(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 bg-[#D8E7F5]"
             >
               <option value="">Verification</option>
               <option value="verified">Verified</option>
@@ -118,7 +118,7 @@ const App = () => {
             </select>
             <button
               onClick={handleFilter}
-              className="w-full px-4 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200"
+              className="w-full px-4 py-2 bg-yellow-500 text-white font-semibold rounded-full shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200"
             >
               Apply
             </button>
@@ -127,32 +127,32 @@ const App = () => {
 
         {/* Specific Search Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-700">Specific Search:</h3>
+          <h3 className="text-lg font-medium text-gray-800">Specific Search:</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <input
               type="text"
               placeholder="Enter Roll Number"
               value={rollNumber}
               onChange={(e) => setRollNumber(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 bg-[#D8E7F5]"
             />
             <input
               type="text"
               placeholder="Name (Auto)"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 bg-[#D8E7F5]"
             />
             <input
               type="text"
               placeholder="Father's Name"
               value={fatherName}
               onChange={(e) => setFatherName(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500  rounded-lg inset-shadow-sm inset-shadow-indigo-500  hover:bg-blue-200 bg-[#D8E7F5]"
             />
             <button
               onClick={handleSpecificSearch}
-              className="w-full px-4 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200"
+              className="w-full px-4 py-2 bg-yellow-500 text-white font-semibold rounded-full shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200"
             >
               Apply
             </button>
