@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import StudentTable from './StudentTable';
+
 
 const App = () => {
   const [course, setCourse] = useState('');
@@ -25,6 +27,7 @@ const App = () => {
   };
 
   return (
+    <>
     <div className="flex justify-center items-start min-h-screen bg-gray-100 p-4 font-sans">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 space-y-6 border border-gray-200">
         
@@ -160,7 +163,14 @@ const App = () => {
         </div>
       </div>
     </div>
+<StudentTable/>
+</>
   );
+
+ 
 };
+
+
+
 
 export default App;
