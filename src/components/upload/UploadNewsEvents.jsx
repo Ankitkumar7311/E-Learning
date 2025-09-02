@@ -12,28 +12,20 @@ const UploadNewsEvents = () => {
     "8th Semester (2023 - 24 Spring)",
   ];
 
-  const subjects = ["A", "B", "C", "D"];
-
   const [formData, setFormData] = useState({
     semester: "",
-    subjects: Array(subjects.length).fill(""),
+    description: "", // ✅ event description
   });
 
-  const [submitted, setSubmitted] = useState(false); // ✅ for popup feedback
+  const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubjectChange = (index, value) => {
-    const updated = [...formData.subjects];
-    updated[index] = value;
-    setFormData({ ...formData, subjects: updated });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Submitted ✅", formData);
-    setSubmitted(true); // ✅ trigger feedback
+    setSubmitted(true);
   };
 
   return (
@@ -41,8 +33,9 @@ const UploadNewsEvents = () => {
       <h2 className="text-lg font-semibold mb-6">Complete your Upload:</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* News/Events Type */}
         <div className="flex items-center">
-          <label className="w-48 font-medium">Choose Semester:</label>
+          <label className="w-48 font-medium">Choose News/Events type:</label>
           <select
             name="semester"
             value={formData.semester}
@@ -50,38 +43,28 @@ const UploadNewsEvents = () => {
             className="flex-1 p-3 rounded-lg border border-gray-300 bg-blue-100"
           >
             <option value="">-- Select Semester --</option>
-            {semesters.map((sem) => (
-              <option key={sem} value={sem}>
+            {semesters.map((sem, idx) => (
+              <option key={idx} value={sem}>
                 {sem}
               </option>
             ))}
           </select>
         </div>
 
-        <div className="flex items-center">
-          <label className="w-48 font-medium">
-            Choose Subjects:{" "}
-            <span className="text-gray-500 text-xs">(Choose Priority Wise)</span>
-          </label>
-          <div className="flex gap-3 flex-1">
-            {subjects.map((s, index) => (
-              <select
-                key={s}
-                value={formData.subjects[index]}
-                onChange={(e) => handleSubjectChange(index, e.target.value)}
-                className="flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
-              >
-                <option value="">{s}. Choose</option>
-                <option value="Maths">Maths</option>
-                <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="English">English</option>
-                <option value="Computer Science">Computer Science</option>
-              </select>
-            ))}
-          </div>
+        {/* ✅ Text Area for Event Description */}
+        <div className="flex items-start">
+          <label className="w-48 font-medium">Enter the Event:</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Describe the event..."
+            rows="4"
+            className="flex-1 p-3 rounded-lg border border-gray-300 bg-blue-100"
+          ></textarea>
         </div>
 
+        {/* Submit */}
         <div className="flex justify-center">
           <button
             type="submit"
@@ -92,14 +75,14 @@ const UploadNewsEvents = () => {
         </div>
       </form>
 
-      {/* ✅ Pop-up / Success message */}
+      {/* ✅ Success Popup */}
       {submitted && (
         <div className="mt-6 p-4 bg-green-100 text-green-700 rounded-lg shadow">
           🎉 Form submitted successfully!
           <br />
-          Semester: {formData.semester}
+          Type: {formData.semester}
           <br />
-          Subjects: {formData.subjects.filter((s) => s).join(", ")}
+          Event: {formData.description}
         </div>
       )}
     </div>

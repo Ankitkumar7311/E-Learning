@@ -1,5 +1,6 @@
 // components/upload/UploadPYQ.jsx
-import React, { useState } from "react"; // <-- IMPORTANT
+import React, { useState } from "react";
+import { FaUpload } from "react-icons/fa"; // <-- Importing upload icon
 
 const UploadPYQ = () => {
   const semesters = [
@@ -18,6 +19,7 @@ const UploadPYQ = () => {
   const [formData, setFormData] = useState({
     semester: "",
     subjects: Array(subjects.length).fill(""),
+    files: Array(subjects.length).fill(null), // ✅ store file for each subject
   });
 
   const handleChange = (e) =>
@@ -29,15 +31,24 @@ const UploadPYQ = () => {
     setFormData({ ...formData, subjects: updated });
   };
 
+  const handleFileChange = (index, file) => {
+    const updated = [...formData.files];
+    updated[index] = file;
+    setFormData({ ...formData, files: updated });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Submitted ✅", formData);
+    alert("Form Submitted ✅ (Check Console)");
   };
 
   return (
     <div className="w-full max-w-5xl mx-auto bg-white shadow-md rounded-xl p-8 border">
       <h2 className="text-lg font-semibold mb-6">Complete your Upload:</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
+        
+        {/* Semester Dropdown */}
         <div className="flex items-center">
           <label className="w-48 font-medium">Choose Semester:</label>
           <select
@@ -55,30 +66,58 @@ const UploadPYQ = () => {
           </select>
         </div>
 
-        <div className="flex items-center">
-          <label className="w-48 font-medium">
+        {/* Subjects with File Upload */}
+        <div>
+          <label className="block font-medium mb-2">
             Choose Subjects:{" "}
             <span className="text-gray-500 text-xs">(Choose Priority Wise)</span>
           </label>
-          <div className="flex gap-3 flex-1">
+
+          <div className="flex flex-col gap-4">
             {subjects.map((s, index) => (
-              <select
+              <div
                 key={s}
-                value={formData.subjects[index]}
-                onChange={(e) => handleSubjectChange(index, e.target.value)}
-                className="flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
+                className="flex items-center gap-3 border p-3 rounded-lg shadow-sm"
               >
-                <option value="">{s}. Choose</option>
-                <option value="Maths">Maths</option>
-                <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="English">English</option>
-                <option value="Computer Science">Computer Science</option>
-              </select>
+                {/* Subject Dropdown */}
+                <select
+                  value={formData.subjects[index]}
+                  onChange={(e) => handleSubjectChange(index, e.target.value)}
+                  className="flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
+                >
+                  <option value="">{s}. Choose</option>
+                  <option value="Maths">Maths</option>
+                  <option value="Physics">Physics</option>
+                  <option value="Chemistry">Chemistry</option>
+                  <option value="English">English</option>
+                  <option value="Computer Science">Computer Science</option>
+                </select>
+
+                {/* File Upload with Icon */}
+                <label className="flex items-center gap-2 cursor-pointer bg-yellow-200 hover:bg-yellow-300 px-4 py-2 rounded-lg shadow">
+                  <FaUpload className="text-gray-700" />
+                  <span className="text-sm">Upload</span>
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={(e) =>
+                      handleFileChange(index, e.target.files[0] || null)
+                    }
+                  />
+                </label>
+
+                {/* Show uploaded file name */}
+                {formData.files[index] && (
+                  <span className="text-xs text-green-600">
+                    {formData.files[index].name}
+                  </span>
+                )}
+              </div>
             ))}
           </div>
         </div>
 
+        {/* Submit Button */}
         <div className="flex justify-center">
           <button
             type="submit"
@@ -87,7 +126,6 @@ const UploadPYQ = () => {
             Submit Now
           </button>
         </div>
-        <input type="file" />
       </form>
     </div>
   );

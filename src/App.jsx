@@ -23,6 +23,7 @@ import Profile from './components/admin_profile/Profile.jsx';
 import EditMaterial from './components/admin_profile/EditMaterial';
 import UploadPdf from './components/admin_profile/UploadPdf';
 import UpdateTeach from './components/admin_profile/UpdateTeach.jsx';
+import Editmaterialedit from './components/admin_profile/Editmaterialedit';
 
 const App = () => {
   return (
@@ -53,6 +54,7 @@ const App = () => {
             <>
               <AdminNavBar />
               <AdminDashboard />
+            
             </>
           }
         >
@@ -67,6 +69,7 @@ const App = () => {
         <Route path="/edit-material" element={<EditMaterial />} />
         <Route path="/upload-pdf" element={<UploadPdf />} />
       </Routes>
+    
     </Router>
   );
 };
