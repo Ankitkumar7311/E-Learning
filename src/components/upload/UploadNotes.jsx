@@ -1,11 +1,7 @@
-import UploadPYQ from "./UploadPYQ"
+import UploadPYQ from "./UploadPYQ";
 
 const UploadNotes = () => {
-  return (
-    <>
-<UploadPYQ/>
-    </>
-  )
-}
+  return <UploadPYQ />;
+};
 
-export default UploadNotes
+export default UploadNotes;

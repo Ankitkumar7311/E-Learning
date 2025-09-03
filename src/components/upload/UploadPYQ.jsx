@@ -1,6 +1,5 @@
-// components/upload/UploadPYQ.jsx
 import React, { useState } from "react";
-import { FaUpload } from "react-icons/fa"; // <-- Importing upload icon
+import { FaUpload } from "react-icons/fa";
 
 const UploadPYQ = () => {
   const semesters = [
@@ -19,8 +18,10 @@ const UploadPYQ = () => {
   const [formData, setFormData] = useState({
     semester: "",
     subjects: Array(subjects.length).fill(""),
-    files: Array(subjects.length).fill(null), // ✅ store file for each subject
+    files: Array(subjects.length).fill(null),
   });
+
+  const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,16 +40,34 @@ const UploadPYQ = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!formData.semester) {
+      alert("Please select a semester!");
+      return;
+    }
+
+    if (formData.files.every((file) => !file)) {
+      alert("Please upload at least one file!");
+      return;
+    }
+
     console.log("Form Submitted ✅", formData);
-    alert("Form Submitted ✅ (Check Console)");
+    setSubmitted(true);
+
+    // Reset form
+    setFormData({
+      semester: "",
+      subjects: Array(subjects.length).fill(""),
+      files: Array(subjects.length).fill(null),
+    });
   };
 
   return (
     <div className="w-full max-w-5xl mx-auto bg-white shadow-md rounded-xl p-8 border">
       <h2 className="text-lg font-semibold mb-6">Complete your Upload:</h2>
+
       <form onSubmit={handleSubmit} className="space-y-6">
-        
-        {/* Semester Dropdown */}
+        {/* Semester */}
         <div className="flex items-center">
           <label className="w-48 font-medium">Choose Semester:</label>
           <select
@@ -66,11 +85,11 @@ const UploadPYQ = () => {
           </select>
         </div>
 
-        {/* Subjects with File Upload */}
+        {/* Subjects & Uploads */}
         <div>
           <label className="block font-medium mb-2">
             Choose Subjects:{" "}
-            <span className="text-gray-500 text-xs">(Choose Priority Wise)</span>
+            <span className="text-gray-500 text-xs">(Priority Wise)</span>
           </label>
 
           <div className="flex flex-col gap-4">
@@ -79,7 +98,6 @@ const UploadPYQ = () => {
                 key={s}
                 className="flex items-center gap-3 border p-3 rounded-lg shadow-sm"
               >
-                {/* Subject Dropdown */}
                 <select
                   value={formData.subjects[index]}
                   onChange={(e) => handleSubjectChange(index, e.target.value)}
@@ -93,7 +111,6 @@ const UploadPYQ = () => {
                   <option value="Computer Science">Computer Science</option>
                 </select>
 
-                {/* File Upload with Icon */}
                 <label className="flex items-center gap-2 cursor-pointer bg-yellow-200 hover:bg-yellow-300 px-4 py-2 rounded-lg shadow">
                   <FaUpload className="text-gray-700" />
                   <span className="text-sm">Upload</span>
@@ -106,7 +123,6 @@ const UploadPYQ = () => {
                   />
                 </label>
 
-                {/* Show uploaded file name */}
                 {formData.files[index] && (
                   <span className="text-xs text-green-600">
                     {formData.files[index].name}
@@ -117,16 +133,20 @@ const UploadPYQ = () => {
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <div className="flex justify-center">
-          <button
-            type="submit"
-            className="bg-yellow-400 hover:bg-yellow-500 text-white font-medium px-8 py-2 rounded-md shadow"
-          >
+          <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-medium px-8 py-2 rounded-md shadow">
             Submit Now
           </button>
         </div>
       </form>
+
+      {/* Success Message */}
+      {submitted && (
+        <div className="mt-6 p-4 bg-green-100 text-green-700 rounded-lg shadow">
+          🎉 Form submitted successfully!
+        </div>
+      )}
     </div>
   );
 };

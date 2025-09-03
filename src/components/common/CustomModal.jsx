@@ -1,8 +1,8 @@
 import Modal from "react-modal";
 
-Modal.setAppElement("#root");
+Modal.setAppElement("#root"); // Important for accessibility
 
-const CustomModal = ({ isOpen, onClose, children }) => {
+const CustomModal = ({ isOpen, onClose, children, title }) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -13,12 +13,17 @@ const CustomModal = ({ isOpen, onClose, children }) => {
       {/* Close Button */}
       <button
         onClick={onClose}
-        className="absolute top-1 right-3 text-gray-500 hover:text-black"
+        aria-label="Close Modal"
+        className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl font-bold"
       >
         ✖
       </button>
 
-      {children}
+      {/* Optional Title */}
+      {title && <h2 className="text-2xl font-semibold mb-4">{title}</h2>}
+
+      {/* Modal Content */}
+      <div>{children}</div>
     </Modal>
   );
 };

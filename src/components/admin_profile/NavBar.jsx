@@ -2,18 +2,43 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const NavBar = () => {
+  const navLinks = [
+    { to: '/universities', label: 'Universities' },
+    { to: '/courses', label: 'Courses' },
+    { to: '/community', label: 'Community' },
+    { to: '/news', label: 'News' },
+    { to: '/about', label: 'About' },
+    { to: '/login', label: 'Login', extra: 'uppercase font-semibold' },
+  ];
+
   return (
-    <nav className='h-16 text-xl flex flex-row justify-evenly items-center bg-[#E3EBFF] shadow-md  decoration-none' style={{textDecoration:"none"}}>
-      <Link to="/" className="text-2xl font-semibold text-gray-800 decoration-none">Mrs.College Guide</Link>
-      <Link to="/universities" className="font-medium hover:text-blue-600">Universities</Link>
-      <Link to="/courses" className="font-medium  hover:text-blue-600">Courses</Link>
-      <Link to="/community" className="font-medium  hover:text-blue-600">Community</Link>
-      <Link to="/news" className="font-medium  hover:text-blue-600">News</Link>
-      <Link to="/about" className="font-medium  hover:text-blue-600">About</Link>
-      <Link to="/login" className="uppercase font-semibold  hover:text-blue-600">Login</Link>
+    <nav className="h-16 flex items-center justify-evenly bg-[#E3EBFF] shadow-md text-lg font-medium">
+      {/* Logo */}
+      <Link
+        to="/"
+        className="text-2xl font-bold text-gray-800 tracking-wide hover:text-blue-700 transition-colors duration-300"
+      >
+        Mrs.College Guide
+      </Link>
+
+      {/* Navigation Links */}
+      <div className="flex gap-6">
+        {navLinks.map(({ to, label, extra }) => (
+          <Link
+            key={to}
+            to={to}
+            className={`relative px-2 py-1 text-gray-700 hover:text-blue-600 transition duration-300 ${extra || ''}`}
+          >
+            {label}
+            <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-blue-600 transition-all duration-300 hover:w-full"></span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Sign Up Button */}
       <Link
         to="/signup"
-        className="rounded bg-yellow-500 h-8 w-24 flex items-center justify-center text-white uppercase font-semibold hover:bg-yellow-600 shadow decoration-none"
+        className="flex h-9 w-28 items-center justify-center rounded-xl bg-gradient-to-r from-yellow-400 to-yellow-500 font-semibold uppercase text-white shadow-md hover:from-yellow-500 hover:to-yellow-600 transition duration-300"
       >
         Sign Up
       </Link>

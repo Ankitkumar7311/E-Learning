@@ -1,14 +1,13 @@
 import ProfileLeft from "./ProfileLeft";
 import ProfileRight from "./ProfileRight";
 
-let Profile = () => {
+const Profile = () => {
   return (
-    <>
-      <section className="h-[550px] bg-[white] flex pl-10">
-        <ProfileLeft />
-        <ProfileRight />
-      </section>
-    </>
+    <section className="flex h-[550px] bg-white pl-10">
+      <ProfileLeft />
+      <ProfileRight />
+    </section>
   );
 };
+
 export default Profile;

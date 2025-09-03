@@ -1,36 +1,36 @@
 import React from 'react';
-// You can replace this with your actual logo file
 import logo from '../../assets/Ellipse.png';
+
 const FacultyPanel = () => {
   return (
-    <nav className="flex items-center justify-between bg-white p-3 shadow-xl ">
-      {/* Left & Center Section */}
-      <div className="flex items-center">
+    <nav className="flex items-center justify-between bg-white px-6 py-3 shadow-md">
+      {/* Left Section */}
+      <div className="flex items-center gap-6">
         {/* Logo and Title */}
-        <div className="flex items-center">
-          <img className="h-14 w-14 ml-[50px]" src={logo} alt="E-learning platform"  />
-          <div className="ml-4">
-            <span className="block text-lg font-bold text-gray-800">Faculty Panel</span>
-            <span className="block text-sm font-bold  text-gray-800">E-learning Platform</span>
+        <div className="flex items-center gap-4">
+          <img className="h-14 w-14" src={logo} alt="E-learning platform" />
+          <div>
+            <h1 className="text-lg font-bold text-gray-800">Faculty Panel</h1>
+            <span className="text-sm font-medium text-gray-600">E-learning Platform</span>
           </div>
         </div>
 
-        {/* Global Admin Button */}
-        <div className="ml-20">
-          <a href="#"><span className="bg-slate-200 border border-slate-300 text-slate-700 font-semibold px-8 py-2.5 rounded-full hover:bg-blue-300 hover:text-white">
-           Faculty
-          </span></a>
-        </div>
+        {/* Faculty Button */}
+        <a
+          href="#"
+          className="bg-slate-200 border border-slate-300 text-slate-700 font-semibold px-6 py-2 rounded-full hover:bg-blue-300 hover:text-white transition-colors"
+        >
+          Faculty
+        </a>
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center">
-        <a href="#" className="text-gray-700 font-medium mr-8 hover:text-blue-600">
+      <div className="flex items-center gap-6">
+        <a href="#" className="text-gray-700 font-medium hover:text-blue-600">
           Help & Support
         </a>
-        <button className="flex items-center bg-yellow-500 text-black font-bold py-2 px-5 rounded-lg hover:bg-yellow-600 transition-colors mr-[50px]">
+        <button className="flex items-center bg-yellow-500 text-black font-bold py-2 px-5 rounded-lg hover:bg-yellow-600 transition-colors">
           <span>Log out</span>
-          {/* Logout Icon SVG */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

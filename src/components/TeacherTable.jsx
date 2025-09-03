@@ -1,176 +1,69 @@
-
 import React from "react";
-import tableBg from "../assets/Table_backGround.png"
+import tableBg from "../assets/Table_backGround.png";
+
+const students = [
+  { roll: "20000001", name: "Prem Kr", course: "Data Structures" },
+  { roll: "20000002", name: "Aarav Singh", course: "Fluid Mechanics" },
+  { roll: "20000003", name: "Neha Sharma", course: "Microprocessors" },
+  { roll: "20000004", name: "Rohit Patel", course: "Surveying" },
+  { roll: "20000005", name: "Siya Verma", course: "Computer Networks" },
+  { roll: "20000006", name: "Karan Roy", course: "Thermodynamics" },
+  { roll: "20000007", name: "Aisha Khan", course: "Genetic Engineering" },
+  { roll: "20000008", name: "Vikram Das", course: "Algorithms" },
+  { roll: "20000009", name: "Meera Jain", course: "VLSI Design" },
+  { roll: "20000010", name: "Aditya Gupta", course: "DBMS" },
+];
+
 const Table = () => {
+  return (
+    <div className="flex justify-center items-start gap-12 p-4">
+      {/* Main Table */}
+      <div className="overflow-x-auto">
+        <table className="border-separate text-center shadow-lg rounded-lg min-w-[400px]">
+          <thead className="text-white bg-orange-300">
+            <tr>
+              <th className="px-4 py-2 border border-white rounded-tl-lg">Roll Number</th>
+              <th className="px-4 py-2 border border-white">Name</th>
+              <th className="px-4 py-2 border border-white rounded-tr-lg">Course</th>
+            </tr>
+          </thead>
+          <tbody
+            className="bg-no-repeat bg-cover"
+            style={{ backgroundImage: `url(${tableBg})` }}
+          >
+            {students.map((student) => (
+              <tr key={student.roll}>
+                <td className="px-4 py-2 border border-white">{student.roll}</td>
+                <td className="px-4 py-2 border border-white">{student.name}</td>
+                <td className="px-4 py-2 border border-white">{student.course}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan="3" className="bg-white rounded-b-lg px-4 py-2">
+                <div className="flex justify-between font-bold">
+                  <a href="" className="hover:text-orange-300">
+                    {"<< Prev. Page"}
+                  </a>
+                  <a href="" className="hover:text-orange-300">
+                    {"Next Page >>"}
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
 
-    return (
+      {/* Search Link */}
+      <div className="flex items-center">
+        <p className="font-bold hover:text-orange-300">
+          <a href="">{"Search Student >>"}</a>
+        </p>
+      </div>
+    </div>
+  );
+};
 
-        <div className="flex justify-center items-center gap-50">
-
-            <div >
-                <table className="border-separate  text-center shadow-lg rounded-lg">
-
-                    <thead className=" text-white bg-orange-300">
-                        <tr>
-                            <th className=" px-4 py-2  border border-[white] rounded-tl-lg">Roll Number</th>
-                            <th className=" px-4 py-2  border border-[white] ">Name</th>
-                            <th className=" px-4 py-2  border border-[white] rounded-tr-lg">Course</th>
-                        </tr>
-                    </thead>
-                    <tbody style={{ backgroundImage: `url(${tableBg})` }}>
-
-                        <tr >
-                            <td className="px-4 py-2 border border-[white]">20000001 </td>
-                            <td className="px-4 py-2 border border-[white]">Prem Kr </td>
-                            <td className="px-4 py-2 border border-[white]">Data Structures</td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000002 </td>
-                            <td className="px-4 py-2 border border-[white]">Aarav Singh </td>
-                            <td className="px-4 py-2 border border-[white]">Fluid Mechanics </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000003 </td>
-                            <td className="px-4 py-2 border border-[white]">Neha Sharma </td>
-                            <td className="px-4 py-2 border border-[white]">Microprocessors </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000004 </td>
-                            <td className="px-4 py-2 border border-[white]">Rohit Patel </td>
-                            <td className="px-4 py-2 border border-[white]">Surveying </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000005</td>
-                            <td className="px-4 py-2 border border-[white]">Siya Verma </td>
-                            <td className="px-4 py-2 border border-[white]">Computer Networks </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000006</td>
-                            <td className="px-4 py-2 border border-[white]">Karan Roy </td>
-                            <td className="px-4 py-2 border border-[white]">Thermodynamics </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000007</td>
-                            <td className="px-4 py-2 border border-[white]">Aisha Khan </td>
-                            <td className="px-4 py-2 border border-[white]">Genetic Engineering </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000008 </td>
-                            <td className="px-4 py-2 border border-[white]">Vikram Das </td>
-                            <td className="px-4 py-2 border border-[white]">Algorithms </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000009 </td>
-                            <td className="px-4 py-2 border border-[white]">Meera Jain</td>
-                            <td className="px-4 py-2 border border-[white]">VLSI Design</td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white] ">20000010</td>
-                            <td className="px-4 py-2 border border-[white] ">Aditya Gupta </td>
-                            <td className="px-4 py-2 border border-[white] ">DBMS </td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colSpan="3" className="bg-white rounded-b-lg px-4 py-2">
-                                <div className="flex justify-between font-bold">
-                                    <span className="hover:text-orange-300"><a href="">{"<< Prev. Page"}</a></span>
-                                    <span className="hover:text-orange-300"><a href="">{"Next Page >>"}</a></span>
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
-
-                </table>
-            </div>
-
-            <div>
-                <p className="font-bold hover:text-orange-300"><a href="">{"Search Student >>"}</a></p>
-            </div>
-
-            <div>
-
-                <table className="border-separate  text-center shadow-lg rounded-lg">
-
-                    <thead className=" text-white bg-orange-300">
-                        <tr>
-                            <th className=" px-4 py-2  border border-[white] rounded-tl-lg">Roll Number</th>
-                            <th className=" px-4 py-2  border border-[white] ">Name</th>
-                            <th className=" px-4 py-2  border border-[white] rounded-tr-lg">Course</th>
-                        </tr>
-                    </thead>
-                    <tbody style={{ backgroundImage: `url(${tableBg})` }}>
-
-                        <tr >
-                            <td className="px-4 py-2 border border-[white]">20000001 </td>
-                            <td className="px-4 py-2 border border-[white]">Prem Kr </td>
-                            <td className="px-4 py-2 border border-[white]">Data Structures</td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000002 </td>
-                            <td className="px-4 py-2 border border-[white]">Aarav Singh </td>
-                            <td className="px-4 py-2 border border-[white]">Fluid Mechanics </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000003 </td>
-                            <td className="px-4 py-2 border border-[white]">Neha Sharma </td>
-                            <td className="px-4 py-2 border border-[white]">Microprocessors </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000004 </td>
-                            <td className="px-4 py-2 border border-[white]">Rohit Patel </td>
-                            <td className="px-4 py-2 border border-[white]">Surveying </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000005</td>
-                            <td className="px-4 py-2 border border-[white]">Siya Verma </td>
-                            <td className="px-4 py-2 border border-[white]">Computer Networks </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000006</td>
-                            <td className="px-4 py-2 border border-[white]">Karan Roy </td>
-                            <td className="px-4 py-2 border border-[white]">Thermodynamics </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000007</td>
-                            <td className="px-4 py-2 border border-[white]">Aisha Khan </td>
-                            <td className="px-4 py-2 border border-[white]">Genetic Engineering </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000008 </td>
-                            <td className="px-4 py-2 border border-[white]">Vikram Das </td>
-                            <td className="px-4 py-2 border border-[white]">Algorithms </td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white]">20000009 </td>
-                            <td className="px-4 py-2 border border-[white]">Meera Jain</td>
-                            <td className="px-4 py-2 border border-[white]">VLSI Design</td>
-                        </tr>
-                        <tr>
-                            <td className="px-4 py-2 border border-[white] ">20000010</td>
-                            <td className="px-4 py-2 border border-[white] ">Aditya Gupta </td>
-                            <td className="px-4 py-2 border border-[white] ">DBMS </td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colSpan="3" className="bg-white rounded-b-lg px-4 py-2">
-                                <div className="flex justify-between font-bold">
-                                    <span className="hover:text-orange-300"><a href="">{"<< Prev. Page"}</a></span>
-                                    <span className="hover:text-orange-300"><a href="">{"Next Page >>"}</a></span>
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    );
-
-
-}
 export default Table;

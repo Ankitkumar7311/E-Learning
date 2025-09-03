@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/admin_profile/NavBar';
+import AdminNavBar from './components/admin_profile/AdminNavBar';
+import AdminDashboard from './components/admin_profile/AdminDashboard';
 import HomePage from './components/admin_profile/HomePage';
 import Courses from './components/admin_profile/Courses';
 import Universities from './components/admin_profile/Universities';
@@ -8,76 +10,66 @@ import Community from './components/admin_profile/Community';
 import News from './components/admin_profile/News';
 import About from './components/admin_profile/About';
 import Login from './components/admin_profile/Login';
-import AdminNavBar from './components/admin_profile/AdminNavBar';
-import AdminDashboard from './components/admin_profile/AdminDashboard';
+import StudentLogin from './components/admin_profile/StudentLogin';
+import TeacherLogin from './components/admin_profile/TeacherLogIn';
+import Profile from './components/admin_profile/Profile';
+import Teacherprofile from './components/admin_profile/Teacherprofile';
+import StudentProfile from './components/admin_profile/StudentProfile';
 import AddRemoveFaculty from './components/admin_profile/AddRemoveFaculty';
 import Add from './components/admin_profile/Add';
 import RegulationForm from './components/admin_profile/Regulation';
 import SearchFaculty from './components/admin_profile/SearchFaculty';
-import SearchStudents from './components/admin_profile/SearchStudents';
-import StudentLogin from './components/admin_profile/StudentLogin.jsx';
-import TeacherLogin from './components/admin_profile/TeacherLogIn.jsx';
-import Teacherprofile from './components/admin_profile/Teacherprofile.jsx';
-import StudentProfile from './components/admin_profile/StudentProfile';
-import Profile from './components/admin_profile/Profile.jsx';
-import EditMaterial from './components/admin_profile/EditMaterial';
-import UploadPdf from './components/admin_profile/UploadPdf';
-import UpdateTeach from './components/admin_profile/UpdateTeach.jsx';
-import Editmaterialedit from './components/admin_profile/Editmaterialedit';
 import Documents from './components/students_profile/Documents';
 import Signup from './components/students_profile/Signup';
+import EditMaterial from './components/admin_profile/EditMaterial';
+import UploadPdf from './components/admin_profile/UploadPdf';
+import UpdateTeach from './components/admin_profile/UpdateTeach';
+
+const PublicLayout = ({ children }) => (
+  <>
+    <NavBar />
+    {children}
+  </>
+);
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<><NavBar /><HomePage /></>} />
-        <Route path="/universities" element={<><NavBar /><Universities /></>} />
-        <Route path="/courses" element={<><NavBar /><Courses /></>} />
-        <Route path="/community" element={<><NavBar /><Community /></>} />
-        <Route path="/news" element={<><NavBar /><News /></>} />
-        <Route path="/about" element={<><NavBar /><About /></>} />
-        <Route path="/login" element={<><NavBar /><Login /></>} />
+        {/* Public Routes */}
+        <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+        <Route path="/courses" element={<PublicLayout><Courses /></PublicLayout>} />
+        <Route path="/universities" element={<PublicLayout><Universities /></PublicLayout>} />
+        <Route path="/community" element={<PublicLayout><Community /></PublicLayout>} />
+        <Route path="/news" element={<PublicLayout><News /></PublicLayout>} />
+        <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+        <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
+        <Route path="/student-login" element={<PublicLayout><StudentLogin /></PublicLayout>} />
+        <Route path="/teacher-login" element={<PublicLayout><TeacherLogin /></PublicLayout>} />
+        <Route path="/signup" element={<PublicLayout><Signup /></PublicLayout>} />
 
-        {/* Login pages */}
-        <Route path="/student-login" element={<><NavBar /><StudentLogin /></>} />
-        <Route path="/teacher-login" element={<><NavBar /><TeacherLogin /></>} />
-
-        {/* Profiles */}
+        {/* Profile Routes */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/teacher-profile" element={<Teacherprofile />} />
         <Route path="/student-profile" element={<StudentProfile />} />
+        <Route path="/documents" element={<Documents />} />
 
-        {/* Admin dashboard with nested routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <>
-              <AdminNavBar />
-              <AdminDashboard />
-            
-            </>
-          }
-        >
+        {/* Admin Dashboard with Nested Routes */}
+        <Route path="/dashboard" element={<><AdminNavBar /><AdminDashboard /></>}>
           <Route path="add-remove-faculty" element={<AddRemoveFaculty />} />
           <Route path="add-remove-student" element={<Add />} />
           <Route path="view-faculty-student" element={<SearchFaculty />} />
           <Route path="regulation" element={<RegulationForm />} />
         </Route>
 
-        {/* Extra features */}
+        {/* Extra Features */}
         <Route path="/update-teach" element={<UpdateTeach />} />
         <Route path="/edit-material" element={<EditMaterial />} />
         <Route path="/upload-pdf" element={<UploadPdf />} />
 
-        <Route path="/documents" element={<Documents />} />
-         <Route path='/signup' element={<Signup/>}/>
-         <Route path='/Student-login' element={<StudentLogin/>}/>
-
+        {/* 404 */}
+        <Route path="*" element={<h1>Page Not Found</h1>} />
       </Routes>
- 
-    
     </Router>
   );
 };

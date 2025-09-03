@@ -34,10 +34,10 @@ const StudentTable = () => {
   return (
     <div className="p-6">
       {/* Outer Table Container */}
-      <div className="overflow-hidden rounded-2xl shadow-lg">
-        <table className="w-full border-separate border-spacing-1">
-          <thead>
-            <tr className="bg-yellow-500">
+      <div className="overflow-x-auto rounded-2xl shadow-lg">
+        <table className="w-full border-collapse">
+          <thead className="bg-yellow-500 text-white">
+            <tr>
               {columns.map((col, idx) => (
                 <th key={idx} className="p-3 text-center font-semibold">
                   {col}
@@ -47,7 +47,12 @@ const StudentTable = () => {
           </thead>
           <tbody>
             {paginatedData.map((row, idx) => (
-              <tr key={idx} className="bg-blue-100">
+              <tr
+                key={idx}
+                className={`${
+                  idx % 2 === 0 ? "bg-blue-100" : "bg-blue-50"
+                } hover:bg-blue-200 transition`}
+              >
                 <td className="p-3 text-center">{row.roll}</td>
                 <td className="p-3 text-center">{row.name}</td>
                 <td className="p-3 text-center">{row.course}</td>
@@ -55,7 +60,9 @@ const StudentTable = () => {
                 <td className="p-3 text-center">{row.fee}</td>
                 <td className="p-3 text-center">{row.reg}</td>
                 <td className="p-3 text-center">{row.verify}</td>
-                <td className="p-3 text-center">{row.details}</td>
+                <td className="p-3 text-center text-blue-600 cursor-pointer hover:underline">
+                  {row.details}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -67,7 +74,7 @@ const StudentTable = () => {
         <button
           onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition"
         >
           Previous
         </button>
@@ -77,7 +84,7 @@ const StudentTable = () => {
         <button
           onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+          className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition"
         >
           Next
         </button>
