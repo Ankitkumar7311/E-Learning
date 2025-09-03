@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const StudentSignUp = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    otp: '',
+    name: "",
+    email: "",
+    password: "",
+    otp: "",
   });
 
   const handleChange = (e) => {
@@ -17,23 +17,29 @@ const StudentSignUp = () => {
   };
 
   const handleGenerateOTP = () => {
-    alert('OTP has been sent to your email!');
+    alert("OTP has been sent to your email!");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Account created successfully!');
+    console.log("Form submitted:", formData);
+    alert("Account created successfully!");
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100  p-4">
       <div className=" p-8 bg-white rounded-lg shadow-xl w-[500px]">
-        <h2 className="text-2xl font-semibold text-left text-gray-800 h-[20px] w-[100px]">Signup</h2><br />
+        <h2 className="text-2xl font-semibold text-left text-gray-800 h-[20px] w-[100px]">
+          Signup
+        </h2>
+        <br />
         <p className="mt-2 text-left text-gray-600">Welcome onboard with us!</p>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
               Name
             </label>
             <input
@@ -49,7 +55,10 @@ const StudentSignUp = () => {
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -65,7 +74,10 @@ const StudentSignUp = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             {/* Flex container to align input and button */}
@@ -92,7 +104,10 @@ const StudentSignUp = () => {
             </div>
           </div>
           <div>
-            <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="otp"
+              className="block text-sm font-medium text-gray-700"
+            >
               OTP
             </label>
             <input
