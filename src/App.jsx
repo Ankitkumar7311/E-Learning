@@ -24,8 +24,8 @@ import EditMaterial from './components/admin_profile/EditMaterial';
 import UploadPdf from './components/admin_profile/UploadPdf';
 import UpdateTeach from './components/admin_profile/UpdateTeach.jsx';
 import Editmaterialedit from './components/admin_profile/Editmaterialedit';
-import Documents from './components/admin_profile/students_profile/Documents';
-import Signup from './components/admin_profile/students_profile/Signup';
+import Documents from './components/students_profile/Documents';
+import Signup from './components/students_profile/Signup';
 
 const App = () => {
   return (
