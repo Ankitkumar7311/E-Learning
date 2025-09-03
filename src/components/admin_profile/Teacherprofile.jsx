@@ -1,8 +1,11 @@
 import faculty from "../../assets/faculty.jpg"
 
+
+
 let Teacherprofile=()=>{
     return <>
-    
+     
+   
     <div className="h-[800px] w-[1100px] p-12 flex flex-col pl-100">
         <hr className="w-[650px]" />
         <h1 className="text-center">Teacher Information </h1>

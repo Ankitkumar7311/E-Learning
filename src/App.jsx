@@ -24,6 +24,8 @@ import EditMaterial from './components/admin_profile/EditMaterial';
 import UploadPdf from './components/admin_profile/UploadPdf';
 import UpdateTeach from './components/admin_profile/UpdateTeach.jsx';
 import Editmaterialedit from './components/admin_profile/Editmaterialedit';
+import Documents from './components/admin_profile/students_profile/Documents';
+import Signup from './components/admin_profile/students_profile/Signup';
 
 const App = () => {
   return (
@@ -68,7 +70,13 @@ const App = () => {
         <Route path="/update-teach" element={<UpdateTeach />} />
         <Route path="/edit-material" element={<EditMaterial />} />
         <Route path="/upload-pdf" element={<UploadPdf />} />
+
+        <Route path="/documents" element={<Documents />} />
+         <Route path='/signup' element={<Signup/>}/>
+         <Route path='/Student-login' element={<StudentLogin/>}/>
+
       </Routes>
+ 
     
     </Router>
   );

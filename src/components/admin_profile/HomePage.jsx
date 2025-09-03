@@ -1,8 +1,11 @@
 import React from "react";
 import Background from "./Background";
 import picBg from "../../assets/home.png";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+
+   let navigate = useNavigate()
   return (
     <Background>
     
@@ -29,9 +32,12 @@ const HomePage = () => {
 
      
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-          <button className="bg-yellow-500 text-gray-900 font-bold py-3 px-8 rounded-lg text-lg hover:bg-yellow-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-lg">
-            GET STARTED
-          </button>
+        <button
+      onClick={() => navigate("/signup")} // ✅ Navigate to Signup.jsx
+      className="bg-yellow-500 text-gray-900 font-bold py-3 px-8 rounded-lg text-lg hover:bg-yellow-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-lg"
+    >
+      GET STARTED
+    </button>
         </div>
       </main>
     </Background>

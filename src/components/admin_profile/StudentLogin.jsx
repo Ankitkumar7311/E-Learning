@@ -8,13 +8,18 @@ const StudentLogin = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
-  const handleChange = (e) => setFormData(p => ({ ...p, [e.target.name]: e.target.value }));
+  const handleChange = (e) =>
+    setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
+
+    // ✅ Redirect to Documents.jsx
+    navigate("/documents");
+
     setFormData({ email: "", password: "" });
-    };
+  };
 
   return (
     <section
@@ -22,20 +27,14 @@ const StudentLogin = () => {
       style={{ backgroundImage: `url(${curveBg})` }}
     >
       <div
-        className="
-          relative rounded-3xl shadow-xl overflow-hidden
-          w-[92vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
-          md:aspect-[16/9]
-          bg-no-repeat bg-cover bg-center
-        "
+        className="relative rounded-3xl shadow-xl overflow-hidden
+           w-[92vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
+           md:aspect-[16/9] bg-no-repeat bg-cover bg-center"
         style={{ backgroundImage: `url(${bg})` }}
       >
         <div
-          className="
-            md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%]
-            w-full rounded-2xl p-10 sm:p-5 bg-transparent
-            overflow-hidden
-          "
+          className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%]
+             w-full rounded-2xl p-10 sm:p-5 bg-transparent overflow-hidden"
           style={{
             backgroundImage: `url(${card})`,
             backgroundRepeat: "no-repeat",
@@ -75,7 +74,10 @@ const StudentLogin = () => {
                 className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
               />
 
-              <button type="button" className="self-end text-xl sm:text-lg text-black hover:underline ">
+              <button
+                type="button"
+                className="self-end text-xl sm:text-lg text-black hover:underline "
+              >
                 Forgot Password?
               </button>
 
@@ -86,15 +88,22 @@ const StudentLogin = () => {
                 LogIn as Student
               </button>
             </form>
+
             <p className="text-xs sm:text-sm md:text-base mt-2">
               Have Admin Access?{" "}
-              <b className="hover:underline cursor-pointer" onClick={() => navigate("/login")}>
+              <b
+                className="hover:underline cursor-pointer"
+                onClick={() => navigate("/login")}
+              >
                 LogIn as an Admin
               </b>
             </p>
             <p className="text-xs sm:text-sm md:text-base mt-2">
               Have Teacher Access?{" "}
-              <b className="hover:underline cursor-pointer" onClick={() => navigate("/teacher-login")}>
+              <b
+                className="hover:underline cursor-pointer"
+                onClick={() => navigate("/teacher-login")}
+              >
                 LogIn as a Teacher
               </b>
             </p>
