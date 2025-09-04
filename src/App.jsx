@@ -24,7 +24,8 @@ import Signup from './components/students_profile/Signup';
 import EditMaterial from './components/admin_profile/EditMaterial';
 import UploadPdf from './components/admin_profile/UploadPdf';
 import UpdateTeach from './components/admin_profile/UpdateTeach';
-import StudentSignUp from './components/students_profile/StudentSignUp';
+
+import RequestReport from './components/admin_profile/RequestReport';
 
 const PublicLayout = ({ children }) => (
   <>
@@ -70,8 +71,10 @@ const App = () => {
 
         {/* 404 */}
         <Route path="*" element={<h1>Page Not Found</h1>} />
+        <Route path='/request-report' element={<RequestReport/>} />
+        
       </Routes>
-      <StudentSignUp/>
+     
     </Router>
   );
 };

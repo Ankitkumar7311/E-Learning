@@ -1,12 +1,17 @@
+import AdminNavBar from "./AdminNavBar";
 import ProfileLeft from "./ProfileLeft";
 import ProfileRight from "./ProfileRight";
 
 const Profile = () => {
-  return (
+  return ( <>
+    <AdminNavBar/>
     <section className="flex h-[550px] bg-white pl-10">
+    
       <ProfileLeft />
       <ProfileRight />
     </section>
+
+    </>
   );
 };
 

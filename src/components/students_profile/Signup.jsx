@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // ✅ navigation ke liye import
+import { useNavigate } from "react-router-dom"; 
 
 // Signup Component
 const Signup = () => {
@@ -8,9 +8,7 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // ✅ Yaha aap apna signup logic (API call, validation, OTP check) add kar sakte ho
-    console.log("Signup form submitted!");
-
+   
     // Signup ke baad Login page pe redirect
     navigate("/Student-login");
   };
