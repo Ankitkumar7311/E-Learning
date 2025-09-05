@@ -24,8 +24,13 @@ import Signup from './components/students_profile/Signup';
 import EditMaterial from './components/admin_profile/EditMaterial';
 import UploadPdf from './components/admin_profile/UploadPdf';
 import UpdateTeach from './components/admin_profile/UpdateTeach';
-
 import RequestReport from './components/admin_profile/RequestReport';
+
+// Define a placeholder logout function here or import it from a utility file
+const handleLogout = () => {
+    console.log("Admin is logging out...");
+    // In a real application, this would clear authentication tokens and redirect
+};
 
 const PublicLayout = ({ children }) => (
   <>
@@ -57,7 +62,20 @@ const App = () => {
         <Route path="/documents" element={<Documents />} />
 
         {/* Admin Dashboard with Nested Routes */}
-        <Route path="/dashboard" element={<><AdminNavBar /><AdminDashboard /></>}>
+        {/* THIS IS WHERE YOU ADD THE PROPS */}
+        <Route 
+            path="/dashboard" 
+            element={
+                <>
+                    <AdminNavBar 
+                        userName="John Doe" 
+                        userRole="Global Admin" 
+                        onLogout={handleLogout} 
+                    />
+                    <AdminDashboard />
+                </>
+            }
+        >
           <Route path="add-remove-faculty" element={<AddRemoveFaculty />} />
           <Route path="add-remove-student" element={<Add />} />
           <Route path="view-faculty-student" element={<SearchFaculty />} />
@@ -72,9 +90,7 @@ const App = () => {
         {/* 404 */}
         <Route path="*" element={<h1>Page Not Found</h1>} />
         <Route path='/request-report' element={<RequestReport/>} />
-        
       </Routes>
-     
     </Router>
   );
 };
