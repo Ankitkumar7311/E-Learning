@@ -76,10 +76,10 @@ const App = () => {
         <Route path='/request-report' element={<RequestReport/>} />
         
       </Routes>
-     <AcadamicCalender/>
+     {/* <AcadamicCalender/> */}
     </Router>
 
-    <UpdateStudent/>
+    {/* <UpdateStudent/> */}
     </>
   );
 };
