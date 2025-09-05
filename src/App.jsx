@@ -26,7 +26,7 @@ import UploadPdf from './components/admin_profile/UploadPdf';
 import UpdateTeach from './components/admin_profile/UpdateTeach';
 
 import RequestReport from './components/admin_profile/RequestReport';
-import UpdateStudent from './components/admin_profile/UpdateStudent';
+
 
 const PublicLayout = ({ children }) => (
   <>
@@ -76,7 +76,7 @@ const App = () => {
         <Route path='/request-report' element={<RequestReport/>} />
         
       </Routes>
-     
+     <AcadamicCalender/>
     </Router>
 
     <UpdateStudent/>
