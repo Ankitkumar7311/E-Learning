@@ -1,9 +1,12 @@
 import React from "react";
 import faculty from "../../assets/faculty.jpg";
+import TeacherNavBar from "../navbars/TeacherNavbar";
 
 const TeacherProfile = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-100 p-8">
+<> 
+{/* <TeacherNavBar/> */}
+   <div className="min-h-screen flex flex-col items-center bg-gray-100 p-8">
       {/* Header */}
       <div className="w-full max-w-4xl text-center mb-6">
         <hr className="border-gray-400 mb-2" />
@@ -70,7 +73,7 @@ const TeacherProfile = () => {
         </table>
       </div>
     </div>
-  );
+ </> );
 };
 
 export default TeacherProfile;

@@ -1,21 +1,21 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import cardpic from "../../assets/card.png";
 
 const Form = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // setup react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
+  // form submit
+  const onSubmit = (data) => {
+    console.log("Form Data:", data);
     navigate("/dashboard");
-    setFormData({ email: "", password: "" });
   };
 
   return (
@@ -29,26 +29,36 @@ const Form = () => {
         Welcome onboard with us!
       </h4>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        {/* Email Field */}
         <label className="font-medium text-sm md:text-lg">Email ID</label>
         <input
           type="text"
-          name="email"
           placeholder="Enter your username"
-          value={formData.email}
-          onChange={handleChange}
           className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^\S+@\S+$/i,
+              message: "Invalid email format",
+            },
+          })}
         />
+        {errors.email && (
+          <p className="text-red-500 text-sm">{errors.email.message}</p>
+        )}
 
+        {/* Password Field */}
         <label className="font-medium text-sm md:text-lg mt-2">Password</label>
         <input
           type="password"
-          name="password"
           placeholder="Enter your password"
-          value={formData.password}
-          onChange={handleChange}
           className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+          {...register("password", { required: "Password is required" })}
         />
+        {errors.password && (
+          <p className="text-red-500 text-sm">{errors.password.message}</p>
+        )}
 
         <button
           type="button"

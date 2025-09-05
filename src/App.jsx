@@ -75,6 +75,7 @@ const App = () => {
         <Route path='/request-report' element={<RequestReport/>} />
         
       </Routes>
+      {/* <UpdateTeach/> */}
      <AcadamicCalender/>
     </Router>
   );
