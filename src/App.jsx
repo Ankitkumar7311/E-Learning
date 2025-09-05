@@ -25,7 +25,6 @@ import EditMaterial from './components/admin_profile/EditMaterial';
 import UploadPdf from './components/admin_profile/UploadPdf';
 import UpdateTeach from './components/admin_profile/UpdateTeach';
 import RequestReport from './components/admin_profile/RequestReport';
-
 // Define a placeholder logout function here or import it from a utility file
 const handleLogout = () => {
     console.log("Admin is logging out...");
@@ -40,7 +39,8 @@ const PublicLayout = ({ children }) => (
 );
 
 const App = () => {
-  return (
+  return ( 
+    <>
     <Router>
       <Routes>
         {/* Public Routes */}
@@ -91,7 +91,11 @@ const App = () => {
         <Route path="*" element={<h1>Page Not Found</h1>} />
         <Route path='/request-report' element={<RequestReport/>} />
       </Routes>
+     {/* <AcadamicCalender/> */}
     </Router>
+
+    {/* <UpdateStudent/> */}
+    </>
   );
 };
 
