@@ -2,6 +2,7 @@ import React from "react";
 import SearchStudents from "../admin_profile/SearchStudents";
 import { useNavigate } from "react-router-dom";
 
+
 const TeacherSearch = () => {
   const navigate = useNavigate();
 
