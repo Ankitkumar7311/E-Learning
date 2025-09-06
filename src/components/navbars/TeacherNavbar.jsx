@@ -1,9 +1,23 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { IoLogOutOutline } from "react-icons/io5";
 import logo from "../../assets/Ellipse.png";
 
-const TeacherNavBar = ({ pageTitle }) => {
+const TeacherNavBar = () => {
+  const location = useLocation();
+
+  // Map routes to titles
+  const pageTitles = {
+    "/teacher-profile": "Faculty Dashboard",
+    "/update-teach": "Update Profile",
+    "/request-report": "Report / Request",
+    "/edit-material": "Edit Material",
+    // add more mappings if needed
+  };
+
+  // Pick title based on route
+  const pageTitle = pageTitles[location.pathname] || "Teacher Section";
+
   return (
     <nav className="flex items-center justify-between bg-white px-6 py-3 shadow-xl">
       {/* Left Section: Logo + Title */}
@@ -21,7 +35,7 @@ const TeacherNavBar = ({ pageTitle }) => {
           </div>
         </div>
 
-        {/* Page Specific Button (passed as prop) */}
+        {/* Page Specific Button */}
         <button
           type="button"
           className="bg-slate-200 border border-slate-300 text-slate-700 font-semibold px-6 py-2.5 rounded-full hover:bg-blue-400 hover:text-white transition duration-300"
@@ -48,4 +62,3 @@ const TeacherNavBar = ({ pageTitle }) => {
 };
 
 export default TeacherNavBar;
-//added  teacher navbar only in the update teach 

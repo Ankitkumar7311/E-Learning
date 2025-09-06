@@ -76,7 +76,7 @@ const App = () => {
         
       </Routes>
       {/* <UpdateTeach/> */}
-     <AcadamicCalender/>
+     {/* <AcadamicCalender/> */}
     </Router>
   );
 };
