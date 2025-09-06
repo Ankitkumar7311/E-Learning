@@ -67,10 +67,7 @@ const App = () => {
             path="/dashboard" 
             element={
                 <>
-                    <AdminNavBar 
-                        userName="John Doe" 
-                        userRole="Global Admin" 
-                        onLogout={handleLogout} 
+                    <AdminNavBar
                     />
                     <AdminDashboard />
                 </>

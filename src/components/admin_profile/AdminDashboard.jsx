@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { FaDollarSign, FaFolder, FaFileUpload } from "react-icons/fa";
-
+import AdminNavBar from "../admin_profile/AdminNavBar"
 // Reusable Action Button
 const ActionButton = ({ icon, text, onClick }) => (
   <button
@@ -41,6 +41,7 @@ const AdminDashboard = () => {
   ];
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50 font-sans">
       <main className="p-4 sm:p-8">
         <div className="max-w-screen-xl mx-auto">
@@ -67,6 +68,7 @@ const AdminDashboard = () => {
         </div>
       </main>
     </div>
+    </>
   );
 };
 

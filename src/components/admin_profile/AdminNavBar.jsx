@@ -1,68 +1,57 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { IoLogOutOutline } from "react-icons/io5"; // Importing the logout icon
+// Navbar.jsx
 
-// Assume 'logo' is imported from somewhere like:
-// import logo from "../../assets/Ellipse.png";
-// For this example, I'll use a placeholder if logoSrc is not provided.
+import React from 'react';
+// Importing the logout icon from react-icons
+import { FiLogOut } from 'react-icons/fi';
+// You should replace this with the actual path to your logo
+import logo from '../../assets/Ellipse.png'; 
+import { useLocation } from 'react-router-dom';
 
-const  AdminNavBar = ({
-  adminPanelTitle = "Admin Panel",
-  platformName = "E-learning Platform",
-  globalAdminButtonText = "Global Admin",
-  onLogout, // This will be a function passed from the parent
-  logoSrc='../src/assets/Ellipse.png', // Optional: Path to your logo image
-}) => {
+const AdminNavBar = () => {
+    const location=useLocation()
+    const buttons={
+        "/dashboard":"Global Admin",
+        "/dashboard/add-remove-faculty":"Add/Remove Faculty",
+        "/dashboard/view-faculty-student":"View Faculty/Student",
+        "/dashboard/regulation":"Add regulation",
+        "/dashboard/add-remove-student":"Add/Remove Student"
+    }
+    const  buttontext=buttons[location.pathname] || "error wrong path"
   return (
-    <nav className="flex items-center justify-between bg-white px-6 py-3 shadow-xl">
-      {/* Left Section: Logo + Titles + Global Admin Button */}
-      <div className="flex items-center space-x-12">
-        {/* Logo and Titles */}
-        <div className="flex items-center space-x-4">
-          {logoSrc ? (
-            <img className="h-14 w-14" src={logoSrc} alt="Platform Logo" />
-          ) : (
-            // Placeholder for the logo if logoSrc is not provided
-            <div className="h-14 w-14 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xs font-bold">
-              LOGO
-            </div>
-          )}
+      <>
+    <nav className="bg-white shadow-sm w-full">
+      <div className="max-w-screen-2xl mx-auto px-6 py-3 flex items-center justify-between">
+        
+        {/* Left Section: Logo and Title */}
+        <div className="flex items-center space-x-4 justify-evenly ">
+          <img src={logo} alt="Vidya Sarthi Logo" className="h-12 w-12" />
           <div>
-            <span className="block text-lg font-bold text-gray-800">
-              {adminPanelTitle}
-            </span>
-            <span className="block text-sm font-semibold text-gray-600">
-              {platformName}
-            </span>
+            <h1 className="text-gray-800 font-bold text-lg">Admin Panel</h1>
+            <p className="text-gray-500 text-[15px]">E-learning</p>
           </div>
         </div>
 
-        {/* Global Admin Button */}
-        <Link
-          to="#"
-          className="bg-slate-200 border border-slate-300 text-slate-700 font-semibold px-6 py-2.5 rounded-full hover:bg-blue-400 hover:text-white transition duration-300"
-        >
-          {globalAdminButtonText}
-        </Link>
-      </div>
+        {/* Center Section: Global Admin Button */}
+        <div>
+          <button className="bg-gray-200 text-gray-700 font-semibold py-2 px-6 rounded-2xl hover:bg-blue-300 transition-colors mr-[700px] hover:text-white">
+           {buttontext}
+          </button>
+        </div>
 
-      {/* Right Section: Help & Support + Logout Button */}
-      <div className="flex items-center space-x-8">
-        <Link
-          to="#"
-          className="text-gray-700 font-medium hover:text-blue-600 transition duration-300"
-        >
-          Help & Support
-        </Link>
-        <button
-          onClick={onLogout} // Attaching the onLogout prop to the onClick event
-          className="flex items-center bg-yellow-500 text-black font-bold py-2 px-5 rounded-lg hover:bg-yellow-600 transition duration-300"
-        >
-          <span>Log out</span>
-          <IoLogOutOutline className="w-5 h-5 ml-2" />
-        </button>
+        {/* Right Section: Help and Logout */}
+        <div className="flex items-center space-x-8">
+          <a href="#" className="text-gray-600 font-medium hover:text-black">
+            Help & Support
+          </a>
+          <button className="bg-yellow-400 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2 hover:bg-yellow-500 transition-colors">
+            <span>Log out</span>
+            <FiLogOut className="h-5 w-5" />
+          </button>
+        </div>
+        
       </div>
     </nav>
+    </>
   );
 };
 
