@@ -50,7 +50,7 @@ const StudentSignUp = () => {
               required
               value={formData.name}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm inset-shadow-indigo-500 hover:bg-blue-200 bg-[#D8E7F5]"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm inset-shadow-indigo-500 hover:bg-blue-200 bg-[#D8E7F5]"
               placeholder="Enter your username"
             />
           </div>
@@ -69,7 +69,7 @@ const StudentSignUp = () => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm inset-shadow-indigo-500 hover:bg-blue-200 bg-[#D8E7F5]"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm inset-shadow-indigo-500 hover:bg-blue-200 bg-[#D8E7F5]"
               placeholder="Enter your email"
             />
           </div>
@@ -91,7 +91,7 @@ const StudentSignUp = () => {
                 value={formData.password}
                 onChange={handleChange}
                 // Use flex-grow and a margin to the right to create spacing
-                className="flex-grow block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2 inset-shadow-indigo-500 hover:bg-blue-200 bg-[#D8E7F5]"
+                className="flex-grow block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mr-2 inset-shadow-indigo-500 hover:bg-blue-200 bg-[#D8E7F5]"
                 placeholder="Enter your password"
               />
               <button
@@ -117,7 +117,7 @@ const StudentSignUp = () => {
               required
               value={formData.otp}
               onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm inset-shadow-indigo-500 hover:bg-blue-200 bg-[#D8E7F5]"
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm inset-shadow-indigo-500 hover:bg-blue-200 bg-[#D8E7F5]"
               placeholder="Enter your OTP"
             />
           </div>

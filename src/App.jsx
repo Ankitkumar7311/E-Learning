@@ -89,6 +89,8 @@ const App = () => {
         <Route path="*" element={<h1>Page Not Found</h1>} />
         <Route path='/request-report' element={<RequestReport/>} />
       </Routes>
+      {/* <UpdateTeach/> */}
+     {/* <AcadamicCalender/> */}
      {/* <AcadamicCalender/> */}
      <StudentNavBar/>
     </Router>
