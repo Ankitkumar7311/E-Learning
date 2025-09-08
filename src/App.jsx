@@ -26,6 +26,7 @@ import UploadPdf from './components/admin_profile/UploadPdf';
 import UpdateTeach from './components/admin_profile/UpdateTeach';
 import RequestReport from './components/admin_profile/RequestReport';
 import StudentNavBar from './components/students_profile/StudentNavBar';
+import Encapsulation from './components/students_profile/Encapsulation';
 // Define a placeholder logout function here or import it from a utility file
 const handleLogout = () => {
     console.log("Admin is logging out...");
@@ -93,6 +94,7 @@ const App = () => {
      {/* <AcadamicCalender/> */}
      {/* <AcadamicCalender/> */}
      <StudentNavBar/>
+     <Encapsulation/>
     </Router>
 
     {/* <UpdateStudent/> */}
