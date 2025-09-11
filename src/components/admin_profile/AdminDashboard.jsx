@@ -1,7 +1,6 @@
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { FaDollarSign, FaFolder, FaFileUpload } from "react-icons/fa";
-import AdminNavBar from "../admin_profile/AdminNavBar";
 
 // Reusable Action Button
 const ActionButton = ({ icon, text, onClick }) => (

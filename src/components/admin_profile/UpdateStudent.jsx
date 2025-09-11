@@ -1,6 +1,6 @@
 import React from 'react'
 import UploadStuNavbar from './UploadStuNavbar'
-import Profileleft from './Profileleft'
+import Profileleft from "./ProfileLeft"
 import teacher from "../../assets/teacher.jpg"
 
 const UpdateStudent = () => {

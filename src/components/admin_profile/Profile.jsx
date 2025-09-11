@@ -1,4 +1,4 @@
-import AdminNavBar from "./AdminNavBar";
+import AdminNavBar from "../navbars/AdminNavBar";
 import ProfileLeft from "./ProfileLeft";
 import ProfileRight from "./ProfileRight";
 

@@ -7,7 +7,7 @@ import TeacherNavBar from "../navbars/TeacherNavbar";
 const UpdateTeach = () => {
   return (
     <>
-      <TeacherNavBar pageTitle="Update Profile" />
+      <TeacherNavBar />
       <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
         {/* Sidebar / Panel */}
         <Profileleft />

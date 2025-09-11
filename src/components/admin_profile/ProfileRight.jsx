@@ -27,7 +27,11 @@ const ProfileRight = () => {
     { title: "Upload PYQ", tag: "PYQ", component: <UploadPYQ /> },
     { title: "Upload Notes", tag: "Notes", component: <UploadNotes /> },
     { title: "Upload QB", tag: "QB", component: <UploadQB /> },
-    { title: "Upload News & Events", tag: "Events", component: <UploadNewsEvents /> },
+    {
+      title: "Upload News & Events",
+      tag: "Events",
+      component: <UploadNewsEvents />,
+    },
   ];
 
   return (
@@ -69,7 +73,10 @@ const ProfileRight = () => {
       </div>
 
       {/* Reusable Modal */}
-      <CustomModal isOpen={!!modalContent} onClose={() => setModalContent(null)}>
+      <CustomModal
+        isOpen={!!modalContent}
+        onClose={() => setModalContent(null)}
+      >
         {modalContent}
       </CustomModal>
     </>

@@ -1,26 +1,29 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import bg from "../../assets/Rectangle.png";
 import curveBg from "../../assets/Curve.png";
 import card from "../../assets/card.png";
+import TeacherNavBar from "../navbars/TeacherNavbar";
 
 const TeacherLogin = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
-  const handleChange = (e) =>
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  // setup react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-    setFormData({ email: "", password: "" });
+  // form submit
+  const onSubmit = (data) => {
+    console.log("Teacher Login Data:", data);
     navigate("/profile");
   };
 
   return (
     <>
-      <TeacherNavbar pageTitle="Teacher login" />
       <section
         className="w-full flex items-center justify-center bg-no-repeat bg-cover px-4"
         style={{ backgroundImage: `url(${curveBg})` }}
@@ -52,30 +55,47 @@ const TeacherLogin = () => {
                 Welcome onboard with us!
               </p>
 
-              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-3"
+              >
+                {/* Email */}
                 <label className="font-medium text-sm sm:text-base md:text-lg leading-tight">
                   Institute Email ID
                 </label>
                 <input
                   type="email"
-                  name="email"
                   placeholder="Enter your username"
-                  value={formData.email}
-                  onChange={handleChange}
                   className="w-full bg-[#D8E7F5] rounded-xl px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Invalid email format",
+                    },
+                  })}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
 
+                {/* Password */}
                 <label className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
                   Password
                 </label>
                 <input
                   type="password"
-                  name="password"
                   placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleChange}
                   className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
 
                 <button
                   type="button"

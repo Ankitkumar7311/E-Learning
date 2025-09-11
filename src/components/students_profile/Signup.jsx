@@ -12,12 +12,33 @@ const Signup = () => {
   } = useForm();
 
   // Submit handler
-  const onSubmit = (data) => {
-    console.log("Form submitted:", data);
-    navigate("/Student-login");
-  };
+ const onSubmit = async (data) => {
+  try {
+    const response = await fetch("http://localhost:8080/VidyaSarthi/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data), // send all form data
+    });
 
-  // Reusable input component (reduces repetition)
+    const result = await response.json();
+
+    if (response.ok) {
+      alert("Account created successfully! You can now login.");
+      // Reset form after success
+      navigate("/Student-login");
+    } else {
+      alert(result.message || "Something went wrong!");
+    }
+  } catch (error) {
+    console.error("Error during signup:", error);
+    alert("Server error. Please try again later.");
+  }
+};
+
+  
+  // Reusable input component
   const InputField = ({ id, label, type = "text", registerOptions, ...rest }) => (
     <div>
       <label htmlFor={id} className="block text-sm font-semibold text-gray-700">
@@ -54,10 +75,21 @@ const Signup = () => {
           <InputField
             id="name"
             label="Name"
-            placeholder="Enter your username"
+            placeholder="Enter your full name"
             registerOptions={{
               required: "Name is required",
               minLength: { value: 2, message: "Name must be at least 2 characters" },
+            }}
+          />
+
+          {/* Student ID */}
+          <InputField
+            id="studentId"
+            label="Student ID"
+            placeholder="Enter your Student ID"
+            registerOptions={{
+              required: "Student ID is required",
+              minLength: { value: 4, message: "Student ID must be at least 4 characters" },
             }}
           />
 
@@ -72,6 +104,30 @@ const Signup = () => {
               pattern: {
                 value: /^\S+@\S+$/i,
                 message: "Invalid email format",
+              },
+            }}
+          />
+
+          {/* Branch */}
+          <InputField
+            id="branch"
+            label="Branch"
+            placeholder="Enter your branch (e.g., CSE)"
+            registerOptions={{
+              required: "Branch is required",
+            }}
+          />
+
+          {/* Year */}
+          <InputField
+            id="year"
+            label="Year"
+            placeholder="Enter your year (e.g., 2026)"
+            registerOptions={{
+              required: "Year is required",
+              pattern: {
+                value: /^[0-9]{4}$/,
+                message: "Year must be a 4-digit number",
               },
             }}
           />
@@ -118,7 +174,7 @@ const Signup = () => {
             )}
           </div>
 
-          {/* OTP (optional validation later) */}
+          {/* OTP */}
           <InputField
             id="otp"
             label="OTP"
