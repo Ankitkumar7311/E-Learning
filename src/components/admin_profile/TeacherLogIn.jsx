@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import bg from "../../assets/Rectangle.png";
 import curveBg from "../../assets/Curve.png";
 import card from "../../assets/card.png";
-
+import TeacherNavbar from "../navbars/TeacherNavbar"
 const TeacherLogin = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const TeacherLogin = () => {
 
   return (
     <>
-      <TeacherNavbar pageTitle="Teacher login" />
+      <TeacherNavbar />
       <section
         className="w-full flex items-center justify-center bg-no-repeat bg-cover px-4"
         style={{ backgroundImage: `url(${curveBg})` }}

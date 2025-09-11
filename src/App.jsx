@@ -27,6 +27,9 @@ import UpdateTeach from './components/admin_profile/UpdateTeach';
 import RequestReport from './components/admin_profile/RequestReport';
 import StudentNavBar from './components/students_profile/StudentNavBar';
 import Encapsulation from './components/students_profile/Encapsulation';
+import TeacherTables from "./components/TeacherTables"
+import FacultyEditProfile from './components/admin_profile/FacultyEditProfile';
+import Editmaterialedit from './components/admin_profile/Editmaterialedit';
 // Define a placeholder logout function here or import it from a utility file
 const handleLogout = () => {
     console.log("Admin is logging out...");
@@ -93,8 +96,12 @@ const App = () => {
       {/* <UpdateTeach/> */}
      {/* <AcadamicCalender/> */}
      {/* <AcadamicCalender/> */}
-     <StudentNavBar/>
-     <Encapsulation/>
+     {/* <StudentNavBar/>
+     <Encapsulation/> */}
+              
+
+          <FacultyEditProfile/>
+
     </Router>
 
     {/* <UpdateStudent/> */}
