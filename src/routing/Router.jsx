@@ -104,13 +104,12 @@ const routes = createBrowserRouter([
           { path: "add-remove-student", element: <Add /> },
           { path: "view-faculty-student", element: <SearchFaculty /> },
           { path: "regulation", element: <RegulationForm /> },
+          { path: "teacher-profile", element: <Teacherprofile /> },
+          { path: "student-profile", element: <StudentProfile /> },
         ],
       },
     ],
   },
-  { path: "teacher-profile", element: <Teacherprofile /> },
-  { path: "student-profile", element: <StudentProfile /> },
-
   // Teacher routes (with TeacherNavBar)
   {
     path: "/teacher",

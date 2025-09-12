@@ -8,7 +8,7 @@ const TeacherSearch = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/teacher-profile"); // ✅ Redirect to teacher profile
+navigate("/dashboard/teacher-profile");
   };
 
   return (

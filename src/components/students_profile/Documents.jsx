@@ -50,25 +50,25 @@ const Documents = () => {
       {/* Main Content Container */}
       <div className="bg-white rounded-lg shadow-md p-6 sm:p-8">
         {/* Latest Section */}
-        <section className="mb-8">
+        <section className="mb-3">
           <h2 className="text-xl font-bold mb-4">Latest:</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {latestItems.map((item, index) => (
               <Link
                 key={index}
                 to={item.route}
-                className="relative bg-gray-100 p-6 rounded-lg text-center flex flex-col items-center justify-center space-y-2 shadow-sm transition-transform transform hover:scale-105"
+                className="relative bg-gray-100 p-3 rounded-lg text-center flex flex-col items-center justify-center space-y-2 shadow-sm transition-transform transform hover:scale-105"
               >
                 <div
                   key={index}
-                  className="relative bg-gray-100 p-6 rounded-lg text-center flex flex-col items-center justify-center space-y-2 shadow-sm transition-transform transform hover:scale-105"
+                  className="relative bg-gray-100 p-3 rounded-lg text-center flex flex-col items-center justify-center space-y-2 shadow-sm transition-transform transform hover:scale-105"
                 >
                   {/* ✅ PNG recolored to orange-300 */}
-                  <div className="w-full h-34 flex items-center justify-center rounded-lg  bg-[#F3B900]">
+                  <div className="w-30 h-25 flex items-center justify-center rounded-lg  bg-[#F3B900]">
                     <img
                       src={item.icon}
                       alt={item.name}
-                      className="w-12 h-12 object-contain  "
+                      className="w-10 h-10 object-contain  "
                     />
                   </div>
                   <p className="text-base font-semibold text-blue-600">
