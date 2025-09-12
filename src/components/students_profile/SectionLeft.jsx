@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import teacher from "../../assets/teacher.jpg";
 import { FaRegEdit } from "react-icons/fa";
 
@@ -39,9 +40,11 @@ let SectionLeft = () => {
           </span>
           <br />
           <aside className="flex items-center justify-center">
-            <button className="bg-yellow-500 text-white h-[40px] w-[150px] flex items-center justify-evenly !rounded-full">
-              <FaRegEdit size={20} /> Request
-            </button>
+              <Link to="/update-profile-student">
+          <button className="flex items-center justify-evenly gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-5 rounded-full transition">
+            <FaRegEdit size={18}/> Request
+          </button>
+        </Link>
           </aside>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { IoLogOutOutline } from "react-icons/io5";
 import logo from "../../assets/Ellipse.png";
+import { FiLogOut } from "react-icons/fi";
 
 const TeacherNavBar = () => {
   const location = useLocation();
@@ -47,15 +48,17 @@ const TeacherNavBar = () => {
       {/* Right Section: Help + Logout */}
       <div className="flex items-center space-x-8">
         <Link
-          to="#"
+          to="/request-report"
           className="text-gray-700 font-medium hover:text-blue-600 transition duration-300"
         >
           Help & Support
         </Link>
-        <button className="flex items-center bg-yellow-500 text-black font-bold py-2 px-5 rounded-lg hover:bg-yellow-600 transition duration-300">
-          <span>Log out</span>
-          <IoLogOutOutline className="w-5 h-5 ml-2" />
-        </button>
+        <Link to="/login">
+          <button className="bg-yellow-400 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2 hover:bg-yellow-500 transition-colors">
+            <span>Log out</span>
+            <FiLogOut className="h-5 w-5" />
+          </button>
+        </Link>
       </div>
     </nav>
   );

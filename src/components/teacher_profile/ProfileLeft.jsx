@@ -1,7 +1,9 @@
+import { Link, useNavigate } from "react-router-dom";
 import teacher from "../../assets/teacher.jpg";
 import { FaRegEdit } from "react-icons/fa";
 
 const ProfileLeft = () => {
+  let navigate = useNavigate()
   return (
     <div className="h-full w-1/2 flex justify-center py-3 shadow-sm">
       <div className="flex flex-col rounded-xl bg-white h-[525px] w-60 p-4">
@@ -41,9 +43,11 @@ const ProfileLeft = () => {
 
         {/* Request Button */}
         <div className="flex justify-center mt-4">
+        <Link to="/update-profile-teacher">
           <button className="flex items-center justify-evenly gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-5 rounded-full transition">
-            <FaRegEdit size={18} /> Request
+            <FaRegEdit size={18}/> Request
           </button>
+        </Link>
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ const StudentLogin = () => {
   // form submit
   const onSubmit = (data) => {
     console.log("Student Login Data:", data);
-    navigate("/documents");
+    navigate("/student/student-dashboard");
   };
 
   return (

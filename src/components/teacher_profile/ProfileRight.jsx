@@ -4,9 +4,9 @@ import UploadQB from "../upload/UploadQB";
 import UploadPYQ from "../upload/UploadPYQ";
 import UploadNotes from "../upload/UploadNotes";
 import UploadNewsEvents from "../upload/UploadNewsEvents";
-import RequestReport from "./RequestReport";
+import RequestReport from "../admin_profile/RequestReport";
 import CustomModal from "../common/CustomModal";
-import EditMaterial from "./EditMaterial";
+import EditMaterial from "../admin_profile/EditMaterial";
 
 import uploadImg from "../../assets/10.png";
 import profileImg from "../../assets/Group.png";

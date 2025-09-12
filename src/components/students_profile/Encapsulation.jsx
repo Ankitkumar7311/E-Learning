@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import StudentNavBar from './StudentNavBar';
+import StudentNavBar from '../navbars/StudentNavBar'
 
 const Encapsulation = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +21,7 @@ const Encapsulation = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <StudentNavBar />
+      {/* <StudentNavBar /> */}
       <div className="py-8 px-4 sm:px-6 lg:px-8 mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
 

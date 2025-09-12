@@ -50,14 +50,14 @@ const AdminDashboard = () => {
               <h2 className="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h2>
 
               {/* Action Buttons Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-                {actions.map(({ icon, text, route }, index) => (
-                  <ActionButton
-                    key={index}
-                    icon={icon}
-                    text={text}
-                    onClick={() => navigate(route)}
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                  {actions.map(({ icon, text, route }, index) => (
+                    <ActionButton
+                      key={index}
+                      icon={icon}
+                      text={text}
+                      onClick={() => navigate(route)}
+                    />
                 ))}
               </div>
 
