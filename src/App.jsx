@@ -30,10 +30,10 @@ import Encapsulation from './components/students_profile/Encapsulation';
 import StudentTable from './components/admin_profile/StudentTable';
 import TeacherTable from './components/admin_profile/TeacherTable';
 // Define a placeholder logout function here or import it from a utility file
-const handleLogout = () => {
-    console.log("Admin is logging out...");
-    // In a real application, this would clear authentication tokens and redirect
-};
+// const handleLogout = () => {
+//     console.log("Admin is logging out...");
+//     // In a real application, this would clear authentication tokens and redirect
+// };
 
 const PublicLayout = ({ children }) => (
   <>
@@ -91,6 +91,7 @@ const App = () => {
         {/* 404 */}
         <Route path="*" element={<h1>Page Not Found</h1>} />
         <Route path='/request-report' element={<RequestReport/>} />
+        <Route to="/FindmaterialPop"  element={<FindmaterialPop/>} />
       </Routes>
       {/* <UpdateTeach/> */}
      {/* <AcadamicCalender/> */}
