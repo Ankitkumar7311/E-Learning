@@ -30,11 +30,15 @@ import Encapsulation from './components/students_profile/Encapsulation';
 import TeacherTables from "./components/TeacherTables"
 import FacultyEditProfile from './components/admin_profile/FacultyEditProfile';
 import Editmaterialedit from './components/admin_profile/Editmaterialedit';
+import FindmaterialPop from './components/find/FindmaterialPop';
+import FindmaterialPop1 from './components/find/Findmaterialpop1';
+import FindmaterialPop2 from './components/find/Findmaterialpop2';
+import FindmaterialPop3 from './components/find/FindMaterialpop3';
 // Define a placeholder logout function here or import it from a utility file
-const handleLogout = () => {
-    console.log("Admin is logging out...");
-    // In a real application, this would clear authentication tokens and redirect
-};
+// const handleLogout = () => {
+//     console.log("Admin is logging out...");
+//     // In a real application, this would clear authentication tokens and redirect
+// };
 
 const PublicLayout = ({ children }) => (
   <>
@@ -92,14 +96,19 @@ const App = () => {
         {/* 404 */}
         <Route path="*" element={<h1>Page Not Found</h1>} />
         <Route path='/request-report' element={<RequestReport/>} />
+        <Route to="/FindmaterialPop"  element={<FindmaterialPop/>} />
       </Routes>
       {/* <UpdateTeach/> */}
      {/* <AcadamicCalender/> */}
      {/* <AcadamicCalender/> */}
      {/* <StudentNavBar/>
      <Encapsulation/> */}
-              
+                 
 
+              
+      
+       
+          <FindmaterialPop3/>
           <FacultyEditProfile/>
 
     </Router>
