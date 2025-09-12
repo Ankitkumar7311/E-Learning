@@ -1,21 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import bg from "../../assets/Rectangle.png";
 import curveBg from "../../assets/Curve.png";
 import card from "../../assets/card.png";
 
 const StudentLogin = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
-  const handleChange = (e) =>
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  // setup react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-    navigate("/documents");
-    setFormData({ email: "", password: "" });
+  // form submit
+  const onSubmit = (data) => {
+    console.log("Student Login Data:", data);
+    navigate("/student/student-dashboard");
   };
 
   return (
@@ -40,31 +43,46 @@ const StudentLogin = () => {
               Welcome onboard with us!
             </p>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col gap-3"
+            >
               <div>
                 <label className="block mb-1 text-sm">Institute Email ID</label>
                 <input
                   type="email"
-                  name="email"
                   placeholder="Enter your username"
-                  value={formData.email}
-                  onChange={handleChange}
                   className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 text-sm sm:text-base outline-none focus:ring-2 focus:ring-blue-400"
-                  required
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Invalid email format",
+                    },
+                  })}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block mb-1 text-sm">Password</label>
                 <input
                   type="password"
-                  name="password"
                   placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleChange}
                   className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 text-sm sm:text-base outline-none focus:ring-2 focus:ring-blue-400"
-                  required
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               <button

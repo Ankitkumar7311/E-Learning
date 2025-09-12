@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AdminNavBar from "./AdminNavBar";
+import AdminNavBar from "../navbars/AdminNavBar";
 
 const RequestReport = () => {
   // Mock data for the table

@@ -1,13 +1,14 @@
 import React from "react";
-import Profileleft from "../admin_profile/ProfileLeft";
+import Profileleft from "../teacher_profile/ProfileLeft";
 import teacher from "../../assets/teacher.jpg";
 import FacultyPanel from "./FacultyPanel";
 import TeacherNavBar from "../navbars/TeacherNavbar";
+import { Link } from "react-router-dom";
 
 const UpdateTeach = () => {
   return (
     <>
-      <TeacherNavBar pageTitle="Update Profile" />
+      <TeacherNavBar />
       <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
         {/* Sidebar / Panel */}
         <Profileleft />
@@ -49,9 +50,12 @@ const UpdateTeach = () => {
             type="password"
             placeholder="Enter password"
           />
+          <Link to="/profile">
           <button className="text-white bg-yellow-500 p-3 rounded-xl w-[150px] hover:bg-yellow-600 transition">
             Update
           </button>
+          </Link>
+
         </form>
       </div>
     </>

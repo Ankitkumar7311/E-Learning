@@ -4,9 +4,9 @@ import UploadQB from "../upload/UploadQB";
 import UploadPYQ from "../upload/UploadPYQ";
 import UploadNotes from "../upload/UploadNotes";
 import UploadNewsEvents from "../upload/UploadNewsEvents";
-import RequestReport from "./RequestReport";
+import RequestReport from "../admin_profile/RequestReport";
 import CustomModal from "../common/CustomModal";
-import EditMaterial from "./EditMaterial";
+import EditMaterial from "../admin_profile/EditMaterial";
 
 import uploadImg from "../../assets/10.png";
 import profileImg from "../../assets/Group.png";
@@ -27,7 +27,11 @@ const ProfileRight = () => {
     { title: "Upload PYQ", tag: "PYQ", component: <UploadPYQ /> },
     { title: "Upload Notes", tag: "Notes", component: <UploadNotes /> },
     { title: "Upload QB", tag: "QB", component: <UploadQB /> },
-    { title: "Upload News & Events", tag: "Events", component: <UploadNewsEvents /> },
+    {
+      title: "Upload News & Events",
+      tag: "Events",
+      component: <UploadNewsEvents />,
+    },
   ];
 
   return (
@@ -69,7 +73,10 @@ const ProfileRight = () => {
       </div>
 
       {/* Reusable Modal */}
-      <CustomModal isOpen={!!modalContent} onClose={() => setModalContent(null)}>
+      <CustomModal
+        isOpen={!!modalContent}
+        onClose={() => setModalContent(null)}
+      >
         {modalContent}
       </CustomModal>
     </>
