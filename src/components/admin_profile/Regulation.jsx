@@ -8,7 +8,7 @@ const RegulationForm = () => {
   const branches = ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
   const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
-  // default 5 empty subjects (matches your Postman example which had 5)
+  // fixed 5 empty subjects
   const defaultSubjects = Array.from({ length: 5 }, () => ({
     name: "",
     subjectCode: "",
@@ -17,11 +17,10 @@ const RegulationForm = () => {
   const [formData, setFormData] = useState({
     regulation: "",
     branch: "",
-    semester: "", // will store number (or empty string)
+    semester: "",
     subjectDto: defaultSubjects,
   });
 
-  // generic change handler for top-level fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -30,43 +29,12 @@ const RegulationForm = () => {
     }));
   };
 
-  // change handler for subject objects
   const handleSubjectChange = (index, field, value) => {
     setFormData((prev) => {
       const newSubjects = prev.subjectDto.map((s, i) =>
         i === index ? { ...s, [field]: value } : s
       );
       return { ...prev, subjectDto: newSubjects };
-    });
-  };
-
-  const handleAddSubject = () => {
-    setFormData((prev) => ({
-      ...prev,
-      subjectDto: [...prev.subjectDto, { name: "", subjectCode: "" }],
-    }));
-  };
-
-  const handleRemoveSubject = (index) => {
-    setFormData((prev) => {
-      const newSubjects = prev.subjectDto.filter((_, i) => i !== index);
-      return { ...prev, subjectDto: newSubjects };
-    });
-  };
-
-  const handleFillSample = () => {
-    // fills the form with the exact Postman example you provided
-    setFormData({
-      regulation: "2025",
-      branch: "CSE",
-      semester: 1,
-      subjectDto: [
-        { name: "English", subjectCode: "ENG102" },
-        { name: "Math", subjectCode: "MTH102" },
-        { name: "Science", subjectCode: "SCI102" },
-        { name: "History", subjectCode: "HST102" },
-        { name: "Hindi", subjectCode: "HIN102" },
-      ],
     });
   };
 
@@ -100,7 +68,6 @@ const RegulationForm = () => {
     }
   };
 
-  // Reusable select field
   const SelectField = ({ label, name, options, value, onChange }) => (
     <div className="mb-3 flex items-center gap-4">
       <label className="w-40">{label} :</label>
@@ -155,34 +122,16 @@ const RegulationForm = () => {
             <option value="">Choose Semester</option>
             {semesters.map((s) => (
               <option key={s} value={s}>
-                {s} {/* display number */}
+                {s}
               </option>
             ))}
           </select>
         </div>
 
         <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <label className="block font-medium">
-              Subjects: <span className="text-sm">(Choose Priority Wise)</span>
-            </label>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={handleAddSubject}
-                className="bg-green-500 text-white px-3 py-1 rounded"
-              >
-                + Add
-              </button>
-              <button
-                type="button"
-                onClick={handleFillSample}
-                className="bg-indigo-500 text-white px-3 py-1 rounded"
-              >
-                Fill sample
-              </button>
-            </div>
-          </div>
+          <label className="block font-medium mb-2">
+            Subjects: <span className="text-sm">(Priority Wise)</span>
+          </label>
 
           <div className="flex flex-col gap-2">
             {formData.subjectDto.map((sub, index) => (
@@ -204,21 +153,13 @@ const RegulationForm = () => {
 
                 <input
                   type="text"
-                  placeholder="Subject Code (e.g. ENG102)"
+                  placeholder="Subject Code"
                   value={sub.subjectCode}
                   onChange={(e) =>
                     handleSubjectChange(index, "subjectCode", e.target.value)
                   }
                   className="w-48 p-2 rounded-md bg-blue-100"
                 />
-
-                <button
-                  type="button"
-                  onClick={() => handleRemoveSubject(index)}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                >
-                  Remove
-                </button>
               </div>
             ))}
           </div>
