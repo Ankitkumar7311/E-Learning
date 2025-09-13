@@ -1,26 +1,30 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import bg from "../../assets/Rectangle.png";
-import curveBg from "../../assets/Curve.png";
-import card from "../../assets/card.png";
+import bg from "../assets/Rectangle.png";
+import curveBg from "../assets/Curve.png";
+import card from "../assets/card.png";
+import { useAuth } from "./AuthContext"; // ✅ adjust the path based on your folder structure
 
 const StudentLogin = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  // setup react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  // form submit
   const onSubmit = (data) => {
     console.log("Student Login Data:", data);
-    navigate("/student/student-dashboard");
-  };
 
+    // ✅ set auth with role = "student"
+    login({ role: "student", user: data.email });
+
+    // ✅ redirect to student dashboard
+    navigate("/student/dashboard");
+  };
   return (
     <section
       className="w-full flex items-center justify-center px-4 bg-cover bg-no-repeat"

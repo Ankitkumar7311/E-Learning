@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import UploadQB from "../upload/UploadQB";
-import UploadPYQ from "../upload/UploadPYQ";
-import UploadNotes from "../upload/UploadNotes";
-import UploadNewsEvents from "../upload/UploadNewsEvents";
-import RequestReport from "../admin_profile/RequestReport";
-import CustomModal from "../common/CustomModal";
-import EditMaterial from "../admin_profile/EditMaterial";
+import UploadQB from "../../modules/faculty/upload/UploadQB";
+import UploadPYQ from "../../modules/faculty/upload/UploadPYQ";
+import UploadNotes from "../../modules/faculty/upload/UploadNotes";
+import UploadNewsEvents from "../../modules/faculty/upload/UploadNewsEvents";
+import RequestReport from "../../modules/admin/RequestReport";
+import CustomModal from "../../modules/faculty/common_modal/CustomModal";
+import EditMaterial from "../../modules/admin/EditMaterial";
 
 import uploadImg from "../../assets/10.png";
 import profileImg from "../../assets/Group.png";

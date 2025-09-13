@@ -1,43 +1,40 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import NavBar from "../components/navbars/NavBar";
-import AdminNavBar from "../components/navbars/AdminNavBar";
-import TeacherNavBar from "../components/navbars/TeacherNavbar";
-import StudentNavBar from "../components/navbars/StudentNavBar";
+import { useAuth } from "../auth/AuthContext";
+import NavBar from "../pages/NavBar";
+import AdminNavBar from "../modules/admin/AdminNavBar";
+import TeacherNavBar from "../modules/faculty/TeacherNavbar";
+import StudentNavBar from "../modules/student/StudentNavBar";
 
-// Admin components
-import AdminDashboard from "../components/admin_profile/AdminDashboard";
-import HomePage from "../components/admin_profile/HomePage";
-import Courses from "../components/admin_profile/Courses";
-import Universities from "../components/admin_profile/Universities";
-import Community from "../components/admin_profile/Community";
-import News from "../components/admin_profile/News";
-import About from "../components/admin_profile/About";
-import Login from "../components/admin_profile/Login";
-import Teacherprofile from "../components/admin_profile/Teacherprofile";
-import StudentProfile from "../components/admin_profile/StudentProfile";
-import AddRemoveFaculty from "../components/admin_profile/AddRemoveFaculty";
-import Add from "../components/admin_profile/Add";
-import RegulationForm from "../components/admin_profile/Regulation";
-import SearchFaculty from "../components/admin_profile/SearchFaculty";
-import EditMaterial from "../components/admin_profile/EditMaterial";
-import UploadPdf from "../components/upload/UploadPdf";
-import UpdateTeach from "../components/admin_profile/UpdateTeach";
-import RequestReport from "../components/admin_profile/RequestReport";
+import AdminDashboard from "../layouts/AdminDashboard";
+import HomePage from "../pages/HomePage";
+import Courses from "../pages/Courses";
+import Universities from "../pages/Universities";
+import Community from "../pages/Community";
+import News from "../pages/News";
+import About from "../pages/About";
+import Login from "../auth/Login";
+import Teacherprofile from "../modules/admin/Teacherprofile";
+import StudentProfile from "../modules/admin/StudentProfile";
+import AddRemoveFaculty from "../modules/admin/AddRemoveFaculty";
+import Add from "../modules/admin/Add";
+import RegulationForm from "../modules/admin/Regulation";
+import SearchFaculty from "../modules/admin/SearchFaculty";
+import EditMaterial from "../modules/admin/EditMaterial";
+import UploadPdf from "../modules/faculty/upload/UploadPdf";
+import UpdateTeach from "../modules/admin/UpdateTeach";
+import RequestReport from "../modules/admin/RequestReport";
 
-// Auth
-import StudentLogin from "../components/admin_profile/StudentLogin";
-import TeacherLogin from "../components/admin_profile/TeacherLogIn";
-import Signup from "../components/students_profile/Signup";
+import StudentLogin from "../auth/StudentLogin";
+import TeacherLogin from "../auth/TeacherLogIn";
+import Signup from "../auth/Signup";
 
-// Teacher components
-import Profile from "../components/teacher_profile/Profile";
+import Profile from "../layouts/facultydashboard/Profile";
 
-// Student components
-import Documents from "../components/students_profile/Documents";
-import StudentSection from "../components/students_profile/StudentSection";
-import UpdateStudent from "../components/admin_profile/UpdateStudent";
-import AcadamicCalender from "../components/students_profile/AcadamicCalender";
-import Encapsulation from "../components/students_profile/Encapsulation";
+import Documents from "../modules/student/Documents";
+import StudentSection from "../layouts/studentdashboard/StudentSection";
+import UpdateStudent from "../modules/admin/UpdateStudent";
+import AcadamicCalender from "../modules/student/AcadamicCalender";
+import Encapsulation from "../modules/student/Encapsulation";
 
 // Layouts
 const PublicLayout = () => (
@@ -68,8 +65,15 @@ const StudentLayout = () => (
   </>
 );
 
+// Protected route
+const ProtectedRoute = ({ children, role }) => {
+  const { user } = useAuth();
+  if (!user) return <h1>Unauthorized: Please login</h1>;
+  if (role && user.role !== role) return <h1>Access Denied</h1>;
+  return children;
+};
+
 const routes = createBrowserRouter([
-  // Public routes
   {
     path: "/",
     element: <PublicLayout />,
@@ -87,18 +91,17 @@ const routes = createBrowserRouter([
     ],
   },
 
-  // Admin Dashboard with nested routes
   {
-    path: "/dashboard",
-    element: <AdminLayout />,
+    path: "/admin",
+    element: (
+      <ProtectedRoute role="admin">
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
-        index: true,
-        element: <AdminDashboard />, // main dashboard page
-      },
-      {
-        path: "",
-        element: <AdminDashboard />, // wrap Quick Actions + Outlet
+        path: "dashboard",
+        element: <AdminDashboard />,
         children: [
           { path: "add-remove-faculty", element: <AddRemoveFaculty /> },
           { path: "add-remove-student", element: <Add /> },
@@ -110,41 +113,51 @@ const routes = createBrowserRouter([
       },
     ],
   },
-  // Teacher routes (with TeacherNavBar)
+
   {
     path: "/teacher",
-    element: <TeacherLayout />,
-    children: [{ index: true, element: <Teacherprofile /> }],
+    element: (
+      <ProtectedRoute role="teacher">
+        <TeacherLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: "dashboard",
+        element: <Profile />, // main teacher dashboard
+        children: [
+          {
+            path: "update-profile",
+            element: <UpdateTeach />,
+          },
+        ],
+      },
+    ],
   },
-  { path: "update-profile-teacher", element: <UpdateTeach /> },
 
-  // Student routes (with StudentNavBar)
   {
     path: "/student",
-    element: <StudentLayout />,
+    element: (
+      <ProtectedRoute role="student">
+        <StudentLayout />
+      </ProtectedRoute>
+    ),
     children: [
-      { index: true, element: <StudentProfile /> },
-      { path: "student-dashboard", element: <StudentSection /> },
+      { path: "dashboard", element: <StudentSection /> }, // ✅ renamed correctly
+      { path: "profile", element: <StudentProfile /> }, // ✅ profile route
       { path: "documents", element: <Documents /> },
       { path: "academic-calendar", element: <AcadamicCalender /> },
       { path: "subjects/encapsulation", element: <Encapsulation /> },
-      // { path: "faculty-qb", element: <FacultyQB /> },
-      // { path: "request-question", element: <RequestQuestion /> },
-      // { path: "announcements", element: <Announcements /> },
     ],
   },
   { path: "update-profile-student", element: <UpdateStudent /> },
 
-  // Standalone profile (outside student/teacher)
   { path: "/profile", element: <Profile /> },
-
-  // Extra features
   { path: "/update-teach", element: <UpdateTeach /> },
   { path: "/edit-material", element: <EditMaterial /> },
   { path: "/upload-pdf", element: <UploadPdf /> },
   { path: "/request-report", element: <RequestReport /> },
 
-  // 404
   { path: "*", element: <h1>Page Not Found</h1> },
 ]);
 

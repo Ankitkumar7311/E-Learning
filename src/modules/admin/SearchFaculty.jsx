@@ -1,5 +1,5 @@
 import React from "react";
-import SearchStudents from "../admin_profile/SearchStudents";
+import SearchStudents from "./SearchStudents";
 import { useNavigate } from "react-router-dom";
 
 

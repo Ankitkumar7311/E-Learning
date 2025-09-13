@@ -2,7 +2,7 @@ import React from "react";
 import UploadStuNavbar from "./UploadStuNavbar";
 import teacher from "../../assets/teacher.jpg";
 import { Link } from "react-router-dom";
-import SectionLeft from "../students_profile/SectionLeft";
+import SectionLeft from "../../layouts/studentdashboard/SectionLeft";
 
 const UpdateStudent = () => {
   return (

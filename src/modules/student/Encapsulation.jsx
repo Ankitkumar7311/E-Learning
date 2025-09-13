@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import StudentNavBar from '../navbars/StudentNavBar'
+import React, { useState } from "react";
+import StudentNavBar from "./StudentNavBar";
 
 const Encapsulation = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 10; // This should be dynamic based on your PDF
-  const pdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
-  const tutorialUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'; // Replace with your tutorial URL
+  const pdfUrl =
+    "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+  const tutorialUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Replace with your tutorial URL
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -24,7 +25,6 @@ const Encapsulation = () => {
       {/* <StudentNavBar /> */}
       <div className="py-8 px-4 sm:px-6 lg:px-8 mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
-
           {/* PDF Viewer Section */}
           <div className="flex justify-center mb-6">
             <div className="h-[600px] w-full max-w-2xl border border-gray-300 rounded-lg overflow-hidden flex items-center justify-center">
@@ -54,14 +54,20 @@ const Encapsulation = () => {
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className={`text-blue-600 font-bold hover:underline ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`text-blue-600 font-bold hover:underline ${
+                currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
               &lt;&lt; Prev. Page
             </button>
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className={`text-blue-600 font-bold hover:underline ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`text-blue-600 font-bold hover:underline ${
+                currentPage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
             >
               Next Page &gt;&gt;
             </button>

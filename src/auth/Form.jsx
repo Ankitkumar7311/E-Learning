@@ -1,21 +1,27 @@
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import cardpic from "../../assets/card.png";
-
+import cardpic from "../assets/card.png";
+import { useAuth } from "../auth/AuthContext";
+import { useState } from "react";
 const Form = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
+  const [role] = useState("admin"); // default is admin
 
-  // setup react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  // form submit
   const onSubmit = (data) => {
-    console.log("Form Data:", data);
-    navigate("/dashboard");
+    console.log("Admin Login Data:", data);
+
+    // ✅ set auth with role = "admin"
+    login({ role: "admin", user: data.email });
+
+    // ✅ redirect to admin dashboard
+    navigate("/admin/dashboard");
   };
 
   return (
@@ -23,7 +29,9 @@ const Form = () => {
       className="absolute md:top-15 md:right-15 w-[70vw] sm:w-[70vw] md:w-[40%] rounded-2xl pt-10 sm:p-4 overflow-y-auto bg-no-repeat bg-cover bg-center"
       style={{ backgroundImage: `url(${cardpic})`, maxHeight: "90%" }}
     >
-      <h1 className="text-2xl md:text-4xl font-medium font-roboto mb-3">LogIn</h1>
+      <h1 className="text-2xl md:text-4xl font-medium font-roboto mb-3">
+        LogIn
+      </h1>
       <hr className="border border-black mb-2 w-2/3" />
       <h4 className="text-sm md:text-2xl font-montserrat mb-3">
         Welcome onboard with us!

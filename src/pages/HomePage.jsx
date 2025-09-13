@@ -1,6 +1,6 @@
 import React from "react";
-import Background from "./Background";
-import picBg from "../../assets/home.png";
+import Background from "../modules/admin/Background";
+import picBg from "../assets/home.png";
 import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
@@ -18,12 +18,13 @@ const HomePage = () => {
         {/* Description */}
         <div className="max-w-4xl text-center py-6">
           <p className="text-gray-700 text-lg md:text-xl leading-relaxed">
-            Explore your options and make informed decisions with our comprehensive
-            guide to universities worldwide. Discover top-ranked institutions, explore
-            diverse programs, and connect with like-minded individuals to build your
-            academic future. With easy-to-use search tools, in-depth profiles, and
-            trusted reviews, we provide everything you need to make the right choice
-            for your academic journey. Start your search today and find your perfect fit!
+            Explore your options and make informed decisions with our
+            comprehensive guide to universities worldwide. Discover top-ranked
+            institutions, explore diverse programs, and connect with like-minded
+            individuals to build your academic future. With easy-to-use search
+            tools, in-depth profiles, and trusted reviews, we provide everything
+            you need to make the right choice for your academic journey. Start
+            your search today and find your perfect fit!
           </p>
         </div>
 

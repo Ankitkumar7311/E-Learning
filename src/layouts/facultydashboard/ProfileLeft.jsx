@@ -43,7 +43,7 @@ const ProfileLeft = () => {
 
         {/* Request Button */}
         <div className="flex justify-center mt-4">
-        <Link to="/update-profile-teacher">
+        <Link to="/teacher/update-profile">
           <button className="flex items-center justify-evenly gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-5 rounded-full transition">
             <FaRegEdit size={18}/> Request
           </button>

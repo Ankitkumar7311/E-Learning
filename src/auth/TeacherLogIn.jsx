@@ -1,13 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import bg from "../../assets/Rectangle.png";
-import curveBg from "../../assets/Curve.png";
-import card from "../../assets/card.png";
-import TeacherNavBar from "../navbars/TeacherNavbar";
+import bg from "../assets/Rectangle.png";
+import curveBg from "../assets/Curve.png";
+import card from "../assets/card.png";
+import { useAuth } from "./AuthContext";
 
 const TeacherLogin = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   // setup react-hook-form
   const {
@@ -19,7 +20,11 @@ const TeacherLogin = () => {
   // form submit
   const onSubmit = (data) => {
     console.log("Teacher Login Data:", data);
-    navigate("/profile");
+    // set auth with role teacher
+    login({ role: "teacher", user: data.email });
+
+    // redirect to teacher dashboard
+    navigate("/teacher/dashboard");
   };
 
   return (

@@ -1,5 +1,5 @@
-import academic from "../../assets/academic.png";
-import Background from "./Background";
+import academic from "../assets/academic.png";
+import Background from "../modules/admin/Background";
 import Form from "./Form";
 
 const Login = () => {
@@ -21,8 +21,8 @@ const Login = () => {
             Welcome to Vidya Sarthi
           </h3>
           <p className="font-roboto text-sm md:text-lg lg:text-xl mt-3 max-w-xl leading-relaxed">
-            A digital bridge between students and teachers, where teachers
-            share knowledge and students access notes with ease.
+            A digital bridge between students and teachers, where teachers share
+            knowledge and students access notes with ease.
           </p>
         </div>
 
