@@ -12,7 +12,7 @@ const NavBar = () => {
   ];
 
   return (
-    <nav className="h-16 flex items-center justify-evenly bg-[#E3EBFF] shadow-md text-lg font-medium">
+    <nav className="sticky top-0 z-50 h-16 flex items-center justify-evenly bg-[#E3EBFF] shadow-md text-lg font-medium">
       {/* Logo */}
       <Link
         to="/"

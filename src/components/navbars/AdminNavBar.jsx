@@ -20,7 +20,7 @@ const AdminNavBar = () => {
   const buttontext = buttons[location.pathname] || "error wrong path";
   return (
     <>
-      <nav className="bg-white shadow-sm w-full">
+      <nav className="bg-white shadow-sm  sticky top-0  w-full">
         <div className="max-w-screen-2xl mx-auto px-6 py-3 flex items-center justify-between">
           {/* Left Section: Logo and Title */}
           <div className="flex items-center space-x-4 justify-evenly ">
