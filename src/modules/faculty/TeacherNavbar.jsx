@@ -20,7 +20,7 @@ const TeacherNavBar = () => {
   const pageTitle = pageTitles[location.pathname] || "Teacher Section";
 
   return (
-    <nav className="flex items-center justify-between bg-white px-6 py-3 shadow-xl">
+    <nav className="sticky top-0 z-50 flex items-center justify-between bg-white px-6 py-3 shadow-xl overflow-x-hidden">
       {/* Left Section: Logo + Title */}
       <div className="flex items-center space-x-12">
         {/* Logo and Title */}

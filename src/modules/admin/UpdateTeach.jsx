@@ -2,7 +2,7 @@ import React from "react";
 import Profileleft from "../../layouts/facultydashboard/ProfileLeft";
 import teacher from "../../assets/teacher.jpg";
 import FacultyPanel from "./FacultyPanel";
-import TeacherNavBar from "../faculty/TeacherNavbar";
+import TeacherNavBar from "../faculty/TeacherNavBar";
 import { Link } from "react-router-dom";
 
 const UpdateTeach = () => {

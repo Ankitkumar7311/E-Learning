@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import NavBar from "../pages/NavBar";
 import AdminNavBar from "../modules/admin/AdminNavBar";
-import TeacherNavBar from "../modules/faculty/TeacherNavbar";
+import TeacherNavBar from "../modules/faculty/TeacherNavBar";
 import StudentNavBar from "../modules/student/StudentNavBar";
 
 import AdminDashboard from "../layouts/AdminDashboard";

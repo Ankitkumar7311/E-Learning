@@ -26,7 +26,7 @@ const Form = () => {
 
   return (
     <div
-      className="absolute md:top-15 md:right-15 w-[70vw] sm:w-[70vw] md:w-[40%] rounded-2xl pt-10 sm:p-4 overflow-y-auto bg-no-repeat bg-cover bg-center"
+      className="absolute mt-[85px] md:top-15 md:right-15 w-[70vw] sm:w-[70vw] md:w-[40%] rounded-2xl pt-10 sm:p-4 overflow-y-auto bg-no-repeat bg-cover bg-center"
       style={{ backgroundImage: `url(${cardpic})`, maxHeight: "90%" }}
     >
       <h1 className="text-2xl md:text-4xl font-medium font-roboto mb-3">

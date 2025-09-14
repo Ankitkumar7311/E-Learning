@@ -1,6 +1,6 @@
 import React from "react";
 import faculty from "../../assets/faculty.jpg";
-import TeacherNavBar from "../faculty/TeacherNavbar";
+import TeacherNavBar from "../faculty/TeacherNavBar";
 
 const TeacherProfile = () => {
   return (
