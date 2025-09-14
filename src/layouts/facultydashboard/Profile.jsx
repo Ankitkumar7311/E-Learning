@@ -6,7 +6,7 @@ import ProfileRight from "./ProfileRight";
 const Profile = () => {
   return (
     <>
-      <TeacherNavBar />
+      {/* <TeacherNavBar /> */}
       <section className="flex h-[550px] bg-white pl-10">
         <ProfileLeft />
         <ProfileRight />

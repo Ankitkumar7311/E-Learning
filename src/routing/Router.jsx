@@ -125,12 +125,10 @@ const routes = createBrowserRouter([
       {
         path: "dashboard",
         element: <Profile />, // main teacher dashboard
-        children: [
-          {
-            path: "update-profile",
-            element: <UpdateTeach />,
-          },
-        ],
+      },
+      {
+        path: "update-profile",
+        element: <UpdateTeach />,
       },
     ],
   },

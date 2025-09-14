@@ -28,7 +28,7 @@ const App = () => {
       batch: filters.batch,
       branch: filters.branch,
     });
-navigate("/dashboard/student-profile"); //  Full path
+navigate("/admin/dashboard/student-profile"); //  Full path
   };
 
   const handleFilter = () => {

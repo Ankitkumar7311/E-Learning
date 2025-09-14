@@ -8,7 +8,7 @@ const TeacherSearch = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-navigate("/dashboard/teacher-profile");
+navigate("/admin/dashboard/teacher-profile");
   };
 
   return (
