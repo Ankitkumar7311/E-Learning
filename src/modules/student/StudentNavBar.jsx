@@ -6,7 +6,15 @@ import { Link, useLocation } from "react-router-dom";
 const StudentNavBar = () => {
   const location = useLocation();
   const buttons = {
-    "/documents": "College Materials",
+    "/student/documents": "College Materials",
+    "/student/dashboard":"Student dashboard",
+    "/student/academic-calendar":"Academic calendar",
+    "/student/faculty-qb":"Question banjks", 
+    "/student/request-question":"Request-Questions",
+    "/student/announcements":"Announcements",
+    "/student/subjects/encapsulation":"Encapsulation"
+
+     
   };
   const buttontext = buttons[location.pathname] || "Error: Wrong Path";
 

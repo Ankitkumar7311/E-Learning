@@ -9,8 +9,9 @@ const TeacherNavBar = () => {
 
   // Map routes to titles
   const pageTitles = {
-    "/teacher-profile": "Faculty Dashboard",
-    "/update-teach": "Update Profile",
+    // "/teacher-profile": "Faculty Dashboard",
+    "/teacher/update-profile": "Update Profile",
+    "/teacher/dashboard":"Faculty Panel",
     "/request-report": "Report / Request",
     "/edit-material": "Edit Material",
     // add more mappings if needed
@@ -28,7 +29,7 @@ const TeacherNavBar = () => {
           <img className="h-14 w-14" src={logo} alt="E-learning platform" />
           <div>
             <span className="block text-lg font-bold text-gray-800">
-              Teacher Section
+              Teacher Panel
             </span>
             <span className="block text-sm font-semibold text-gray-600">
               E-learning Platform
