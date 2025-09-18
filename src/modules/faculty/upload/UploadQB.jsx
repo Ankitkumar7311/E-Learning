@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { FaUpload } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const UploadQB = () => {
+
+  let navigate=useNavigate();
+  
   const semesters = [
     "1st Semester (2021 - 22 Autumn)",
     "2nd Semester (2021 - 22 Spring)",
@@ -46,8 +50,9 @@ const UploadQB = () => {
     setFormData({ ...formData, filesForConcepts: updated });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+   
 
     // Validation
     if (!formData.semester) {
@@ -65,6 +70,47 @@ const UploadQB = () => {
 
     console.log("Form Submitted ✅", formData);
     setSubmitted(true);
+     console.log("Submitting body");
+
+
+    try {
+            const body = new FormData();
+          body.append("semester", formData.semester);
+
+          formData.subjects.forEach((sub, i) => {
+            if (sub) body.append(`subjects[${i}]`, sub);
+          });
+
+          formData.concepts.forEach((concept, i) => {
+            if (concept) body.append(`concepts[${i}]`, concept);
+          });
+
+          formData.filesForConcepts.forEach((file, i) => {
+            if (file) body.append(`filesForConcepts[${i}]`, file);
+      });
+
+      const response = await fetch(
+        "http://localhost:8080/VidyaSarthi/faculty/uploadQB",
+        {
+          method: "POST",
+          body, // ✅ FormData goes directly
+        }
+      );
+
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("doc submitted");
+        navigate("/Student-login");
+      } else {
+        alert(result.message || "Something went wrong!");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      alert("Server error. Please try again later.");
+    }
+
 
     // Optional: Reset form
     setFormData({
@@ -81,13 +127,13 @@ const UploadQB = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Semester */}
-        <div className="flex items-center">
-          <label className="w-48 font-medium">Choose Semester:</label>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <label className="sm:w-48 font-medium">Choose Semester:</label>
           <select
             name="semester"
             value={formData.semester}
             onChange={handleChange}
-            className="flex-1 p-3 rounded-lg bg-blue-100"
+            className="w-full sm:flex-1 p-3 rounded-lg bg-blue-100"
           >
             <option value="">-- Select Semester --</option>
             {semesters.map((sem, idx) => (
@@ -99,17 +145,17 @@ const UploadQB = () => {
         </div>
 
         {/* Subjects */}
-        <div className="flex items-center">
-          <label className="w-48 font-medium">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <label className="sm:w-48 font-medium">
             Choose Subjects: <span className="text-gray-500 text-xs">(Priority)</span>
           </label>
-          <div className="flex gap-3 flex-1">
+          <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
             {subjects.map((s, index) => (
               <select
                 key={index}
                 value={formData.subjects[index]}
                 onChange={(e) => handleSubjectChange(index, e.target.value)}
-                className="flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
+                className="w-full sm:flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
               >
                 <option value="">{s}. Choose</option>
                 <option value="Maths">Maths</option>
@@ -129,12 +175,12 @@ const UploadQB = () => {
             {concepts.map((c, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 border p-3 rounded-lg shadow-sm"
+                className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border p-3 rounded-lg shadow-sm"
               >
                 <select
                   value={formData.concepts[index]}
                   onChange={(e) => handleConceptChange(index, e.target.value)}
-                  className="flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
+                  className="w-full sm:flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
                 >
                   <option value="">{c}. Choose</option>
                   <option value="Data Structures">Data Structures</option>
@@ -177,11 +223,11 @@ const UploadQB = () => {
       </form>
 
       {/* Success Message */}
-      {submitted && (
+      {/* {submitted && (
         <div className="mt-6 p-4 bg-green-100 text-green-700 rounded-lg shadow">
           🎉 Form submitted successfully!
         </div>
-      )}
+      )} */}
     </div>
   );
 };
