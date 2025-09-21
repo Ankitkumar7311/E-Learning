@@ -1,18 +1,17 @@
 import React from "react";
-import SearchStudents from "./SearchStudents";
+import StudentTable from "./StudentTable"; // Assuming you're now using StudentTable
 import { useNavigate } from "react-router-dom";
-
 
 const TeacherSearch = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-navigate("/admin/dashboard/teacher-profile");
+    navigate("/admin/dashboard/teacher-profile");
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen w-full flex flex-col gap-20 items-center justify-center">
+    <div className="w-full min-h-screen overflow-x-hidden bg-gray-100 p-6 flex flex-col gap-20 items-center justify-center">
       <div className="bg-white rounded-lg shadow-xl p-8 max-w-4xl w-full">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
@@ -117,8 +116,10 @@ navigate("/admin/dashboard/teacher-profile");
         </div>
       </div>
 
-      {/* Student Search Table */}
-      <SearchStudents />
+      {/* ✅ Student Table with isolated scroll */}
+      <div className="w-full max-w-4xl">
+        <StudentTable />
+      </div>
     </div>
   );
 };
