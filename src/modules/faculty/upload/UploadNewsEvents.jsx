@@ -47,24 +47,22 @@ const UploadNewsEvents = () => {
         }
       );
 
-      // Read raw text first (works for both plain text and JSON)
       const raw = await response.text();
-
-      // Attempt to parse JSON; if that fails, normalize to { message: raw }
       let result;
       try {
-        result = raw ? JSON.parse(raw) : null; // handle empty body
+        result = raw ? JSON.parse(raw) : null;
       } catch {
         result = { message: raw };
       }
 
-      // If server returned non-2xx, throw with the server message if available
       if (!response.ok) {
-        const msg = (result && (result.message || result.error)) || response.statusText;
-        throw new Error(msg || "Failed to submit news/event. Please check server status.");
+        const msg =
+          (result && (result.message || result.error)) || response.statusText;
+        throw new Error(
+          msg || "Failed to submit news/event. Please check server status."
+        );
       }
 
-      // Success: result may be an object or { message: "NewsUploaded" }
       console.log("✅ API Response:", result);
 
       setSubmittedData({
@@ -73,10 +71,13 @@ const UploadNewsEvents = () => {
       });
 
       setSubmitted(true);
-      setFormData({ semester: "", description: "" }); // reset form
+      setFormData({ semester: "", description: "" });
     } catch (err) {
       console.error("API Error:", err);
-      setError("❌ Failed to upload. " + (err.message || "Please check your network connection."));
+      setError(
+        "❌ Failed to upload. " +
+          (err.message || "Please check your network connection.")
+      );
     } finally {
       setLoading(false);
     }
@@ -85,17 +86,20 @@ const UploadNewsEvents = () => {
   const isSubmitDisabled = loading || !formData.description;
 
   return (
-    <div className="w-full max-w-5xl mx-auto bg-white shadow-md rounded-xl p-8 border">
-      <h2 className="text-lg font-semibold mb-6">Upload Announcement</h2>
+    <div className="w-full max-w-5xl mx-auto bg-white shadow-md rounded-xl p-6 sm:p-8 border">
+      <h2 className="text-lg sm:text-xl font-semibold mb-6 text-center sm:text-left">
+        Upload Announcement
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="flex items-center">
-          <label className="w-48 font-medium">Choose Semester:</label>
+        {/* Semester */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <label className="sm:w-48 font-medium">Choose Semester:</label>
           <select
             name="semester"
             value={formData.semester}
             onChange={handleChange}
-            className="flex-1 p-3 rounded-lg border border-gray-300 bg-blue-100"
+            className="flex-1 p-3 rounded-lg border border-gray-300 bg-blue-100 w-full"
           >
             <option value="">-- Select Semester --</option>
             {semesters.map((sem, idx) => (
@@ -106,24 +110,26 @@ const UploadNewsEvents = () => {
           </select>
         </div>
 
-        <div className="flex items-start">
-          <label className="w-48 font-medium">Enter the Announcement:</label>
+        {/* Description */}
+        <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+          <label className="sm:w-48 font-medium">Enter the Announcement:</label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
             placeholder="Describe the event..."
             rows="4"
-            className="flex-1 p-3 rounded-lg border border-gray-300 bg-blue-100"
+            className="flex-1 p-3 rounded-lg border border-gray-300 bg-blue-100 w-full"
           ></textarea>
         </div>
 
+        {/* Button */}
         <div className="flex justify-center">
           <button
             type="submit"
             disabled={isSubmitDisabled}
             className={`
-              bg-yellow-400 hover:bg-yellow-500 text-white font-medium px-8 py-2 rounded-md shadow
+              bg-yellow-400 hover:bg-yellow-500 text-white font-medium px-6 sm:px-8 py-2 rounded-md shadow
               ${isSubmitDisabled ? "opacity-50 cursor-not-allowed" : ""}
             `}
           >
@@ -132,12 +138,14 @@ const UploadNewsEvents = () => {
         </div>
       </form>
 
+      {/* Error */}
       {error && (
         <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg">
           {error}
         </div>
       )}
 
+      {/* Success */}
       {submitted && !error && submittedData && (
         <div className="mt-6 p-4 bg-green-100 text-green-700 rounded-lg shadow">
           🎉 Announcement submitted successfully!
