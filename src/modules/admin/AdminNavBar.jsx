@@ -1,61 +1,84 @@
 import React, { useState } from "react";
-// Importing the icons we'll need for the menu
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
-// You should replace this with the actual path to your logo
 import logo from "../../assets/Ellipse.png";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const AdminNavBar = () => {
-  // State to manage the mobile menu's open/closed status
+  // State to manage menu visibility
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const location = useLocation();
+
   const buttons = {
     "/admin/dashboard": "Global Admin",
     "/admin/dashboard/add-remove-faculty": "Add/Remove Faculty",
     "/admin/dashboard/view-faculty-student": "View Faculty/Student",
     "/admin/dashboard/regulation": "Add regulation",
     "/admin/dashboard/add-remove-student": "Add/Remove Student",
-    "/request-report":"Report-request"
+    "/request-report": "Report-request",
   };
-  const buttontext = buttons[location.pathname] || "error wrong path";
+  const buttontext = buttons[location.pathname] || "Admin Panel";
+
+  // A reusable component for menu items to keep the code clean
+  const MenuItems = ({ isMobile = false }) => (
+    <div
+      className={`flex ${
+        isMobile
+          ? "flex-col space-y-4 px-6 pt-8 text-lg"
+          : "flex-col space-y-3 p-6"
+      }`}
+    >
+      <button
+        type="button"
+        className="w-full rounded-lg bg-slate-100 px-4 py-3 text-left font-semibold text-slate-800"
+      >
+        {buttontext}
+      </button>
+      <Link
+        to="/request-report"
+        className="block rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-100"
+        onClick={() => setIsMenuOpen(false)}
+      >
+        Help & Support
+      </Link>
+      <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+        <button className="flex w-full items-center justify-center space-x-2 rounded-lg bg-yellow-400 py-3 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
+          <span>Log out</span>
+          <FiLogOut className="h-5 w-5" />
+        </button>
+      </Link>
+    </div>
+  );
 
   return (
     <>
-      {/* Set a relative position to anchor the absolute menu panel */}
-      <nav className="bg-white shadow-sm sticky top-0 w-full z-50 relative">
-        <div className="max-w-screen-2xl mx-auto px-6 py-3 flex items-center justify-between">
+      {/* Set a lower z-index to allow menus to overlap it */}
+      <nav className="sticky top-0 z-30 bg-white/95 shadow-lg backdrop-blur-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           {/* Left Section: Logo and Title */}
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-shrink-0 items-center gap-3">
             <img src={logo} alt="Vidya Sarthi Logo" className="h-12 w-12" />
             <div>
-              <h1 className="text-gray-800 font-bold text-lg">Admin Panel</h1>
-              <p className="text-gray-500 text-[15px]">E-learning</p>
+              <h1 className="text-lg font-bold text-gray-800">Admin Panel</h1>
+              <p className="text-[15px] text-gray-500">E-learning</p>
             </div>
           </div>
 
-          {/* Center and Right Sections for Desktop */}
-          {/* This container is hidden on mobile (below lg) and shown as a flex container on large screens */}
-          {/* CHANGE: Changed justify-center to justify-between to align items to the sides */}
-          <div className="hidden lg:flex items-center justify-between flex-1 ml-10">
-            {/* Left-aligned Button for Desktop */}
-            <div>
-              <button className="bg-gray-200 text-gray-700 font-semibold py-2 px-6 rounded-2xl hover:bg-blue-300 transition-colors hover:text-white">
-                {buttontext}
-              </button>
-            </div>
-
-            {/* Right Section: Help and Logout */}
+          {/* Center and Right Sections for DESKTOP */}
+          <div className="hidden flex-1 items-center justify-between pl-8 lg:flex">
+            {/* Center-left button */}
+            <button className="rounded-2xl bg-gray-200 py-2 px-6 font-semibold text-gray-700 hover:bg-blue-100">
+              {buttontext}
+            </button>
+            {/* Right-aligned links */}
             <div className="flex items-center space-x-8">
               <Link
                 to="/request-report"
-                className="text-gray-700 font-medium hover:text-blue-600 transition duration-300"
+                className="font-medium text-gray-700 transition duration-300 hover:text-blue-600"
               >
                 Help & Support
               </Link>
               <Link to="/login">
-                <button className="bg-yellow-400 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2 hover:bg-yellow-500 transition-colors">
+                <button className="flex items-center space-x-2 rounded-lg bg-yellow-400 py-2 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
                   <span>Log out</span>
                   <FiLogOut className="h-5 w-5" />
                 </button>
@@ -63,51 +86,65 @@ const AdminNavBar = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          {/* This button is only visible on mobile screens (below lg) */}
-          <div className="lg:hidden">
+          {/* Hamburger Menu Button for TABLET & MOBILE */}
+          <div className="flex items-center lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 focus:outline-none"
+              type="button"
+              className="inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100"
             >
-              {/* Show close icon if menu is open, otherwise show menu icon */}
+              <span className="sr-only">Open main menu</span>
               {isMenuOpen ? (
-                <FiX className="h-6 w-6" />
+                 <FiX className="h-6 w-6" />
               ) : (
-                <FiMenu className="h-6 w-6" />
+                 <FiMenu className="h-6 w-6" />
               )}
             </button>
           </div>
         </div>
-
-        {/* Mobile Menu Panel */}
-        {/* This panel is shown only on mobile screens when isMenuOpen is true */}
-        {isMenuOpen && (
-          <div className="lg:hidden absolute top-full right-0 w-64 bg-white shadow-lg rounded-b-lg p-5">
-            <div className="flex flex-col items-start space-y-5">
-              {/* Mobile version of the center and right sections */}
-              <button className="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg w-full text-left">
-                {buttontext}
-              </button>
-
-              <Link
-                to="/request-report"
-                className="text-gray-700 font-medium hover:text-blue-600 w-full"
-                onClick={() => setIsMenuOpen(false)} // Close menu on click
-              >
-                Help & Support
-              </Link>
-
-              <Link to="/login" className="w-full">
-                <button className="bg-yellow-400 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center space-x-2 hover:bg-yellow-500 w-full">
-                  <span>Log out</span>
-                  <FiLogOut className="h-5 w-5" />
-                </button>
-              </Link>
-            </div>
-          </div>
-        )}
       </nav>
+
+      {/* --- MENUS for TABLET and MOBILE --- */}
+
+      {/* Backdrop for Tablet Sidebar */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 hidden bg-black/40 md:block lg:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        ></div>
+      )}
+
+      {/* TABLET: Left Sidebar Menu */}
+      <div
+        className={`fixed top-0 left-0 z-50 h-screen w-72 transform bg-white shadow-xl transition-transform duration-300 ease-in-out lg:hidden ${
+          isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex justify-end p-4">
+          <button onClick={() => setIsMenuOpen(false)}>
+            <FiX className="h-6 w-6 text-gray-600" />
+          </button>
+        </div>
+        {/* Only render menu items on tablet, not mobile, to avoid duplication */}
+        <div className="hidden md:block">
+          <MenuItems />
+        </div>
+      </div>
+
+      {/* MOBILE: Full-screen Menu */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 flex h-full w-full flex-col bg-white md:hidden">
+          <div className="flex items-center justify-between p-4">
+            <span className="font-bold text-gray-800">Menu</span>
+            <button onClick={() => setIsMenuOpen(false)}>
+              <FiX className="h-6 w-6 text-gray-600" />
+            </button>
+          </div>
+          <div className="mt-4">
+            <MenuItems isMobile={true} />
+          </div>
+        </div>
+      )}
     </>
   );
 };
