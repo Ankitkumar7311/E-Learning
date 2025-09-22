@@ -5,7 +5,7 @@ import SectionRight from "./SectionRight";
 const StudentSection = () => {
   return (
     <>
-      <section className="h-[550px] bg-[white] flex pl-10">
+      <section className="h-auto md:h-[550px] bg-[white] flex flex-col md:flex-row pl-10 gap-6">
         <SectionLeft />
         <SectionRight />
       </section>
