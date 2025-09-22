@@ -63,18 +63,20 @@ const UploadPYQ = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto bg-white shadow-md rounded-xl p-8 border">
-      <h2 className="text-lg font-semibold mb-6">Complete your Upload:</h2>
+    <div className="w-full max-w-5xl mx-auto bg-white shadow-md rounded-xl p-6 sm:p-8 border">
+      <h2 className="text-lg font-semibold mb-6 text-center sm:text-left">
+        Complete your Upload:
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Semester */}
-        <div className="flex items-center">
-          <label className="w-48 font-medium">Choose Semester:</label>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <label className="w-full sm:w-48 font-medium">Choose Semester:</label>
           <select
             name="semester"
             value={formData.semester}
             onChange={handleChange}
-            className="flex-1 p-3 rounded-lg border border-gray-300 bg-blue-100"
+            className="w-full sm:flex-1 p-3 rounded-lg border border-gray-300 bg-blue-100"
           >
             <option value="">-- Select Semester --</option>
             {semesters.map((sem) => (
@@ -87,7 +89,7 @@ const UploadPYQ = () => {
 
         {/* Subjects & Uploads */}
         <div>
-          <label className="block font-medium mb-2">
+          <label className="block font-medium mb-2 text-center sm:text-left">
             Choose Subjects:{" "}
             <span className="text-gray-500 text-xs">(Priority Wise)</span>
           </label>
@@ -96,12 +98,12 @@ const UploadPYQ = () => {
             {subjects.map((s, index) => (
               <div
                 key={s}
-                className="flex items-center gap-3 border p-3 rounded-lg shadow-sm"
+                className="flex flex-col sm:flex-row sm:items-center gap-3 border p-3 rounded-lg shadow-sm"
               >
                 <select
                   value={formData.subjects[index]}
                   onChange={(e) => handleSubjectChange(index, e.target.value)}
-                  className="flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
+                  className="w-full sm:flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
                 >
                   <option value="">{s}. Choose</option>
                   <option value="Maths">Maths</option>
@@ -111,23 +113,25 @@ const UploadPYQ = () => {
                   <option value="Computer Science">Computer Science</option>
                 </select>
 
-                <label className="flex items-center gap-2 cursor-pointer bg-yellow-200 hover:bg-yellow-300 px-4 py-2 rounded-lg shadow">
-                  <FaUpload className="text-gray-700" />
-                  <span className="text-sm">Upload</span>
-                  <input
-                    type="file"
-                    className="hidden"
-                    onChange={(e) =>
-                      handleFileChange(index, e.target.files[0] || null)
-                    }
-                  />
-                </label>
+                <div className="flex items-center justify-between sm:justify-start gap-3">
+                  <label className="flex items-center gap-2 cursor-pointer bg-yellow-200 hover:bg-yellow-300 px-4 py-2 rounded-lg shadow w-full sm:w-auto justify-center">
+                    <FaUpload className="text-gray-700" />
+                    <span className="text-sm">Upload</span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={(e) =>
+                        handleFileChange(index, e.target.files[0] || null)
+                      }
+                    />
+                  </label>
 
-                {formData.files[index] && (
-                  <span className="text-xs text-green-600">
-                    {formData.files[index].name}
-                  </span>
-                )}
+                  {formData.files[index] && (
+                    <span className="text-xs text-green-600 truncate max-w-[150px] sm:max-w-none">
+                      {formData.files[index].name}
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -135,7 +139,7 @@ const UploadPYQ = () => {
 
         {/* Submit */}
         <div className="flex justify-center">
-          <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-medium px-8 py-2 rounded-md shadow">
+          <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-medium px-8 py-2 rounded-md shadow w-full sm:w-auto">
             Submit Now
           </button>
         </div>
@@ -143,7 +147,7 @@ const UploadPYQ = () => {
 
       {/* Success Message */}
       {submitted && (
-        <div className="mt-6 p-4 bg-green-100 text-green-700 rounded-lg shadow">
+        <div className="mt-6 p-4 bg-green-100 text-green-700 rounded-lg shadow text-center sm:text-left">
           🎉 Form submitted successfully!
         </div>
       )}
