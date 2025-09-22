@@ -30,18 +30,18 @@ const TeacherLogin = () => {
   return (
     <>
       <section
-        className="w-full flex items-center justify-center bg-no-repeat bg-cover px-4"
+        className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-2 sm:px-4"
         style={{ backgroundImage: `url(${curveBg})` }}
       >
         <div
           className="relative rounded-3xl shadow-xl overflow-hidden
-        w-[92vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
-        md:aspect-[16/9] bg-no-repeat bg-cover bg-center"
+        w-[95vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
+        md:aspect-[16/9] bg-no-repeat bg-cover bg-center flex items-center justify-center"
           style={{ backgroundImage: `url(${bg})` }}
         >
           <div
             className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%]
-          w-full rounded-2xl p-10 sm:p-5 bg-transparent overflow-hidden"
+          w-full rounded-2xl p-6 sm:p-8 md:p-10 bg-transparent overflow-hidden"
             style={{
               backgroundImage: `url(${card})`,
               backgroundRepeat: "no-repeat",
@@ -49,14 +49,14 @@ const TeacherLogin = () => {
               backgroundSize: "100% 100%",
             }}
           >
-            <div className="h-full overflow-y-auto pr-3">
-              <h1 className="font-roboto font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-normal">
+            <div className="h-full overflow-y-auto pr-1 sm:pr-3">
+              <h1 className="font-roboto font-semibold text-lg sm:text-2xl md:text-3xl lg:text-4xl leading-normal">
                 Teacher LogIn
               </h1>
 
               <hr className="border border-black mb-3 hidden md:block w-2/3" />
 
-              <p className="font-montserrat text-sm sm:text-base md:text-lg text-gray-700 mb-4">
+              <p className="font-montserrat text-xs sm:text-base md:text-lg text-gray-700 mb-4">
                 Welcome onboard with us!
               </p>
 
@@ -71,7 +71,7 @@ const TeacherLogin = () => {
                 <input
                   type="email"
                   placeholder="Enter your username"
-                  className="w-full bg-[#D8E7F5] rounded-xl px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                  className="w-full bg-[#D8E7F5] rounded-xl px-4 sm:px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -81,7 +81,7 @@ const TeacherLogin = () => {
                   })}
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                  <p className="text-red-500 text-xs sm:text-sm">{errors.email.message}</p>
                 )}
 
                 {/* Password */}
@@ -97,14 +97,14 @@ const TeacherLogin = () => {
                   })}
                 />
                 {errors.password && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-red-500 text-xs sm:text-sm">
                     {errors.password.message}
                   </p>
                 )}
 
                 <button
                   type="button"
-                  className="self-end text-sm sm:text-base text-black hover:underline"
+                  className="self-end text-xs sm:text-sm md:text-base text-black hover:underline"
                 >
                   Forgot Password?
                 </button>
