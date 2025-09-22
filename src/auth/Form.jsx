@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import cardpic from "../assets/card.png";
 import { useAuth } from "../auth/AuthContext";
 import { useState } from "react";
+
 const Form = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -16,30 +17,30 @@ const Form = () => {
 
   const onSubmit = (data) => {
     console.log("Admin Login Data:", data);
-
-    // ✅ set auth with role = "admin"
     login({ role: "admin", user: data.email });
-
-    // ✅ redirect to admin dashboard
     navigate("/admin/dashboard");
   };
 
   return (
     <div
-      className="absolute mt-[85px] md:top-15 md:right-15 w-[70vw] sm:w-[70vw] md:w-[40%] rounded-2xl pt-10 sm:p-4 overflow-y-auto bg-no-repeat bg-cover bg-center"
-      style={{ backgroundImage: `url(${cardpic})`, maxHeight: "90%" }}
+      className="w-full max-w-md sm:max-w-sm lg:max-w-md xl:max-w-lg rounded-2xl pt-6 px-4 sm:p-5 md:p-6 bg-white bg-opacity-80 shadow-lg"
+      style={{
+        backgroundImage: `url(${cardpic})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
-      <h1 className="text-2xl md:text-4xl font-medium font-roboto mb-3">
+      <h1 className="text-xl md:text-3xl font-medium font-roboto mb-2 text-center">
         LogIn
       </h1>
-      <hr className="border border-black mb-2 w-2/3" />
-      <h4 className="text-sm md:text-2xl font-montserrat mb-3">
+      <hr className="border border-black mb-2 w-2/3 mx-auto" />
+      <h4 className="text-xs md:text-lg font-montserrat mb-5 text-center">
         Welcome onboard with us!
       </h4>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
         {/* Email Field */}
-        <label className="font-medium text-sm md:text-lg">Email ID</label>
+        <label className="font-medium text-sm md:text-base">Email ID</label>
         <input
           type="text"
           placeholder="Enter your username"
@@ -53,11 +54,11 @@ const Form = () => {
           })}
         />
         {errors.email && (
-          <p className="text-red-500 text-sm">{errors.email.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
         )}
 
         {/* Password Field */}
-        <label className="font-medium text-sm md:text-lg mt-2">Password</label>
+        <label className="font-medium text-sm md:text-base">Password</label>
         <input
           type="password"
           placeholder="Enter your password"
@@ -65,41 +66,44 @@ const Form = () => {
           {...register("password", { required: "Password is required" })}
         />
         {errors.password && (
-          <p className="text-red-500 text-sm">{errors.password.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
         )}
 
         <button
           type="button"
-          className="self-end text-sm md:text-base text-black hover:underline mt-1"
+          className="self-end text-xs md:text-sm text-black hover:underline"
         >
           Forgot Password?
         </button>
 
         <button
           type="submit"
-          className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-lg md:text-xl py-2.5 md:py-3"
+          className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-base md:text-lg py-2 md:py-2.5 mt-3"
         >
           LogIn
         </button>
 
-        <p className="text-base md:text-lg text-center mt-2">
-          Are you a student?{" "}
-          <b
-            className="hover:underline cursor-pointer"
-            onClick={() => navigate("/student-login")}
-          >
-            LogIn as a Student
-          </b>
-        </p>
-        <p className="text-base md:text-lg text-center">
-          Are you a Teacher?{" "}
-          <b
-            className="hover:underline cursor-pointer"
-            onClick={() => navigate("/teacher-login")}
-          >
-            LogIn as a Teacher
-          </b>
-        </p>
+        {/* Student / Teacher Links */}
+        <div className="mt-3 space-y-1">
+          <p className="text-xs md:text-base text-center">
+            Are you a Student?{" "}
+            <b
+              className="hover:underline cursor-pointer"
+              onClick={() => navigate("/student-login")}
+            >
+              LogIn as a Student
+            </b>
+          </p>
+          <p className="text-xs md:text-base text-center">
+            Are you a Teacher?{" "}
+            <b
+              className="hover:underline cursor-pointer"
+              onClick={() => navigate("/teacher-login")}
+            >
+              LogIn as a Teacher
+            </b>
+          </p>
+        </div>
       </form>
     </div>
   );
