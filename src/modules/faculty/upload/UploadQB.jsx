@@ -193,9 +193,8 @@ import { FaUpload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const UploadQB = () => {
+  let navigate = useNavigate();
 
-  let navigate=useNavigate();
-  
   const semesters = [
     "1st Semester",
     "2nd Semester",
@@ -274,64 +273,54 @@ const UploadQB = () => {
     console.log("Form Submitted ✅", formData);
     setSubmitted(true);
 
-    setFormData({
-      semester: "",
-      subjects: Array(subjects.length).fill(""),
-      concepts: Array(concepts.length).fill(""),
-      filesForConcepts: Array(concepts.length).fill(null),
-    });
-  };
-     console.log("Submitting body");
-
-
     try {
-  const body = new FormData();
-  body.append("semester", formData.semester);
+      const body = new FormData();
+      body.append("semester", formData.semester);
 
-  formData.subjects.forEach((sub, i) => {
-    if (sub) body.append(`subjects[${i}]`, sub);
-  });
+      formData.subjects.forEach((sub, i) => {
+        if (sub) body.append(`subjects[${i}]`, sub);
+      });
 
-  formData.concepts.forEach((concept, i) => {
-    if (concept) body.append(`concepts[${i}]`, concept);
-  });
+      formData.concepts.forEach((concept, i) => {
+        if (concept) body.append(`concepts[${i}]`, concept);
+      });
 
-  formData.filesForConcepts.forEach((file, i) => {
-    if (file) body.append(`filesForConcepts[${i}]`, file);
-  });
+      formData.filesForConcepts.forEach((file, i) => {
+        if (file) body.append(`filesForConcepts[${i}]`, file);
+      });
 
-  const response = await fetch(
-    "http://localhost:8080/VidyaSarthi/faculty/uploadQB",
-    {
-      method: "POST",
-      body, // ✅ FormData goes directly
+      const response = await fetch(
+        "http://localhost:8080/VidyaSarthi/faculty/uploadQB",
+        {
+          method: "POST",
+          body, // ✅ FormData goes directly
+        }
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        alert("doc submitted");
+        navigate("/Student-login");
+      } else {
+        alert(result.message || "Something went wrong!");
+      }
+
+      // ✅ Reset form on complete success
+      setFormData({
+        semester: "",
+        subjects: Array(4).fill(""),
+        concepts: Array(concepts.length).fill(""),
+        filesForConcepts: Array(concepts.length).fill(null),
+      });
+    } catch (error) {
+      console.error("Error during submission:", error);
+      alert(
+        "An error occurred during submission. One or more files could not be uploaded. Please check the console."
+      );
+    } finally {
+      // Optional cleanup if needed
     }
-  );
-
-  const result = await response.json();
-  if (response.ok) {
-    alert("doc submitted");
-    navigate("/Student-login");
-  } else {
-    alert(result.message || "Something went wrong!");
-  }
-
-  // ✅ Reset form on complete success
-  setFormData({
-    semester: "",
-    subjects: Array(4).fill(""),
-    concepts: Array(concepts.length).fill(""),
-    filesForConcepts: Array(concepts.length).fill(null),
-  });
-
-} catch (error) {
-  console.error("Error during submission:", error);
-  alert(
-    "An error occurred during submission. One or more files could not be uploaded. Please check the console."
-  );
-} finally {
-  // Optional cleanup if needed
-}
+  };
 
   return (
     <div className="w-[100%] max-w-4xl mx-auto bg-white shadow-md rounded-xl p-6 sm:p-8">
@@ -340,8 +329,6 @@ const UploadQB = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Semester */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <label className="sm:w-48 font-medium">Choose Semester:</label>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           <label className="sm:w-48 font-medium">Choose Semester:</label>
           <select
             name="semester"
@@ -363,11 +350,7 @@ const UploadQB = () => {
           <label className="sm:w-48 font-medium">
             Choose Subjects:{" "}
             <span className="text-gray-500 text-xs">(Priority)</span>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-          <label className="sm:w-48 font-medium">
-            Choose Subjects: <span className="text-gray-500 text-xs">(Priority)</span>
           </label>
-          <div className="flex flex-col sm:flex-row gap-3 flex-1">
           <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
             {subjects.map((s, index) => (
               <select
@@ -376,7 +359,7 @@ const UploadQB = () => {
                 onChange={(e) => handleSubjectChange(index, e.target.value)}
                 className="w-full sm:flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
               >
-                <option value="">{s}. Choose</option>
+                <option value="">{s.name}. Choose</option>
                 <option value="Maths">Maths</option>
                 <option value="Physics">Physics</option>
                 <option value="Chemistry">Chemistry</option>
@@ -394,7 +377,6 @@ const UploadQB = () => {
             {concepts.map((c, index) => (
               <div
                 key={index}
-                className="flex flex-col sm:flex-row sm:items-center gap-3 border p-3 rounded-lg shadow-sm"
                 className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border p-3 rounded-lg shadow-sm"
               >
                 <select
@@ -405,12 +387,18 @@ const UploadQB = () => {
                   <option value="">{index + 1}. Choose Unit</option>
                   {concepts.map((concept) => (
                     <option key={concept.id} value={concept.name}>
-                        {concept.name}
+                      {concept.name}
                     </option>
                   ))}
                 </select>
 
-                <label className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg shadow ${isSubmitting ? 'bg-gray-300' : 'bg-yellow-200 hover:bg-yellow-300'}`}>
+                <label
+                  className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg shadow ${
+                    isSubmitting
+                      ? "bg-gray-300"
+                      : "bg-yellow-200 hover:bg-yellow-300"
+                  }`}
+                >
                   <FaUpload className="text-gray-700" />
                   <span className="text-sm">Upload</span>
                   <input
@@ -455,4 +443,3 @@ const UploadQB = () => {
 };
 
 export default UploadQB;
-
