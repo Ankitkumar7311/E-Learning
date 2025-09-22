@@ -7,8 +7,8 @@ const CustomModal = ({ isOpen, onClose, children, title }) => {
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      className="relative bg-white p-8 rounded-xl w-[90%] max-w-6xl mx-auto shadow-xl outline-none max-h-[90vh] overflow-y-auto"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      className="relative bg-white p-8 rounded-xl w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] mx-auto shadow-xl outline-none max-h-[90vh] overflow-y-auto"
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
       {/* Close Button */}
       <button
@@ -29,5 +29,3 @@ const CustomModal = ({ isOpen, onClose, children, title }) => {
 };
 
 export default CustomModal;
-
-
