@@ -9,7 +9,6 @@ const StudentSection = () => {
       <section className="h-auto md:h-[550px] bg-[white] flex flex-col md:flex-row pl-10 gap-6">
         <SectionLeft />
         <SectionRight />
-        <Outlet/>
       </section>
     </>
   );

@@ -35,7 +35,6 @@ import StudentSection from "../layouts/studentdashboard/StudentSection";
 import UpdateStudent from "../modules/admin/UpdateStudent";
 import AcadamicCalender from "../modules/student/AcadamicCalender";
 import Encapsulation from "../modules/student/Encapsulation";
-import FindmaterialPop3 from "../modules/student/find/FindmaterialPop3";
 import FindPYQ from "../modules/student/find/FindPYQ";
 import FindNotes from "../modules/student/find/FindNotes";
 import FindQB from "../modules/student/find/FindQB";
@@ -154,7 +153,6 @@ const routes = createBrowserRouter([
     children: [
       { path: "dashboard", element: <StudentSection />,
           children:[
-            { path:"", element:<FindmaterialPop3/>},
             { path:"", element:<FindPYQ/>},
             { path:"", element:<FindNotes/>},
             { path:"", element:<FindQB/>},
