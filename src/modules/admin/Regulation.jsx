@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import RegulationAddedpopup from "./popups/RegulationAddedpopup";
 
 const RegulationForm = () => {
   const navigate = useNavigate();
@@ -173,6 +174,7 @@ const RegulationForm = () => {
         </button>
       </form>
     </div>
+    
   );
 };
 
