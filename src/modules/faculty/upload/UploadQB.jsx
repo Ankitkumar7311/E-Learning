@@ -89,59 +89,53 @@ const UploadQB = () => {
 
 
     try {
-            const body = new FormData();
-          body.append("semester", formData.semester);
+  const body = new FormData();
+  body.append("semester", formData.semester);
 
-          formData.subjects.forEach((sub, i) => {
-            if (sub) body.append(`subjects[${i}]`, sub);
-          });
+  formData.subjects.forEach((sub, i) => {
+    if (sub) body.append(`subjects[${i}]`, sub);
+  });
 
-          formData.concepts.forEach((concept, i) => {
-            if (concept) body.append(`concepts[${i}]`, concept);
-          });
+  formData.concepts.forEach((concept, i) => {
+    if (concept) body.append(`concepts[${i}]`, concept);
+  });
 
-          formData.filesForConcepts.forEach((file, i) => {
-            if (file) body.append(`filesForConcepts[${i}]`, file);
-      });
+  formData.filesForConcepts.forEach((file, i) => {
+    if (file) body.append(`filesForConcepts[${i}]`, file);
+  });
 
-      const response = await fetch(
-        "http://localhost:8080/VidyaSarthi/faculty/uploadQB",
-        {
-          method: "POST",
-          body, // ✅ FormData goes directly
-        }
-      );
-
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert("doc submitted");
-        navigate("/Student-login");
-      } else {
-        alert(result.message || "Something went wrong!");
-      }
-    } catch (error) {
-      console.error("Error during signup:", error);
-      alert("Server error. Please try again later.");
+  const response = await fetch(
+    "http://localhost:8080/VidyaSarthi/faculty/uploadQB",
+    {
+      method: "POST",
+      body, // ✅ FormData goes directly
     }
+  );
 
+  const result = await response.json();
+  if (response.ok) {
+    alert("doc submitted");
+    navigate("/Student-login");
+  } else {
+    alert(result.message || "Something went wrong!");
+  }
 
-      // Optional: Reset form on complete success
-      setFormData({
-        semester: "",
-        subjects: Array(4).fill(""),
-        concepts: Array(concepts.length).fill(""),
-        filesForConcepts: Array(concepts.length).fill(null),
-      });
-    } catch (error) {
-      alert(
-        "An error occurred during submission. One or more files could not be uploaded. Please check the console."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // ✅ Reset form on complete success
+  setFormData({
+    semester: "",
+    subjects: Array(4).fill(""),
+    concepts: Array(concepts.length).fill(""),
+    filesForConcepts: Array(concepts.length).fill(null),
+  });
+
+} catch (error) {
+  console.error("Error during submission:", error);
+  alert(
+    "An error occurred during submission. One or more files could not be uploaded. Please check the console."
+  );
+} finally {
+  // Optional cleanup if needed
+}
 
   return (
     <div className="w-[100%] max-w-4xl mx-auto bg-white shadow-md rounded-xl p-8">
@@ -256,5 +250,5 @@ const UploadQB = () => {
     </div>
   );
 };
-
+}
 export default UploadQB;
