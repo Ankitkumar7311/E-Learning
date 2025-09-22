@@ -13,9 +13,9 @@ let SectionRight = () => {
   ];
 
   const uploads = [
-    { title: "Faculty Provide QB", label: "PYQ" },
+    { title: "Faculty Provide QB", label: "QB" },
     { title: "Notes", label: "Notes" },
-    { title: "PYQ", label: "QB" },
+    { title: "PYQ", label: "PYQ" },
     { title: "News & Events", label: "Events" },
   ];
 
