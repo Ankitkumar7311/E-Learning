@@ -40,6 +40,8 @@ import FindPYQ from "../modules/student/find/FindPYQ";
 import FindNotes from "../modules/student/find/FindNotes";
 import FindQB from "../modules/student/find/FindQB";
 
+import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
+import RequestPopup from "../modules/student/find/RequestPopup";
 // Layouts
 const PublicLayout = () => (
   <>
@@ -110,9 +112,10 @@ const routes = createBrowserRouter([
           { path: "add-remove-faculty", element: <AddRemoveFaculty /> },
           { path: "add-remove-student", element: <Add /> },
           { path: "view-faculty-student", element: <SearchFaculty /> },
-          { path: "regulation", element: <RegulationForm /> },
+          { path: "regulation", element: <RegulationForm />  },
           { path: "teacher-profile", element: <Teacherprofile /> },
           { path: "student-profile", element: <StudentProfile /> },
+          {path: "regulationpop", element: <RegulationAddedpopup />}
         ],
       },
     ],
@@ -161,6 +164,8 @@ const routes = createBrowserRouter([
       { path: "documents", element: <Documents /> },
       { path: "academic-calendar", element: <AcadamicCalender /> },
       { path: "subjects/encapsulation", element: <Encapsulation /> },
+        {path:"RequestPopup", element:<RequestPopup/>},
+
     ],
   },
   { path: "update-profile-student", element: <UpdateStudent /> },
