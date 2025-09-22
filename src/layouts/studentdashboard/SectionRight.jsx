@@ -72,3 +72,5 @@ let SectionRight = () => {
 };
 
 export default SectionRight;
+
+

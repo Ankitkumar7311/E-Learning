@@ -35,6 +35,10 @@ import StudentSection from "../layouts/studentdashboard/StudentSection";
 import UpdateStudent from "../modules/admin/UpdateStudent";
 import AcadamicCalender from "../modules/student/AcadamicCalender";
 import Encapsulation from "../modules/student/Encapsulation";
+import FindmaterialPop3 from "../modules/student/find/FindmaterialPop3";
+import FindPYQ from "../modules/student/find/FindPYQ";
+import FindNotes from "../modules/student/find/FindNotes";
+import FindQB from "../modules/student/find/FindQB";
 
 // Layouts
 const PublicLayout = () => (
@@ -126,6 +130,10 @@ const routes = createBrowserRouter([
         path: "dashboard",
         element: <Profile />, // main teacher dashboard
       },
+      { path: "request-report", element: <RequestReport /> },
+      {
+        path: "edit-material", element:<EditMaterial/>
+      },
       {
         path: "update-profile",
         element: <UpdateTeach />,
@@ -141,7 +149,14 @@ const routes = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { path: "dashboard", element: <StudentSection /> }, // ✅ renamed correctly
+      { path: "dashboard", element: <StudentSection />,
+          children:[
+            { path:"", element:<FindmaterialPop3/>},
+            { path:"", element:<FindPYQ/>},
+            { path:"", element:<FindNotes/>},
+            { path:"", element:<FindQB/>},
+          ]
+       }, // ✅ renamed correctly
       { path: "profile", element: <StudentProfile /> }, // ✅ profile route
       { path: "documents", element: <Documents /> },
       { path: "academic-calendar", element: <AcadamicCalender /> },
@@ -154,9 +169,9 @@ const routes = createBrowserRouter([
   { path: "/update-teach", element: <UpdateTeach /> },
   { path: "/edit-material", element: <EditMaterial /> },
   { path: "/upload-pdf", element: <UploadPdf /> },
-  { path: "/request-report", element: <RequestReport /> },
 
   { path: "*", element: <h1>Page Not Found</h1> },
 ]);
 
 export default routes;
+  

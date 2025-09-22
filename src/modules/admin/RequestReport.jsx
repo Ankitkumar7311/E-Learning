@@ -1,88 +1,31 @@
 import React, { useState } from "react";
 import AdminNavBar from "./AdminNavBar";
+import Editmaterialedit from "./Editmaterialedit"; // 👈 your existing component
+import CustomModal from "../faculty/common_modal/CustomModal";
 
 const RequestReport = () => {
-  // Mock data for the table
-  const [data] = useState([
-    {
-      id: 1,
-      request: "CS304",
-      module: "ME304",
-      comment: "Information is wrong",
-      complete: true,
-    },
-    {
-      id: 2,
-      request: "CS304",
-      module: "ME304",
-      comment: "Please Add DOF's concept in detail",
-      complete: true,
-    },
-    {
-      id: 3,
-      request: "CS304",
-      module: "ME304",
-      comment: "Photo is wrong",
-      complete: true,
-    },
-    {
-      id: 4,
-      request: "CS304",
-      module: "ME304",
-      comment: "Link not working",
-      complete: false,
-    },
+  const [data, setData] = useState([
+    { id: 1, request: "CS304", module: "ME304", comment: "Information is wrong" },
+    { id: 2, request: "CS304", module: "ME304", comment: "Please Add DOF's concept in detail" },
+    { id: 3, request: "CS304", module: "ME304", comment: "Photo is wrong" },
+    { id: 4, request: "CS304", module: "ME304", comment: "Link not working" },
   ]);
+  const totalCount = data.length;
 
-  const totalComplete = data.filter((item) => item.complete).length;
 
-  // ✅ Small subcomponent for status rendering
-  const StatusCell = ({ complete }) => {
-    if (complete === true) {
-      return (
-        <div className="flex justify-center items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-green-500"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-      );
-    }
-    if (complete === false) {
-      return (
-        <span className="flex justify-center text-orange-500">Pending</span>
-      );
-    }
-    return null;
-  };
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col">
-      {/* Navbar */}
-      <AdminNavBar />
-
+    <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
       {/* Content */}
-      <div className="flex-1 flex items-center justify-center p-4 font-sans">
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-1 font-sans">
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl overflow-hidden">
           <div className="p-6">
             <table className="min-w-full border border-gray-300 divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  {[
-                    "S.N.",
-                    "Request Code",
-                    "Module Code",
-                    "Comment",
-                    "Complete",
-                  ].map((head, idx) => (
+                  {["S.N.", "Request Code", "Module Code", "Comment", "Action"].map((head, idx) => (
                     <th
                       key={idx}
                       className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
@@ -110,11 +53,20 @@ const RequestReport = () => {
                       {item.comment}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
-                      <StatusCell complete={item.complete} />
+                      <button
+                        onClick={() => {
+                          setSelectedId(item.id);
+                          setOpenModal(true);
+                        }}
+                        className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-md"
+                      >
+                        Edit
+                      </button>
                     </td>
                   </tr>
                 ))}
-                {/* Total Row */}
+                
+                {/* ✅ Total Row */}
                 <tr className="bg-gray-50 font-medium">
                   <td
                     colSpan="4"
@@ -123,7 +75,7 @@ const RequestReport = () => {
                     Total
                   </td>
                   <td className="px-6 py-4 text-left font-bold text-gray-900">
-                    {totalComplete}
+                    {totalCount}
                   </td>
                 </tr>
               </tbody>
@@ -131,6 +83,14 @@ const RequestReport = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal with your custom component */}
+      {openModal && (
+        <CustomModal isOpen={openModal} onClose={() => setOpenModal(false)} title="Edit Material">
+          {/* 👇 Here you insert your already built component */}
+          <Editmaterialedit requestId={selectedId} onClose={() => setOpenModal(false)} />
+        </CustomModal>
+      )}
     </div>
   );
 };

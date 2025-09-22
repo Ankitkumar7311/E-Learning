@@ -29,3 +29,5 @@ const CustomModal = ({ isOpen, onClose, children, title }) => {
 };
 
 export default CustomModal;
+
+
