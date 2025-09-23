@@ -23,44 +23,50 @@ const StudentLogin = () => {
   };
 
   return (
-    <section
-      className="w-full flex items-center justify-center px-4 py-8 bg-cover bg-no-repeat min-h-screen"
-      style={{ backgroundImage: `url(${curveBg})` }}
-    >
-      {/* Wrapper with 2 columns on md+ */}
-      <div className="relative w-full max-w-7xl rounded-3xl shadow-2xl overflow-hidden mx-auto grid grid-cols-1 md:grid-cols-2">
-        
-        {/* Left side background image (hidden on small screens) */}
+    <>
+      <section
+        className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-2 sm:px-4"
+        style={{ backgroundImage: `url(${curveBg})` }}
+      >
         <div
-          className="hidden md:block bg-cover bg-center"
+          className="relative rounded-3xl shadow-xl overflow-hidden
+        w-[95vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
+        md:aspect-[16/9] bg-no-repeat bg-cover bg-center flex items-center justify-center"
           style={{ backgroundImage: `url(${bg})` }}
-        ></div>
-
-        {/* Right side form */}
-        <div
-          className="w-full p-6 sm:p-8 md:p-10 bg-cover bg-no-repeat bg-top flex items-center"
-          style={{ backgroundImage: `url(${card})` }}
         >
-          <div className="w-full">
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold font-roboto mb-2">
-              Student LogIn
-            </h1>
-            <hr className="hidden md:block border border-black mb-3 w-2/3" />
-            <p className="text-sm sm:text-base md:text-lg text-gray-700 mb-4">
-              Welcome onboard with us!
-            </p>
+          <div
+            className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%]
+          w-full rounded-2xl p-6 sm:p-8 md:p-10 bg-transparent overflow-hidden"
+            style={{
+              backgroundImage: `url(${card})`,
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "right top",
+              backgroundSize: "100% 100%",
+            }}
+          >
+            <div className="h-full overflow-y-auto pr-1 sm:pr-3">
+              <h1 className="font-roboto font-semibold text-2xl sm:text-2xl md:text-3xl lg:text-4xl leading-normal text-center">
+                Student LogIn
+              </h1>
 
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-3"
-            >
-              {/* Email */}
-              <div>
-                <label className="block mb-1 text-sm">Institute Email ID</label>
+              <hr className="border border-black mb-3 hidden md:block w-2/3 mx-auto" />
+
+              <p className="font-montserrat text-xs sm:text-base md:text-lg text-gray-700 mb-4 text-center">
+                Welcome onboard with us!
+              </p>
+
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-3"
+              >
+                {/* Email */}
+                <label className="font-medium text-sm sm:text-base md:text-lg leading-tight">
+                  Institute Email ID
+                </label>
                 <input
                   type="email"
                   placeholder="Enter your username"
-                  className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 text-sm sm:text-base outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-[#D8E7F5] rounded-xl px-4 sm:px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -70,73 +76,71 @@ const StudentLogin = () => {
                   })}
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
+                  <p className="text-red-500 text-xs sm:text-sm">{errors.email.message}</p>
                 )}
-              </div>
 
-              {/* Password */}
-              <div>
-                <label className="block mb-1 text-sm">Password</label>
+                {/* Password */}
+                <label className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
+                  Password
+                </label>
                 <input
                   type="password"
                   placeholder="Enter your password"
-                  className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 text-sm sm:text-base outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                   {...register("password", {
                     required: "Password is required",
                   })}
                 />
                 {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="text-red-500 text-xs sm:text-sm">
                     {errors.password.message}
                   </p>
                 )}
-              </div>
 
-              {/* Forgot Password */}
-              <button
-                type="button"
-                className="self-end text-sm sm:text-base text-black hover:underline"
-              >
-                Forgot Password?
-              </button>
+                <button
+                  type="button"
+                  className="self-end text-xs sm:text-sm md:text-base text-black hover:underline"
+                >
+                  Forgot Password?
+                </button>
 
-              {/* Submit */}
-              <button
-                type="submit"
-                className="w-full py-2.5 md:py-3 text-sm sm:text-base md:text-lg font-bold rounded-2xl bg-[#F3B300] hover:bg-yellow-600 transition"
-              >
-                LogIn as Student
-              </button>
-            </form>
-
-            {/* Links */}
-            <div className="mt-4 space-y-2 text-xs sm:text-sm md:text-base">
-              <p>
-                Have Admin Access?{" "}
+                <button
+                  type="submit"
+                  className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-sm sm:text-base md:text-lg py-2.5 md:py-3"
+                >
+                  LogIn as Student
+                </button>
+              </form>
+              <div className="mt-6 space-y-2">
+              <p className="text-xs sm:text-sm md:text-lg text-center mt-2">
+                 Are you a Admin?{" "}
                 <b
+                  className="hover:underline cursor-pointer"
                   onClick={() => navigate("/login")}
-                  className="cursor-pointer hover:underline"
                 >
                   LogIn as an Admin
                 </b>
               </p>
-              <p>
-                Have Teacher Access?{" "}
+
+              <p className="text-xs sm:text-sm  text-center md:text-lg">
+                 Are you a Teacher?{" "}
                 <b
+                  className="hover:underline cursor-pointer"
                   onClick={() => navigate("/teacher-login")}
-                  className="cursor-pointer hover:underline"
                 >
                   LogIn as a Teacher
                 </b>
               </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
 export default StudentLogin;
+
+
+
