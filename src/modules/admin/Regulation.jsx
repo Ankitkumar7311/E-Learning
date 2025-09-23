@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import RegulationAddedpopup from "./popups/RegulationAddedpopup";
 
 const RegulationForm = () => {
   const navigate = useNavigate();
@@ -8,7 +9,6 @@ const RegulationForm = () => {
   const branches = ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
   const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
-  // fixed 5 empty subjects
   const defaultSubjects = Array.from({ length: 5 }, () => ({
     name: "",
     subjectCode: "",
@@ -42,6 +42,20 @@ const RegulationForm = () => {
     e.preventDefault();
     console.log("Submitting body:", formData);
 
+    // ✅ Client-side validation
+    const isFormValid =
+      formData.regulation &&
+      formData.branch &&
+      formData.semester &&
+      formData.subjectDto.every(
+        (sub) => sub.name.trim() && sub.subjectCode.trim()
+      );
+
+    if (!isFormValid) {
+      alert("Please fill in all fields before submitting.");
+      return;
+    }
+
     try {
       const response = await fetch(
         "http://localhost:8080/VidyaSarthi/addRegulation",
@@ -54,13 +68,15 @@ const RegulationForm = () => {
         }
       );
 
-      const result = await response.json();
+      const text = await response.text();
 
-      if (response.ok) {
-        alert("Account created successfully! You can now login.");
+      if (response.status === 409) {
+        alert("Duplicate entry: This regulation already exists.");
+      } else if (response.ok) {
+        alert(text || "Regulation added successfully!");
         navigate("/Student-login");
       } else {
-        alert(result.message || "Something went wrong!");
+        alert(text || "Something went wrong!");
       }
     } catch (error) {
       console.error("Error during signup:", error);
@@ -69,13 +85,13 @@ const RegulationForm = () => {
   };
 
   const SelectField = ({ label, name, options, value, onChange }) => (
-    <div className="mb-3 flex items-center gap-4">
-      <label className="w-40">{label} :</label>
+    <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+      <label className="sm:w-40 w-full">{label} :</label>
       <select
         name={name}
         value={value}
         onChange={onChange}
-        className="flex-1 p-2 rounded-md bg-blue-100"
+        className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
       >
         <option value="">Choose {label}</option>
         {options.map((opt, idx) => (
@@ -88,10 +104,10 @@ const RegulationForm = () => {
   );
 
   return (
-    <div className="w-full flex justify-center mt-10">
+    <div className="w-full flex justify-center mt-10 px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-2xl p-6 w-[800px]"
+        className="bg-white shadow-md rounded-2xl p-6 w-full max-w-3xl space-y-4"
       >
         <h2 className="text-xl font-semibold mb-4">Add Regulation</h2>
 
@@ -111,24 +127,15 @@ const RegulationForm = () => {
           onChange={handleChange}
         />
 
-        <div className="mb-3 flex items-center gap-4">
-          <label className="w-40">Semester :</label>
-          <select
-            name="semester"
-            value={formData.semester}
-            onChange={handleChange}
-            className="flex-1 p-2 rounded-md bg-blue-100"
-          >
-            <option value="">Choose Semester</option>
-            {semesters.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectField
+          label="Semester"
+          name="semester"
+          options={semesters}
+          value={formData.semester}
+          onChange={handleChange}
+        />
 
-        <div className="mb-4">
+        <div>
           <label className="block font-medium mb-2">
             Subjects: <span className="text-sm">(Priority Wise)</span>
           </label>
@@ -137,9 +144,9 @@ const RegulationForm = () => {
             {formData.subjectDto.map((sub, index) => (
               <div
                 key={index}
-                className="flex gap-3 items-center bg-gray-50 p-2 rounded"
+                className="flex flex-col sm:flex-row gap-2 sm:gap-3 bg-gray-50 p-2 rounded"
               >
-                <div className="w-6 text-sm">{index + 1}.</div>
+                <div className="text-sm font-medium">{index + 1}.</div>
 
                 <input
                   type="text"
@@ -148,7 +155,7 @@ const RegulationForm = () => {
                   onChange={(e) =>
                     handleSubjectChange(index, "name", e.target.value)
                   }
-                  className="flex-1 p-2 rounded-md bg-blue-100"
+                  className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
                 />
 
                 <input
@@ -158,7 +165,7 @@ const RegulationForm = () => {
                   onChange={(e) =>
                     handleSubjectChange(index, "subjectCode", e.target.value)
                   }
-                  className="w-48 p-2 rounded-md bg-blue-100"
+                  className="w-full sm:w-48 p-2 rounded-md bg-blue-100"
                 />
               </div>
             ))}
@@ -173,6 +180,7 @@ const RegulationForm = () => {
         </button>
       </form>
     </div>
+    
   );
 };
 

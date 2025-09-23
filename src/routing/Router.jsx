@@ -35,7 +35,12 @@ import StudentSection from "../layouts/studentdashboard/StudentSection";
 import UpdateStudent from "../modules/admin/UpdateStudent";
 import AcadamicCalender from "../modules/student/AcadamicCalender";
 import Encapsulation from "../modules/student/Encapsulation";
+import FindPYQ from "../modules/student/find/FindPYQ";
+import FindNotes from "../modules/student/find/FindNotes";
+import FindQB from "../modules/student/find/FindQB";
 
+import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
+import RequestPopup from "../modules/student/find/RequestPopup";
 // Layouts
 const PublicLayout = () => (
   <>
@@ -106,9 +111,10 @@ const routes = createBrowserRouter([
           { path: "add-remove-faculty", element: <AddRemoveFaculty /> },
           { path: "add-remove-student", element: <Add /> },
           { path: "view-faculty-student", element: <SearchFaculty /> },
-          { path: "regulation", element: <RegulationForm /> },
+          { path: "regulation", element: <RegulationForm />  },
           { path: "teacher-profile", element: <Teacherprofile /> },
           { path: "student-profile", element: <StudentProfile /> },
+          {path: "regulationpop", element: <RegulationAddedpopup />}
         ],
       },
     ],
@@ -126,6 +132,10 @@ const routes = createBrowserRouter([
         path: "dashboard",
         element: <Profile />, // main teacher dashboard
       },
+      { path: "request-report", element: <RequestReport /> },
+      {
+        path: "edit-material", element:<EditMaterial/>
+      },
       {
         path: "update-profile",
         element: <UpdateTeach />,
@@ -141,11 +151,19 @@ const routes = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { path: "dashboard", element: <StudentSection /> }, // ✅ renamed correctly
+      { path: "dashboard", element: <StudentSection />,
+          children:[
+            { path:"", element:<FindPYQ/>},
+            { path:"", element:<FindNotes/>},
+            { path:"", element:<FindQB/>},
+          ]
+       }, // ✅ renamed correctly
       { path: "profile", element: <StudentProfile /> }, // ✅ profile route
       { path: "documents", element: <Documents /> },
       { path: "academic-calendar", element: <AcadamicCalender /> },
       { path: "subjects/encapsulation", element: <Encapsulation /> },
+        {path:"RequestPopup", element:<RequestPopup/>},
+
     ],
   },
   { path: "update-profile-student", element: <UpdateStudent /> },
@@ -154,9 +172,9 @@ const routes = createBrowserRouter([
   { path: "/update-teach", element: <UpdateTeach /> },
   { path: "/edit-material", element: <EditMaterial /> },
   { path: "/upload-pdf", element: <UploadPdf /> },
-  { path: "/request-report", element: <RequestReport /> },
 
   { path: "*", element: <h1>Page Not Found</h1> },
 ]);
 
 export default routes;
+  

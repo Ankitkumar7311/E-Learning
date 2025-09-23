@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import bg from "../assets/Rectangle.png";
 import curveBg from "../assets/Curve.png";
 import card from "../assets/card.png";
-import { useAuth } from "./AuthContext"; // ✅ adjust the path based on your folder structure
+import { useAuth } from "./AuthContext";
 
 const StudentLogin = () => {
   const navigate = useNavigate();
@@ -18,27 +18,30 @@ const StudentLogin = () => {
 
   const onSubmit = (data) => {
     console.log("Student Login Data:", data);
-
-    // ✅ set auth with role = "student"
     login({ role: "student", user: data.email });
-
-    // ✅ redirect to student dashboard
     navigate("/student/dashboard");
   };
+
   return (
     <section
-      className="w-full flex items-center justify-center px-4 bg-cover bg-no-repeat"
+      className="w-full flex items-center justify-center px-4 py-8 bg-cover bg-no-repeat min-h-screen"
       style={{ backgroundImage: `url(${curveBg})` }}
     >
-      <div
-        className="relative w-[92vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px] rounded-3xl shadow-2xl overflow-hidden md:aspect-[16/9] bg-cover bg-center"
-        style={{ backgroundImage: `url(${bg})` }}
-      >
+      {/* Wrapper with 2 columns on md+ */}
+      <div className="relative w-full max-w-7xl rounded-3xl shadow-2xl overflow-hidden mx-auto grid grid-cols-1 md:grid-cols-2">
+        
+        {/* Left side background image (hidden on small screens) */}
         <div
-          className="w-full md:w-[46%] md:absolute md:top-4 md:bottom-6 md:right-6 rounded-2xl p-6 sm:p-8 md:p-10 bg-cover bg-no-repeat bg-top"
+          className="hidden md:block bg-cover bg-center"
+          style={{ backgroundImage: `url(${bg})` }}
+        ></div>
+
+        {/* Right side form */}
+        <div
+          className="w-full p-6 sm:p-8 md:p-10 bg-cover bg-no-repeat bg-top flex items-center"
           style={{ backgroundImage: `url(${card})` }}
         >
-          <div className="h-full overflow-y-auto pr-2">
+          <div className="w-full">
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold font-roboto mb-2">
               Student LogIn
             </h1>
@@ -51,6 +54,7 @@ const StudentLogin = () => {
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-3"
             >
+              {/* Email */}
               <div>
                 <label className="block mb-1 text-sm">Institute Email ID</label>
                 <input
@@ -72,6 +76,7 @@ const StudentLogin = () => {
                 )}
               </div>
 
+              {/* Password */}
               <div>
                 <label className="block mb-1 text-sm">Password</label>
                 <input
@@ -89,6 +94,7 @@ const StudentLogin = () => {
                 )}
               </div>
 
+              {/* Forgot Password */}
               <button
                 type="button"
                 className="self-end text-sm sm:text-base text-black hover:underline"
@@ -96,6 +102,7 @@ const StudentLogin = () => {
                 Forgot Password?
               </button>
 
+              {/* Submit */}
               <button
                 type="submit"
                 className="w-full py-2.5 md:py-3 text-sm sm:text-base md:text-lg font-bold rounded-2xl bg-[#F3B300] hover:bg-yellow-600 transition"
@@ -104,6 +111,7 @@ const StudentLogin = () => {
               </button>
             </form>
 
+            {/* Links */}
             <div className="mt-4 space-y-2 text-xs sm:text-sm md:text-base">
               <p>
                 Have Admin Access?{" "}

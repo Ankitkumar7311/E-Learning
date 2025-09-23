@@ -12,15 +12,24 @@ import uploadImg from "../../assets/10.png";
 import profileImg from "../../assets/Group.png";
 import requestImg from "../../assets/Star.png";
 import editImg from "../../assets/10.png";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const ProfileRight = () => {
   const [modalContent, setModalContent] = useState(null);
+  let navigate = useNavigate();
 
   const features = [
     { img: uploadImg, label: "Uploaded Module" },
-    { img: profileImg, label: "Profile Status" },
-    { img: requestImg, label: "Request/Report", component: <RequestReport /> },
-    { img: editImg, label: "Edit Material", component: <EditMaterial /> },
+    {
+      img: profileImg,
+      label: "Profile Status",
+    },
+    {
+      img: requestImg,
+      label: "Request/Report",
+      path: "/teacher/request-report",
+    },
+    { img: editImg, label: "Edit Material", path: "/teacher/edit-material" },
   ];
 
   const uploads = [
@@ -43,7 +52,10 @@ const ProfileRight = () => {
             <div
               key={index}
               className="flex flex-col items-center space-y-2 w-1/4 cursor-pointer"
-              onClick={() => item.component && setModalContent(item.component)}
+              onClick={() => {
+                console.log("Navigating to:", item.path);
+                if (item.path) navigate(item.path);
+              }}
             >
               <div className="bg-blue-100 rounded-full flex items-center justify-center w-14 h-14">
                 <img src={item.img} alt={item.label} className="w-7 h-7" />
@@ -84,3 +96,7 @@ const ProfileRight = () => {
 };
 
 export default ProfileRight;
+
+
+
+

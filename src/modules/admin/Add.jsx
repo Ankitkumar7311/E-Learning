@@ -15,25 +15,22 @@ const InputField = ({ name, value, onChange, onBlur, type = "text", placeholder,
 );
 
 const Button = ({ children, type = "submit", variant = 'add' }) => (
-    <button
-      type={type}
-      className={`text-white font-medium rounded px-6 py-2 transition duration-300 shadow ${
-        variant === 'add' ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-red-600 hover:bg-red-700'
-      }`}
-    >
-      {children}
-    </button>
-  );
+  <button
+    type={type}
+    className={`text-white font-medium rounded px-6 py-2 transition duration-300 shadow ${
+      variant === 'add' ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-red-600 hover:bg-red-700'
+    }`}
+  >
+    {children}
+  </button>
+);
 
 const Add = () => {
-  // State for the "Add Student" form
   const initialFormState = { name: "", studentId: "", email: "", branch: "", year: "", password: "" };
   const [formData, setFormData] = useState(initialFormState);
-
-  // State for the "Remove Student" form
   const [studentIdToRemove, setStudentIdToRemove] = useState('');
   const [studentNameToRemove, setStudentNameToRemove] = useState('');
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -61,7 +58,6 @@ const Add = () => {
     }
   };
 
-  // Fetches student name from the backend when the ID input field loses focus
   const handleFetchStudentName = async () => {
     if (!studentIdToRemove) {
       setStudentNameToRemove('');
@@ -71,7 +67,6 @@ const Add = () => {
     try {
       const response = await fetch(`http://localhost:8080/VidyaSarthi/student/${studentIdToRemove}`);
       if (!response.ok) throw new Error('Student not found');
-      
       const data = await response.json();
       setStudentNameToRemove(data.name || 'Name not found');
     } catch (error) {
@@ -81,23 +76,21 @@ const Add = () => {
     }
   };
 
-  // Submits the request to remove the student
   const handleRemoveSubmit = async (e) => {
     e.preventDefault();
     if (!studentIdToRemove || !studentNameToRemove || studentNameToRemove === 'Loading...') {
-        alert("Please enter a valid Student ID and fetch the student's name first.");
-        return;
+      alert("Please enter a valid Student ID and fetch the student's name first.");
+      return;
     }
     try {
       const response = await fetch(`http://localhost:8080/VidyaSarthi/deleteStudent/${studentIdToRemove}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      
       alert("Student removed successfully!");
       setStudentIdToRemove('');
       setStudentNameToRemove('');
-      window.dispatchEvent(new CustomEvent('studentsUpdated')); // Signal table to refresh
+      window.dispatchEvent(new CustomEvent('studentsUpdated'));
     } catch (error) {
       console.error("Failed to remove student:", error);
       alert("Error removing student. Please check the console.");
@@ -105,7 +98,7 @@ const Add = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-50 p-6">
+    <div className="w-full min-h-screen overflow-x-hidden bg-gray-50 p-6 flex flex-col items-center">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
         {/* Add Student Card */}
         <div className="bg-white shadow-lg rounded-xl p-6">
@@ -142,7 +135,13 @@ const Add = () => {
           </form>
         </div>
       </div>
-      <StudentTable/>
+
+      {/* ✅ Scrollable Student Table */}
+      <div className="w-full overflow-x-auto mt-8">
+        <div className="min-w-[700px]">
+          <StudentTable />
+        </div>
+      </div>
     </div>
   );
 };
