@@ -23,32 +23,24 @@ const Form = () => {
 
   return (
     <div
-      className="w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] 
-      bg-white/90 rounded-2xl shadow-lg 
-      p-4 sm:p-6 md:p-8 backdrop-blur-sm 
-      max-h-[85vh] overflow-y-auto"
+      className="w-full max-w-md sm:max-w-sm lg:max-w-md xl:max-w-lg rounded-2xl pt-6 px-4 sm:p-5 md:p-6 bg-white bg-opacity-80 shadow-lg"
       style={{
         backgroundImage: `url(${cardpic})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-medium font-roboto mb-2 sm:mb-3 text-center">
+      <h1 className="text-xl md:text-3xl font-medium font-roboto mb-2 text-center">
         LogIn
       </h1>
-      <hr className="border border-black mb-3 sm:mb-4 w-2/3 mx-auto" />
-      <h4 className="text-xs sm:text-base md:text-xl font-montserrat mb-4 sm:mb-5 text-center">
+      <hr className="border border-black mb-2 w-2/3 mx-auto" />
+      <h4 className="text-xs md:text-lg font-montserrat mb-5 text-center">
         Welcome onboard with us!
       </h4>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-2 sm:gap-3"
-      >
-        {/* Email */}
-        <label className="font-medium text-xs sm:text-sm md:text-lg">
-          Email ID
-        </label>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        {/* Email Field */}
+        <label className="font-medium text-sm md:text-base">Email ID</label>
         <input
           type="text"
           placeholder="Enter your username"
@@ -63,15 +55,11 @@ const Form = () => {
           })}
         />
         {errors.email && (
-          <p className="text-red-500 text-xs sm:text-sm">
-            {errors.email.message}
-          </p>
+          <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
         )}
 
-        {/* Password */}
-        <label className="font-medium text-xs sm:text-sm md:text-lg mt-1 sm:mt-2">
-          Password
-        </label>
+        {/* Password Field */}
+        <label className="font-medium text-sm md:text-base">Password</label>
         <input
           type="password"
           placeholder="Enter your password"
@@ -80,45 +68,44 @@ const Form = () => {
           {...register("password", { required: "Password is required" })}
         />
         {errors.password && (
-          <p className="text-red-500 text-xs sm:text-sm">
-            {errors.password.message}
-          </p>
+          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
         )}
 
         <button
           type="button"
-          className="self-end text-xs sm:text-sm md:text-base text-black hover:underline mt-1"
+          className="self-end text-xs md:text-sm text-black hover:underline"
         >
           Forgot Password?
         </button>
 
         <button
           type="submit"
-          className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl 
-          w-full font-bold text-sm sm:text-lg md:text-xl py-2 sm:py-2.5 md:py-3"
+          className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-base md:text-lg py-2 md:py-2.5 mt-3"
         >
           LogIn
         </button>
 
-        {/* Links */}
-        <p className="text-xs sm:text-sm md:text-lg text-center mt-2">
-          Are you a student?{" "}
-          <b
-            className="hover:underline cursor-pointer"
-            onClick={() => navigate("/student-login")}
-          >
-            LogIn as a Student
-          </b>
-        </p>
-        <p className="text-xs sm:text-sm md:text-lg text-center">
-          Are you a Teacher?{" "}
-          <b
-            className="hover:underline cursor-pointer"
-            onClick={() => navigate("/teacher-login")}
-          >
-            LogIn as a Teacher
-          </b>
-        </p>
+        {/* Student / Teacher Links */}
+        <div className="mt-3 space-y-1">
+          <p className="text-xs md:text-base text-center">
+            Are you a Student?{" "}
+            <b
+              className="hover:underline cursor-pointer"
+              onClick={() => navigate("/student-login")}
+            >
+              LogIn as a Student
+            </b>
+          </p>
+          <p className="text-xs md:text-base text-center">
+            Are you a Teacher?{" "}
+            <b
+              className="hover:underline cursor-pointer"
+              onClick={() => navigate("/teacher-login")}
+            >
+              LogIn as a Teacher
+            </b>
+          </p>
+        </div>
       </form>
     </div>
   );
