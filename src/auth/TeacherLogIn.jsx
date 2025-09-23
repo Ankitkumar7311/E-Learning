@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import bg from "../assets/Rectangle.png";
@@ -9,126 +9,119 @@ import { useAuth } from "./AuthContext";
 const TeacherLogin = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [error, setError] = useState("");
 
-  // setup react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  // form submit
   const onSubmit = (data) => {
-    console.log("Teacher Login Data:", data);
-    // set auth with role teacher
-    login({ role: "teacher", user: data.email });
+    setError("");
 
-    // redirect to teacher dashboard
-    navigate("/teacher/dashboard");
+    fetch("http://localhost:8080/VidyaSarthi/faculty/getFacultyEmail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: data.email }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          if (res.status === 404) throw new Error("Email not found in database");
+          else throw new Error("Failed to login. Status: " + res.status);
+        }
+        return res.json();
+      })
+      .then((profile) => {
+        login({ role: "teacher", user: profile.email });
+        navigate("/teacher/dashboard", { state: { email: profile.email } });
+      })
+      .catch((err) => setError(err.message));
   };
 
   return (
-    <>
-      <section
-        className="w-full flex items-center justify-center bg-no-repeat bg-cover px-4"
-        style={{ backgroundImage: `url(${curveBg})` }}
+    <section
+      className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-4"
+      style={{ backgroundImage: `url(${curveBg})` }}
+    >
+      <div
+        className="relative rounded-3xl shadow-xl overflow-hidden
+        w-full sm:w-[90vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
+        min-h-[90vh] md:min-h-fit
+        md:aspect-[16/9] bg-no-repeat bg-cover bg-center flex items-center justify-center"
+        style={{ backgroundImage: `url(${bg})` }}
       >
         <div
-          className="relative rounded-3xl shadow-xl overflow-hidden
-        w-[92vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
-        md:aspect-[16/9] bg-no-repeat bg-cover bg-center"
-          style={{ backgroundImage: `url(${bg})` }}
+          className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%]
+          w-full rounded-2xl p-8 sm:p-6 bg-transparent overflow-hidden
+          flex items-center justify-center"
+          style={{
+            backgroundImage: `url(${card})`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "right top",
+            backgroundSize: "100% 100%",
+          }}
         >
-          <div
-            className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%]
-          w-full rounded-2xl p-10 sm:p-5 bg-transparent overflow-hidden"
-            style={{
-              backgroundImage: `url(${card})`,
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "right top",
-              backgroundSize: "100% 100%",
-            }}
-          >
-            <div className="h-full overflow-y-auto pr-3">
-              <h1 className="font-roboto font-semibold text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-normal">
-                Teacher LogIn
-              </h1>
+          <div className="w-full max-w-md">
+            <h1 className="font-roboto font-semibold text-2xl sm:text-3xl md:text-4xl leading-normal text-center">
+              Teacher LogIn
+            </h1>
+            <hr className="border border-black mb-3 hidden md:block w-2/3 mx-auto" />
+            <p className="font-montserrat text-sm sm:text-base md:text-lg text-gray-700 mb-6 text-center">
+              Welcome onboard with us!
+            </p>
 
-              <hr className="border border-black mb-3 hidden md:block w-2/3" />
+            {/* Form */}
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex flex-col gap-3"
+            >
+              <label className="font-medium text-sm sm:text-base md:text-lg leading-tight">
+                Institute Email ID
+              </label>
+              <input
+                type="email"
+                placeholder="Enter your username"
+                className="w-full bg-[#D8E7F5] rounded-xl px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^\S+@\S+$/i,
+                    message: "Invalid email format",
+                  },
+                })}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
 
-              <p className="font-montserrat text-sm sm:text-base md:text-lg text-gray-700 mb-4">
-                Welcome onboard with us!
-              </p>
+              <label className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                {...register("password", { required: "Password is required" })}
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password.message}</p>
+              )}
 
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-3"
+              {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+
+              <button
+                type="submit"
+                className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-sm sm:text-base md:text-lg py-2.5 md:py-3 mt-2"
               >
-                {/* Email */}
-                <label className="font-medium text-sm sm:text-base md:text-lg leading-tight">
-                  Institute Email ID
-                </label>
-                <input
-                  type="email"
-                  placeholder="Enter your username"
-                  className="w-full bg-[#D8E7F5] rounded-xl px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: "Invalid email format",
-                    },
-                  })}
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
+                LogIn as Teacher
+              </button>
+            </form>
 
-                {/* Password */}
-                <label className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="Enter your password"
-                  className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
-                  {...register("password", {
-                    required: "Password is required",
-                  })}
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm">
-                    {errors.password.message}
-                  </p>
-                )}
-
-                <button
-                  type="button"
-                  className="self-end text-sm sm:text-base text-black hover:underline"
-                >
-                  Forgot Password?
-                </button>
-
-                <button
-                  type="submit"
-                  className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-sm sm:text-base md:text-lg py-2.5 md:py-3"
-                >
-                  LogIn as Teacher
-                </button>
-              </form>
-
-              <p className="text-xs sm:text-sm md:text-base mt-2">
-                Have Admin Access?{" "}
-                <b
-                  className="hover:underline cursor-pointer"
-                  onClick={() => navigate("/login")}
-                >
-                  LogIn as an Admin
-                </b>
-              </p>
-
-              <p className="text-xs sm:text-sm md:text-base">
-                Have Student Access?{" "}
+            {/* Extra links */}
+            <div className="mt-6 space-y-2">
+              <p className="text-xs sm:text-sm md:text-lg text-center">
+                Are you a Student?{" "}
                 <b
                   className="hover:underline cursor-pointer"
                   onClick={() => navigate("/student-login")}
@@ -136,11 +129,20 @@ const TeacherLogin = () => {
                   LogIn as a Student
                 </b>
               </p>
+              <p className="text-xs sm:text-sm md:text-lg text-center">
+                Are you a Teacher?{" "}
+                <b
+                  className="hover:underline cursor-pointer"
+                  onClick={() => navigate("/teacher-login")}
+                >
+                  LogIn as a Teacher
+                </b>
+              </p>
             </div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 
