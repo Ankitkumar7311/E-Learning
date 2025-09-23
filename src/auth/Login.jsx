@@ -17,10 +17,10 @@ const Login = () => {
           {/* Text Content */}
           <div className="flex flex-col justify-center text-white text-center md:text-left px-3 sm:px-6">
             <h1 className="font-julius font-light text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-snug">
-              Vidya Sarthi
+              College Guide
             </h1>
             <h3 className="font-roboto font-medium text-base sm:text-lg md:text-3xl mt-2 sm:mt-3">
-              Welcome to Vidya Sarthi
+              Welcome to College Guide
             </h3>
             <p className="font-roboto text-xs sm:text-sm md:text-lg lg:text-xl mt-2 sm:mt-3 max-w-xl mx-auto md:mx-0 leading-relaxed">
               A digital bridge between students and teachers, where teachers

@@ -3,17 +3,17 @@ import { Link } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
 
 const NavBar = () => {
-  // State to manage the menu's visibility
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+ // State to manage the menu's visibility
+ const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navLinks = [
-    { to: '/universities', label: 'Universities' },
-    { to: '/courses', label: 'Courses' },
-    { to: '/community', label: 'Community' },
-    { to: '/news', label: 'News' },
-    { to: '/about', label: 'About' },
-    { to: '/login', label: 'Login', extra: 'uppercase font-semibold' },
-  ];
+ const navLinks = [
+   { to: '/library', label: 'Library' },
+   { to: '/courses', label: 'Courses' },
+   { to: '/facilities', label: 'Facilities' },
+   { to: '/news', label: 'News' },
+   { to: '/about', label: 'About' },
+   { to: '/login', label: 'Login', extra: 'uppercase font-semibold' },
+ ];
   
   // A reusable component for menu items to avoid repetition
   const MenuItems = ({ isMobile = false }) => (
@@ -38,7 +38,7 @@ const NavBar = () => {
     </div>
   );
 
-  return (
+  return (
     <>
       <nav className="sticky top-0 z-30 bg-[#E3EBFF]/95 shadow-lg backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
@@ -47,7 +47,7 @@ const NavBar = () => {
             to="/"
             className="text-2xl font-bold tracking-wide text-gray-800 transition-colors duration-300 hover:text-blue-700"
           >
-            Mrs.College Guide
+            College Guide
           </Link>
 
           {/* Navigation Links for Desktop */}

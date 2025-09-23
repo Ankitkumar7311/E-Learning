@@ -8,8 +8,8 @@ import StudentNavBar from "../modules/student/StudentNavBar";
 import AdminDashboard from "../layouts/AdminDashboard";
 import HomePage from "../pages/HomePage";
 import Courses from "../pages/Courses";
-import Universities from "../pages/Universities";
-import Community from "../pages/Community";
+import CentralLibrary from "../pages/CentralLibrary";
+import Facilities from "../pages/Facilities";
 import News from "../pages/News";
 import About from "../pages/About";
 import Login from "../auth/Login";
@@ -41,6 +41,7 @@ import FindQB from "../modules/student/find/FindQB";
 
 import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
 import RequestPopup from "../modules/student/find/RequestPopup";
+
 // Layouts
 const PublicLayout = () => (
   <>
@@ -85,8 +86,8 @@ const routes = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: "courses", element: <Courses /> },
-      { path: "universities", element: <Universities /> },
-      { path: "community", element: <Community /> },
+      { path: "library", element: <CentralLibrary/> },
+      { path: "facilities", element: <Facilities /> },
       { path: "news", element: <News /> },
       { path: "about", element: <About /> },
       { path: "login", element: <Login /> },
