@@ -12,35 +12,33 @@ const Signup = () => {
   } = useForm();
 
   // Submit handler
- const onSubmit = async (data) => {
-  try {
-    const response = await fetch("http://localhost:8080/VidyaSarthi/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data), // send all form data
-    });
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("http://localhost:8080/VidyaSarthi/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    const result = await response.json();
+      const result = await response.json();
 
-    if (response.ok) {
-      alert("Account created successfully! You can now login.");
-      // Reset form after success
-      navigate("/Student-login");
-    } else {
-      alert(result.message || "Something went wrong!");
+      if (response.ok) {
+        alert("Account created successfully! You can now login.");
+        navigate("/Student-login");
+      } else {
+        alert(result.message || "Something went wrong!");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      alert("Server error. Please try again later.");
     }
-  } catch (error) {
-    console.error("Error during signup:", error);
-    alert("Server error. Please try again later.");
-  }
-};
+  };
 
-  
   // Reusable input component
   const InputField = ({ id, label, type = "text", registerOptions, ...rest }) => (
-    <div>
+    <div className="flex flex-col">
       <label htmlFor={id} className="block text-sm font-semibold text-gray-700">
         {label}
       </label>
@@ -61,7 +59,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans text-gray-800 p-4 flex items-center justify-center">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-3xl">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold mb-1">SignUp</h1>
@@ -70,69 +68,79 @@ const Signup = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          {/* Name */}
-          <InputField
-            id="name"
-            label="Name"
-            placeholder="Enter your full name"
-            registerOptions={{
-              required: "Name is required",
-              minLength: { value: 2, message: "Name must be at least 2 characters" },
-            }}
-          />
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          {/* First row of inputs */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <InputField
+              id="name"
+              label="Name"
+              placeholder="Enter your full name"
+              registerOptions={{
+                required: "Name is required",
+                minLength: { value: 2, message: "Name must be at least 2 characters" },
+              }}
+            />
+            <InputField
+              id="studentId"
+              label="Student ID"
+              placeholder="Enter your Student ID"
+              registerOptions={{
+                required: "Student ID is required",
+                minLength: { value: 4, message: "Student ID must be at least 4 characters" },
+              }}
+            />
+          </div>
 
-          {/* Student ID */}
-          <InputField
-            id="studentId"
-            label="Student ID"
-            placeholder="Enter your Student ID"
-            registerOptions={{
-              required: "Student ID is required",
-              minLength: { value: 4, message: "Student ID must be at least 4 characters" },
-            }}
-          />
+          {/* Second row of inputs */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <InputField
+              id="email"
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+              registerOptions={{
+                required: "Email is required",
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "Invalid email format",
+                },
+              }}
+            />
+            <InputField
+              id="branch"
+              label="Branch"
+              placeholder="Enter your branch (e.g., CSE)"
+              registerOptions={{
+                required: "Branch is required",
+              }}
+            />
+          </div>
 
-          {/* Email */}
-          <InputField
-            id="email"
-            label="Email"
-            type="email"
-            placeholder="Enter your email"
-            registerOptions={{
-              required: "Email is required",
-              pattern: {
-                value: /^\S+@\S+$/i,
-                message: "Invalid email format",
-              },
-            }}
-          />
+          {/* Third row of inputs */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <InputField
+              id="year"
+              label="Year"
+              placeholder="Enter your year (e.g., 2026)"
+              registerOptions={{
+                required: "Year is required",
+                pattern: {
+                  value: /^[0-9]{4}$/,
+                  message: "Year must be a 4-digit number",
+                },
+              }}
+            />
 
-          {/* Branch */}
-          <InputField
-            id="branch"
-            label="Branch"
-            placeholder="Enter your branch (e.g., CSE)"
-            registerOptions={{
-              required: "Branch is required",
-            }}
-          />
+            {/* OTP */}
+            <InputField
+              id="otp"
+              label="OTP"
+              placeholder="Enter your OTP"
+              registerOptions={{}}
+            />
+          </div>
 
-          {/* Year */}
-          <InputField
-            id="year"
-            label="Year"
-            placeholder="Enter your year (e.g., 2026)"
-            registerOptions={{
-              required: "Year is required",
-              pattern: {
-                value: /^[0-9]{4}$/,
-                message: "Year must be a 4-digit number",
-              },
-            }}
-          />
-
-          {/* Password */}
+          {/* Password + OTP button row */}
           <div>
             <label
               htmlFor="password"
@@ -140,7 +148,7 @@ const Signup = () => {
             >
               Password
             </label>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
               <input
                 id="password"
                 type="password"
@@ -163,8 +171,8 @@ const Signup = () => {
               />
               <button
                 type="button"
-                className="mt-1 px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md 
-                           hover:bg-yellow-400 transition-colors duration-200 flex-shrink-0"
+                className="mt-2 sm:mt-1 px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md 
+                           hover:bg-yellow-400 transition-colors duration-200 w-full h-14 sm:w-auto"
               >
                 Generate OTP
               </button>
@@ -173,14 +181,6 @@ const Signup = () => {
               <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
             )}
           </div>
-
-          {/* OTP */}
-          <InputField
-            id="otp"
-            label="OTP"
-            placeholder="Enter your OTP"
-            registerOptions={{}}
-          />
 
           {/* Submit Button */}
           <div className="pt-4">
