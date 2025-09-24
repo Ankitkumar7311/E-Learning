@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import ProfileLeft from "../../layouts/facultydashboard/ProfileLeft";
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import teacher from "../../assets/teacher.jpg";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
-const UpdateTeach = ({ email }) => {
+const UpdateTeach = () => {
+  const location = useLocation();
+  const { email, facultyId } = location.state || {}; // login se aayega
+
   const [formData, setFormData] = useState({
     address: "",
     branch: "",
@@ -15,6 +16,7 @@ const UpdateTeach = ({ email }) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,34 +29,25 @@ const UpdateTeach = ({ email }) => {
     fetch("http://localhost:8080/VidyaSarthi/updateFaculty", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...formData, facultyId: formData.facultyId }),
+      body: JSON.stringify({ ...formData, facultyId }), // facultyId bhi jayega
     })
-      .then(async (res) => {
-        const contentType = res.headers.get("content-type");
-        let data;
-
-        if (contentType && contentType.includes("application/json")) {
-          data = await res.json();
-          if (!res.ok) throw new Error(data.message || "Update failed");
-        } else {
-          data = await res.text();
-          if (!res.ok) throw new Error(data || "Update failed");
-        }
-        return data;
+      .then((res) => {
+        if (!res.ok) throw new Error("Update failed");
+        return res.text();
       })
-      .then((message) =>
-        toast.success(message || "Profile updated successfully")
-      )
-      .catch((err) => toast.error(err.message || "Something went wrong"))
-      .finally(() => setLoading(false));
+      .then(() => {
+        setMsg("Profile updated successfully!");
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setMsg("Error updating profile.");
+        setLoading(false);
+      });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row items-center md:items-start justify-start md:justify-center p-4 md:p-10 gap-6">
-      {/* Left card with backend profile */}
-      <ProfileLeft email={email} />
-
-      {/* Update Form */}
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col justify-start items-center bg-white shadow-2xl rounded-xl p-6 md:p-8 w-full max-w-md space-y-4"
@@ -65,17 +58,27 @@ const UpdateTeach = ({ email }) => {
           className="h-32 w-32 md:h-36 md:w-36 rounded-xl object-cover shadow-md"
         />
 
+        {/* FacultyId field (readonly) */}
+        <input
+          className="bg-gray-200 p-2 rounded-xl w-full cursor-not-allowed"
+          type="text"
+          name="facultyId"
+          placeholder="Faculty ID"
+          value={facultyId || ""}
+          readOnly
+        />
+
         <input
           className="bg-blue-100 p-2 rounded-xl w-full"
           type="file"
-          placeholder="Upload image"
+          placeholder="Upload your profile photo"
         />
 
         <input
           className="bg-blue-100 p-2 rounded-xl w-full"
           type="text"
-          name="address"
-          placeholder="Enter address"
+          name="Enter Email address"
+          placeholder="Enter your address"
           value={formData.address}
           onChange={handleChange}
         />
@@ -84,7 +87,7 @@ const UpdateTeach = ({ email }) => {
           className="bg-blue-100 p-2 rounded-xl w-full"
           type="text"
           name="branch"
-          placeholder="Enter branch"
+          placeholder="Enter your branch (e.g. CSE, ECE)"
           value={formData.branch}
           onChange={handleChange}
         />
@@ -93,7 +96,7 @@ const UpdateTeach = ({ email }) => {
           className="bg-blue-100 p-2 rounded-xl w-full"
           type="text"
           name="subject"
-          placeholder="Enter subject"
+          placeholder="Enter your subject specialization"
           value={formData.subject}
           onChange={handleChange}
         />
@@ -102,7 +105,7 @@ const UpdateTeach = ({ email }) => {
           className="bg-blue-100 p-2 rounded-xl w-full"
           type="text"
           name="designation"
-          placeholder="Enter designation"
+          placeholder="Enter your designation (e.g. Assistant Professor)"
           value={formData.designation}
           onChange={handleChange}
         />
@@ -111,7 +114,7 @@ const UpdateTeach = ({ email }) => {
           className="bg-blue-100 p-2 rounded-xl w-full"
           type="text"
           name="phone"
-          placeholder="Enter phone number"
+          placeholder="Enter your phone number"
           value={formData.phone}
           onChange={handleChange}
         />
@@ -120,7 +123,7 @@ const UpdateTeach = ({ email }) => {
           className="bg-blue-100 p-2 rounded-xl w-full"
           type="password"
           name="password"
-          placeholder="Enter password"
+          placeholder="Enter your new password"
           value={formData.password}
           onChange={handleChange}
         />
@@ -132,11 +135,11 @@ const UpdateTeach = ({ email }) => {
         >
           {loading ? "Updating..." : "Update"}
         </button>
-      </form>
 
-      <ToastContainer position="top-right" autoClose={3000} />
+        {msg && <p className="text-center mt-2">{msg}</p>}
+      </form>
     </div>
   );
 };
 
-export default UpdateTeach;
+export default UpdateTeach;     

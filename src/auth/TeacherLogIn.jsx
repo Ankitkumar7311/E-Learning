@@ -23,7 +23,7 @@ const TeacherLogin = () => {
     fetch("http://localhost:8080/VidyaSarthi/faculty/getFacultyEmail", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: data.email }),
+      body: JSON.stringify({ email: data.email, password: data.password }),
     })
       .then((res) => {
         if (!res.ok) {
@@ -33,8 +33,17 @@ const TeacherLogin = () => {
         return res.json();
       })
       .then((profile) => {
-        login({ role: "teacher", user: profile.email });
-        navigate("/teacher/dashboard", { state: { email: profile.email } });
+        // profile se facultyId bhi lena
+        login({
+          role: "teacher",
+          user: profile.email,
+          facultyId: profile.facultyId,
+        });
+
+        // facultyId ko dashboard me bhejna
+        navigate("/teacher/dashboard", {
+          state: { email: profile.email, facultyId: profile.facultyId },
+        });
       })
       .catch((err) => setError(err.message));
   };
@@ -76,12 +85,13 @@ const TeacherLogin = () => {
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-3"
             >
+              {/* Email */}
               <label className="font-medium text-sm sm:text-base md:text-lg leading-tight">
                 Institute Email ID
               </label>
               <input
                 type="email"
-                placeholder="Enter your username"
+                placeholder="Enter your email"
                 className="w-full bg-[#D8E7F5] rounded-xl px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                 {...register("email", {
                   required: "Email is required",
@@ -95,6 +105,7 @@ const TeacherLogin = () => {
                 <p className="text-red-500 text-sm">{errors.email.message}</p>
               )}
 
+              {/* Password */}
               <label className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
                 Password
               </label>
@@ -108,8 +119,18 @@ const TeacherLogin = () => {
                 <p className="text-red-500 text-sm">{errors.password.message}</p>
               )}
 
+              {/* Forgot Password */}
+              <button
+                type="button"
+                className="self-end text-xs sm:text-sm md:text-base text-black hover:underline"
+              >
+                Forgot Password?
+              </button>
+
+              {/* Error */}
               {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
 
+              {/* Submit */}
               <button
                 type="submit"
                 className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-sm sm:text-base md:text-lg py-2.5 md:py-3 mt-2"
@@ -119,23 +140,23 @@ const TeacherLogin = () => {
             </form>
 
             {/* Extra links */}
-            <div className="mt-6 space-y-2">
-              <p className="text-xs sm:text-sm md:text-lg text-center">
-                Are you a Student?{" "}
+            <div className="mt-6 space-y-2 text-center">
+              <p className="text-xs sm:text-sm md:text-base">
+                Have Admin Access?{" "}
+                <b
+                  className="hover:underline cursor-pointer"
+                  onClick={() => navigate("/login")}
+                >
+                  LogIn as an Admin
+                </b>
+              </p>
+              <p className="text-xs sm:text-sm md:text-base">
+                Have Student Access?{" "}
                 <b
                   className="hover:underline cursor-pointer"
                   onClick={() => navigate("/student-login")}
                 >
                   LogIn as a Student
-                </b>
-              </p>
-              <p className="text-xs sm:text-sm md:text-lg text-center">
-                Are you a Teacher?{" "}
-                <b
-                  className="hover:underline cursor-pointer"
-                  onClick={() => navigate("/teacher-login")}
-                >
-                  LogIn as a Teacher
                 </b>
               </p>
             </div>
