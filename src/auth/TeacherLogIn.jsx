@@ -23,7 +23,7 @@ const TeacherLogin = () => {
     fetch("http://localhost:8080/VidyaSarthi/faculty/getFacultyEmail", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: data.email, password: data.password }),
+      body: JSON.stringify({ email: data.email }),
     })
       .then((res) => {
         if (!res.ok) {
@@ -33,14 +33,18 @@ const TeacherLogin = () => {
         return res.json();
       })
       .then((profile) => {
-        // profile se facultyId bhi lena
+        // ✅ check password here
+        if (profile.password !== data.password) {
+          throw new Error("Invalid password");
+        }
+
+        // login successful
         login({
           role: "teacher",
           user: profile.email,
           facultyId: profile.facultyId,
         });
 
-        // facultyId ko dashboard me bhejna
         navigate("/teacher/dashboard", {
           state: { email: profile.email, facultyId: profile.facultyId },
         });
