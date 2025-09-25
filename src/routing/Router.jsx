@@ -5,6 +5,7 @@ import AdminNavBar from "../modules/admin/AdminNavBar";
 import TeacherNavBar from "../modules/faculty/TeacherNavBar";
 import StudentNavBar from "../modules/student/StudentNavBar";
 
+
 import AdminDashboard from "../layouts/AdminDashboard";
 import HomePage from "../pages/HomePage";
 import Courses from "../pages/Courses";
@@ -53,6 +54,7 @@ const PublicLayout = () => (
 const AdminLayout = () => (
   <>
     <AdminNavBar />
+    
     <Outlet />
   </>
 );

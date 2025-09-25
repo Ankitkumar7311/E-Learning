@@ -5,6 +5,7 @@ import bg from "../assets/Rectangle.png";
 import curveBg from "../assets/Curve.png";
 import card from "../assets/card.png";
 import { useAuth } from "./AuthContext";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const TeacherLogin = () => {
   const navigate = useNavigate();

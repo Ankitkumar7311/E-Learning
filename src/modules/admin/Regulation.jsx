@@ -111,21 +111,78 @@ const RegulationForm = () => {
       >
         <h2 className="text-xl font-semibold mb-4">Add Regulation</h2>
 
-        <SelectField
+        <div className="mb-3 flex items-center gap-4">
+  <label className="w-40">Regulation :</label>
+  <input
+    type="text"
+    name="regulation"
+    value={formData.regulation}
+    onChange={handleChange}
+    placeholder="Enter Regulation"
+    className="flex-1 p-2 rounded-md bg-blue-100"
+  />
+</div>
+
+<div className="mb-3 flex items-center gap-4">
+  <label className="w-40">Branch :</label>
+  <input
+    type="text"
+    name="branch"
+    value={formData.branch}
+    onChange={handleChange}
+    placeholder="Enter Branch"
+    className="flex-1 p-2 rounded-md bg-blue-100"
+  />
+</div>
+
+
+        {/* <SelectField
           label="Regulation"
           name="regulation"
           options={regulations}
           value={formData.regulation}
           onChange={handleChange}
-        />
+        /> */}
 
-        <SelectField
+        {/* <div className="flex flex-col"> */}
+
+
+
+  {/* <label className="w-40">Regulation</label>
+  <input
+    type="text"
+    name="regulation"
+    value={formData.regulation}
+    onChange={handleChange}
+    placeholder="Enter Regulation"
+    className="p-2 rounded-md bg-blue-100 border border-gray-300"
+  /> <br /> */}
+{/* </div> */}
+
+
+
+        {/* <SelectField
           label="Branch"
           name="branch"
           options={branches}
           value={formData.branch}
           onChange={handleChange}
-        />
+        /> */}
+
+        {/* <div className="mb-3 flex items-center gap-4"> */}
+
+
+  {/* <label className="w-40">Branch :</label>
+  <input
+    type="text"
+    name="branch"
+    value={formData.branch}
+    onChange={handleChange}
+    placeholder="Enter Branch"
+    className="flex-1 p-2 rounded-md bg-blue-100"
+  /> */}
+{/* </div> */}
+
 
         <SelectField
           label="Semester"

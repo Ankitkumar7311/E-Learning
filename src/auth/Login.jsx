@@ -1,6 +1,7 @@
 import academic from "../assets/academic.png";
 import Background from "../modules/admin/Background";
 import Form from "./Form";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   return (
@@ -39,3 +40,41 @@ const Login = () => {
 };
 
 export default Login;
+
+// 
+
+// import { useState } from "react";
+// import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+// const Form = () => {
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [password, setPassword] = useState("");
+
+//   return (
+//     <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-full max-w-md p-6 bg-white rounded-xl shadow-lg">
+//       <h2 className="text-2xl font-semibold mb-4 text-gray-800">Login</h2>
+
+//       <div className="mb-4 relative">
+//         <input
+//           type={showPassword ? "text" : "password"}
+//           placeholder="Enter Password"
+//           value={password}
+//           onChange={(e) => setPassword(e.target.value)}
+//           className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+//         />
+//         <span
+//           className="absolute right-3 top-3 text-gray-600 cursor-pointer"
+//           onClick={() => setShowPassword(!showPassword)}
+//         >
+//           {showPassword ? <FaEyeSlash /> : <FaEye />}
+//         </span>
+//       </div>
+
+//       <button className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">
+//         Login
+//       </button>
+//     </div>
+//   );
+// };
+
+// export default Form;
