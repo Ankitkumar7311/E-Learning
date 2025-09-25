@@ -1,199 +1,9 @@
-// import React, { useState } from "react";
-// import { FaUpload } from "react-icons/fa";
-
-// const UploadQB = () => {
-//   const semesters = [
-//     "1st Semester (2021 - 22 Autumn)",
-//     "2nd Semester (2021 - 22 Spring)",
-//     "3rd Semester (2022 - 23 Autumn)",
-//     "4th Semester (2022 - 23 Spring)",
-//     "5th Semester (2022 - 23 Autumn)",
-//     "6th Semester (2023 - 24 Spring)",
-//     "7th Semester (2023 - 24 Autumn)",
-//     "8th Semester (2023 - 24 Spring)",
-//   ];
-
-//   const subjects = ["A", "B", "C", "D"];
-//   const concepts = ["A", "B", "C", "D"];
-
-//   const [formData, setFormData] = useState({
-//     semester: "",
-//     subjects: Array(subjects.length).fill(""),
-//     concepts: Array(concepts.length).fill(""),
-//     filesForConcepts: Array(concepts.length).fill(null),
-//   });
-
-//   const [submitted, setSubmitted] = useState(false);
-
-//   const handleChange = (e) =>
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-
-//   const handleSubjectChange = (index, value) => {
-//     const updated = [...formData.subjects];
-//     updated[index] = value;
-//     setFormData({ ...formData, subjects: updated });
-//   };
-
-//   const handleConceptChange = (index, value) => {
-//     const updated = [...formData.concepts];
-//     updated[index] = value;
-//     setFormData({ ...formData, concepts: updated });
-//   };
-
-//   const handleConceptFileChange = (index, file) => {
-//     const updated = [...formData.filesForConcepts];
-//     updated[index] = file;
-//     setFormData({ ...formData, filesForConcepts: updated });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-
-//     // Validation
-//     if (!formData.semester) {
-//       alert("Please select a semester!");
-//       return;
-//     }
-//     if (formData.subjects.every((sub) => !sub)) {
-//       alert("Select at least one subject!");
-//       return;
-//     }
-//     if (formData.filesForConcepts.every((file) => !file)) {
-//       alert("Upload at least one file for units!");
-//       return;
-//     }
-
-//     console.log("Form Submitted ✅", formData);
-//     setSubmitted(true);
-
-//     // Optional: Reset form
-//     setFormData({
-//       semester: "",
-//       subjects: Array(subjects.length).fill(""),
-//       concepts: Array(concepts.length).fill(""),
-//       filesForConcepts: Array(concepts.length).fill(null),
-//     });
-//   };
-
-//   return (
-//     <div className="w-[100%] max-w-4xl mx-auto bg-white shadow-md rounded-xl p-8">
-//       <h2 className="text-lg font-semibold mb-6">Complete your Upload:</h2>
-
-//       <form onSubmit={handleSubmit} className="space-y-6">
-//         {/* Semester */}
-//         <div className="flex items-center">
-//           <label className="w-48 font-medium">Choose Semester:</label>
-//           <select
-//             name="semester"
-//             value={formData.semester}
-//             onChange={handleChange}
-//             className="flex-1 p-3 rounded-lg bg-blue-100"
-//           >
-//             <option value="">-- Select Semester --</option>
-//             {semesters.map((sem, idx) => (
-//               <option key={idx} value={sem}>
-//                 {sem}
-//               </option>
-//             ))}
-//           </select>
-//         </div>
-
-//         {/* Subjects */}
-//         <div className="flex items-center">
-//           <label className="w-48 font-medium">
-//             Choose Subjects: <span className="text-gray-500 text-xs">(Priority)</span>
-//           </label>
-//           <div className="flex gap-3 flex-1">
-//             {subjects.map((s, index) => (
-//               <select
-//                 key={index}
-//                 value={formData.subjects[index]}
-//                 onChange={(e) => handleSubjectChange(index, e.target.value)}
-//                 className="flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
-//               >
-//                 <option value="">{s}. Choose</option>
-//                 <option value="Maths">Maths</option>
-//                 <option value="Physics">Physics</option>
-//                 <option value="Chemistry">Chemistry</option>
-//                 <option value="English">English</option>
-//                 <option value="Computer Science">Computer Science</option>
-//               </select>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* Concepts */}
-//         <div>
-//           <label className="w-48 font-medium block mb-2">Choose Units:</label>
-//           <div className="flex flex-col gap-4 flex-1">
-//             {concepts.map((c, index) => (
-//               <div
-//                 key={index}
-//                 className="flex items-center gap-3 border p-3 rounded-lg shadow-sm"
-//               >
-//                 <select
-//                   value={formData.concepts[index]}
-//                   onChange={(e) => handleConceptChange(index, e.target.value)}
-//                   className="flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
-//                 >
-//                   <option value="">{c}. Choose</option>
-//                   <option value="Data Structures">Data Structures</option>
-//                   <option value="Algorithms">Algorithms</option>
-//                   <option value="Operating Systems">Operating Systems</option>
-//                   <option value="Networks">Networks</option>
-//                 </select>
-
-//                 <label className="flex items-center gap-2 cursor-pointer bg-yellow-200 hover:bg-yellow-300 px-4 py-2 rounded-lg shadow">
-//                   <FaUpload className="text-gray-700" />
-//                   <span className="text-sm">Upload</span>
-//                   <input
-//                     type="file"
-//                     className="hidden"
-//                     onChange={(e) =>
-//                       handleConceptFileChange(index, e.target.files[0] || null)
-//                     }
-//                   />
-//                 </label>
-
-//                 {formData.filesForConcepts[index] && (
-//                   <span className="text-xs text-green-600">
-//                     {formData.filesForConcepts[index].name}
-//                   </span>
-//                 )}
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* Submit */}
-//         <div className="flex justify-center">
-//           <button
-//             type="submit"
-//             className="bg-yellow-400 hover:bg-yellow-500 text-white font-medium px-8 py-2 rounded-md shadow"
-//           >
-//             Submit Now
-//           </button>
-//         </div>
-//       </form>
-
-//       {/* Success Message */}
-//       {submitted && (
-//         <div className="mt-6 p-4 bg-green-100 text-green-700 rounded-lg shadow">
-//           🎉 Form submitted successfully!
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default UploadQB;
-
 import React, { useState } from "react";
-import { FaUpload } from "react-icons/fa";
+import { FaUpload, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const UploadQB = () => {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   const semesters = [
     "1st Semester",
@@ -206,7 +16,6 @@ const UploadQB = () => {
     "8th Semester",
   ];
 
-  // Using arrays of objects for subjects and concepts to hold both name and code/ID
   const subjects = [
     { code: "MTH102", name: "Maths" },
     { code: "PHY101", name: "Physics" },
@@ -215,18 +24,15 @@ const UploadQB = () => {
     { code: "CSE201", name: "Computer Science" },
   ];
 
-  const concepts = [
-    { id: "DS", name: "Data Structures" },
-    { id: "ALGO", name: "Algorithms" },
-    { id: "OS", name: "Operating Systems" },
-    { id: "NET", name: "Networks" },
-  ];
+  const branches = ["CSE", "ECE", "MECH", "CIVIL"];
+  const regulations = ["R18", "R20", "R22"];
 
   const [formData, setFormData] = useState({
+    regulation: "",
+    branch: "",
     semester: "",
-    subjects: Array(4).fill(""),
-    concepts: Array(concepts.length).fill(""),
-    filesForConcepts: Array(concepts.length).fill(null),
+    subject: "",
+    unitFiles: [],
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -235,98 +41,120 @@ const UploadQB = () => {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubjectChange = (index, value) => {
-    const updated = [...formData.subjects];
-    updated[index] = value;
-    setFormData({ ...formData, subjects: updated });
+  const handleAddUnit = () => {
+    setFormData((prev) => ({
+      ...prev,
+      unitFiles: [...prev.unitFiles, null],
+    }));
   };
 
-  const handleConceptChange = (index, value) => {
-    const updated = [...formData.concepts];
-    updated[index] = value;
-    setFormData({ ...formData, concepts: updated });
-  };
-
-  const handleConceptFileChange = (index, file) => {
-    const updated = [...formData.filesForConcepts];
+  const handleUnitFileChange = (index, file) => {
+    const updated = [...formData.unitFiles];
     updated[index] = file;
-    setFormData({ ...formData, filesForConcepts: updated });
+    setFormData({ ...formData, unitFiles: updated });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.semester) {
-      alert("Please select a semester!");
-      return;
-    }
-    const primarySubjectCode = formData.subjects.find((sub) => sub);
-    if (!primarySubjectCode) {
-      alert("Select at least one subject!");
-      return;
-    }
-    if (formData.filesForConcepts.every((file) => !file)) {
-      alert("Upload at least one file for a unit!");
+    const { regulation, branch, semester, subject, unitFiles } = formData;
+
+    if (!regulation || !branch || !semester || !subject) {
+      alert("Please fill all dropdowns!");
       return;
     }
 
-    console.log("Form Submitted ✅", formData);
-    setSubmitted(true);
+    if (unitFiles.length === 0 || unitFiles.every((file) => !file)) {
+      alert("Upload at least one unit file!");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const body = new FormData();
-      body.append("semester", formData.semester);
+      body.append("regulation", regulation);
+      body.append("branch", branch);
+      body.append("semester", semester);
+      body.append("subject", subject);
 
-      formData.subjects.forEach((sub, i) => {
-        if (sub) body.append(`subjects[${i}]`, sub);
-      });
-
-      formData.concepts.forEach((concept, i) => {
-        if (concept) body.append(`concepts[${i}]`, concept);
-      });
-
-      formData.filesForConcepts.forEach((file, i) => {
-        if (file) body.append(`filesForConcepts[${i}]`, file);
+      unitFiles.forEach((file, i) => {
+        if (file) body.append(`unitFiles[${i + 1}]`, file);
       });
 
       const response = await fetch(
         "http://localhost:8080/VidyaSarthi/faculty/uploadQB",
         {
           method: "POST",
-          body, // ✅ FormData goes directly
+          body,
         }
       );
 
       const result = await response.json();
       if (response.ok) {
-        alert("doc submitted");
+        alert("QB submitted successfully!");
+        setSubmitted(true);
         navigate("/Student-login");
       } else {
-        alert(result.message || "Something went wrong!");
+        alert(result.message || "Submission failed!");
       }
 
-      // ✅ Reset form on complete success
       setFormData({
+        regulation: "",
+        branch: "",
         semester: "",
-        subjects: Array(4).fill(""),
-        concepts: Array(concepts.length).fill(""),
-        filesForConcepts: Array(concepts.length).fill(null),
+        subject: "",
+        unitFiles: [],
       });
     } catch (error) {
-      console.error("Error during submission:", error);
-      alert(
-        "An error occurred during submission. One or more files could not be uploaded. Please check the console."
-      );
+      console.error("Submission error:", error);
+      alert("Error during submission. Check console for details.");
     } finally {
-      // Optional cleanup if needed
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="w-[100%] max-w-4xl mx-auto bg-white shadow-md rounded-xl p-6 sm:p-8">
-      <h2 className="text-lg font-semibold mb-6">Complete your Upload:</h2>
+    <div className="w-full max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-6 sm:p-8">
+      <h2 className="text-xl font-semibold mb-6">Upload QB popup</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Regulation */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <label className="sm:w-48 font-medium">Choose Regulation:</label>
+          <select
+            name="regulation"
+            value={formData.regulation}
+            onChange={handleChange}
+            className="w-full sm:flex-1 p-3 rounded-lg bg-blue-100"
+          >
+            <option value="">-- Select Regulation --</option>
+            {regulations.map((reg) => (
+              <option key={reg} value={reg}>
+                {reg}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Branch */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <label className="sm:w-48 font-medium">Choose Branch:</label>
+          <select
+            name="branch"
+            value={formData.branch}
+            onChange={handleChange}
+            className="w-full sm:flex-1 p-3 rounded-lg bg-blue-100"
+          >
+            <option value="">-- Select Branch --</option>
+            {branches.map((br) => (
+              <option key={br} value={br}>
+                {br}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Semester */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <label className="sm:w-48 font-medium">Choose Semester:</label>
@@ -345,52 +173,34 @@ const UploadQB = () => {
           </select>
         </div>
 
-        {/* Subjects */}
+        {/* Subject */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          <label className="sm:w-48 font-medium">
-            Choose Subjects:{" "}
-            <span className="text-gray-500 text-xs">(Priority)</span>
-          </label>
-          <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full">
-            {subjects.map((s, index) => (
-              <select
-                key={index}
-                value={formData.subjects[index]}
-                onChange={(e) => handleSubjectChange(index, e.target.value)}
-                className="w-full sm:flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
-              >
-                <option value="">{s.name}. Choose</option>
-                <option value="Maths">Maths</option>
-                <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="English">English</option>
-                <option value="Computer Science">Computer Science</option>
-              </select>
+          <label className="sm:w-48 font-medium">Choose Subject:</label>
+          <select
+            name="subject"
+            value={formData.subject}
+            onChange={handleChange}
+            className="w-full sm:flex-1 p-3 rounded-lg bg-blue-100"
+          >
+            <option value="">-- Select Subject --</option>
+            {subjects.map((sub) => (
+              <option key={sub.code} value={sub.code}>
+                {sub.name}
+              </option>
             ))}
-          </div>
+          </select>
         </div>
 
-        {/* Concepts */}
+        {/* Dynamic Upload Units */}
         <div>
-          <label className="w-48 font-medium block mb-2">Choose Units:</label>
-          <div className="flex flex-col gap-4 flex-1">
-            {concepts.map((c, index) => (
+          <label className="font-medium block mb-2">Upload Units:</label>
+          <div className="space-y-4">
+            {formData.unitFiles.map((file, index) => (
               <div
                 key={index}
                 className="flex flex-col sm:flex-row items-start sm:items-center gap-3 border p-3 rounded-lg shadow-sm"
               >
-                <select
-                  value={formData.concepts[index]}
-                  onChange={(e) => handleConceptChange(index, e.target.value)}
-                  className="w-full sm:flex-1 p-2 rounded-lg border border-gray-300 bg-blue-100"
-                >
-                  <option value="">{index + 1}. Choose Unit</option>
-                  {concepts.map((concept) => (
-                    <option key={concept.id} value={concept.name}>
-                      {concept.name}
-                    </option>
-                  ))}
-                </select>
+                <span className="font-medium w-24">Unit-{index + 1}:</span>
 
                 <label
                   className={`flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg shadow ${
@@ -405,37 +215,49 @@ const UploadQB = () => {
                     type="file"
                     className="hidden"
                     onChange={(e) =>
-                      handleConceptFileChange(index, e.target.files[0] || null)
+                      handleUnitFileChange(index, e.target.files[0] || null)
                     }
                     disabled={isSubmitting}
                   />
                 </label>
 
-                {formData.filesForConcepts[index] && (
+                {file && (
                   <span className="text-xs text-green-600 truncate max-w-[150px]">
-                    {formData.filesForConcepts[index].name}
+                    {file.name}
                   </span>
                 )}
               </div>
             ))}
           </div>
+
+          {/* Add Unit Button */}
+          <div className="flex justify-center mt-4">
+            <button
+              type="button"
+              onClick={handleAddUnit}
+              className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow"
+            >
+              <FaPlus />
+              <span>Add Unit</span>
+            </button>
+          </div>
         </div>
 
         {/* Submit */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-6">
           <button
             type="submit"
             className="bg-yellow-400 hover:bg-yellow-500 text-white font-medium px-8 py-2 rounded-md shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Submitting..." : "Submit Now"}
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>
 
       {submitted && (
         <div className="mt-6 p-4 bg-green-100 text-green-700 rounded-lg shadow">
-          🎉 Form submitted successfully!
+          🎉 QB submitted successfully!
         </div>
       )}
     </div>
