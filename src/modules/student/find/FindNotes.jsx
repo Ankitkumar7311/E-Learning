@@ -13,7 +13,7 @@ let FindNotes = () => {
                 Choose Regulation:
               </label>
               <select className="w-full sm:w-2/3 h-11 bg-blue-100 border border-gray-200 rounded-lg p-2 text-sm sm:text-base">
-                <option>R22</option>
+                <option hidden>select the regulation</option>
               </select>
             </div>
 
@@ -23,7 +23,9 @@ let FindNotes = () => {
                 Choose Branch:
               </label>
               <select className="w-full sm:w-2/3 h-11 bg-blue-100 border border-gray-200 rounded-lg p-2 text-sm sm:text-base">
-                <option>CSD</option>
+                <option hidden>Select Branch </option>
+                <option >CSD</option>
+
               </select>
             </div>
 
@@ -33,7 +35,7 @@ let FindNotes = () => {
                 Choose Semester:
               </label>
               <select className="w-full sm:w-2/3 h-11 bg-blue-100 border border-gray-200 rounded-lg p-2 text-sm sm:text-base">
-                <option>7th Semester </option>
+                <option hidden>choose semester </option>
               </select>
             </div>
 
@@ -43,7 +45,7 @@ let FindNotes = () => {
                 Choose Subject: <br />
               </label>
               <select className="w-full sm:w-2/3 h-11 bg-blue-100 border border-gray-200 rounded-lg p-2 text-sm sm:text-base">
-                <option>AI</option>
+                <option hidden >choose the subject</option>
               </select>
             </div>
 
