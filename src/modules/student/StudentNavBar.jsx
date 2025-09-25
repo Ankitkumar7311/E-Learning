@@ -74,7 +74,7 @@ const StudentNavBar = () => {
           {/* --- Right Section for DESKTOP (Help & Logout) --- */}
           <div className="hidden items-center space-x-8 lg:flex">
             <Link
-              to="/request-report"
+              to="/student/dashboard/request-report"
               className="font-medium text-gray-700 transition duration-300 hover:text-blue-600"
             >
               Help & Support

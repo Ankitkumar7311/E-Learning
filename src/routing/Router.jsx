@@ -43,6 +43,8 @@ import FindQB from "../modules/student/find/FindQB";
 import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
 import RequestPopup from "../modules/student/find/RequestPopup";
 import Announcment from "../modules/student/find/Announcment";
+import HelpSupport from "../pages/HelpSupport";
+import RequestQuestion from "../modules/student/RequestQuestion";
 // Layouts
 const PublicLayout = () => (
   <>
@@ -96,6 +98,9 @@ const routes = createBrowserRouter([
       { path: "student-login", element: <StudentLogin /> },
       { path: "teacher-login", element: <TeacherLogin /> },
       { path: "signup", element: <Signup /> },
+      { path:"student/dashboard/request-report" , element:<HelpSupport/>},
+      { path:"teacher/request-report" , element: <HelpSupport/>},
+      { path:"student/request-question" , element:<RequestQuestion/>}
     ],
   },
 
