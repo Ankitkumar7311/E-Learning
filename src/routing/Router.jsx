@@ -42,6 +42,7 @@ import FindQB from "../modules/student/find/FindQB";
 import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
 import RequestPopup from "../modules/student/find/RequestPopup";
 
+import Announcment from "../modules/student/find/Announcment";
 // Layouts
 const PublicLayout = () => (
   <>
@@ -161,9 +162,10 @@ const routes = createBrowserRouter([
        }, // ✅ renamed correctly
       { path: "profile", element: <StudentProfile /> }, // ✅ profile route
       { path: "documents", element: <Documents /> },
+      {path: "announcements", element: <Announcment/>},
       { path: "academic-calendar", element: <AcadamicCalender /> },
       { path: "subjects/encapsulation", element: <Encapsulation /> },
-        {path:"RequestPopup", element:<RequestPopup/>},
+      {path:"RequestPopup", element:<RequestPopup/>},
 
     ],
   },
