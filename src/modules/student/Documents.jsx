@@ -83,7 +83,7 @@ const Documents = () => {
         {/* Subject & PYQs Sections */}
         <div className="flex flex-col md:flex-row gap-8">
           {/* Subject Section */}
-          <section className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner">
+          <section className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner ">
             <h2 className="text-xl font-bold mb-4">Subject:</h2>
             <div className="space-y-2 mb-4">
               {subjects.map((subject, index) => (

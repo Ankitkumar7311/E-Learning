@@ -46,6 +46,8 @@ const TeacherLogin = () => {
         });
       })
       .catch((err) => setError(err.message));
+
+      
   };
 
   return (
