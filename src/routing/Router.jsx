@@ -41,7 +41,6 @@ import FindQB from "../modules/student/find/FindQB";
 
 import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
 import RequestPopup from "../modules/student/find/RequestPopup";
-
 import Announcment from "../modules/student/find/Announcment";
 // Layouts
 const PublicLayout = () => (
