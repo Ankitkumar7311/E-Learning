@@ -56,7 +56,7 @@ const TeacherTable = () => {
   const fetchFaculty = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:8080/VidyaSarthi/facultyList");
+      const response = await fetch("http://localhost:8080/VidyaSarthi/getListByRole/Faculty");
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
       setFaculty(data);

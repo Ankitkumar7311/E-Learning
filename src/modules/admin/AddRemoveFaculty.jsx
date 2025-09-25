@@ -7,7 +7,7 @@ const API_BASE_URL = "http://localhost:8080/VidyaSarthi";
 const InputField = ({ ...props }) => (
   <input
     {...props}
-    className={`w-full h-[50px] p-3 border border-gray-300 rounded-2xl bg-blue-100 text-gray-700 
+    className={`w-full h-[45px] p-3 border border-gray-300 rounded-2xl bg-blue-100 text-gray-700 
       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
       ${props.disabled ? "opacity-70 cursor-not-allowed" : ""}`}
   />
@@ -17,7 +17,7 @@ const InputField = ({ ...props }) => (
 const ActionButton = ({ children, ...props }) => (
   <button
     {...props}
-    className={`w-full sm:w-[200px] h-[50px] bg-yellow-500 text-white font-bold rounded-[20px] 
+    className={`w-full sm:w-[150px] h-[45px] bg-yellow-500 text-white font-bold rounded-[20px] 
     hover:bg-yellow-600 transition duration-300 shadow`}
   >
     {children}
@@ -45,11 +45,12 @@ const AddRemoveFaculty = () => {
     fetchAllFaculty();
   }, [fetchAllFaculty]);
 
+  // ✅ THIS IS THE CORRECTED SECTION
   useEffect(() => {
     const fetchNameById = async () => {
       if (removeId.trim()) {
         try {
-          const response = await fetch(`${API_BASE_URL}/faculty/${removeId}`);
+          const response = await fetch(`${API_BASE_URL}/searchByFacultyId/${removeId}`);
           if (!response.ok) {
             setRemoveName("Faculty not found");
             return;
@@ -140,7 +141,7 @@ const AddRemoveFaculty = () => {
         </form>
       </section>
 
-      {/* ✅ Scrollable Teacher Table */}
+      {/* Scrollable Teacher Table */}
       <div className="w-full overflow-x-auto">
         <div className="min-w-[700px]">
           <TeacherTable faculty={facultyList} />

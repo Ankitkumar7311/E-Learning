@@ -56,25 +56,25 @@ const About = () => {
               name="Sri Teegala Krishna Reddy"
               title="Founder Chairman"
               description="The Mayor of Hyderabad and a philanthropist by nature. His vision is to make quality education accessible to all students, including those from rural areas, empowering them to pursue their dreams while upholding strong moral and ethical values."
-              imageUrl="./src/assets/tkrimg.jpg" // <<-- REPLACE WITH ACTUAL IMAGE PATH
+              imageUrl="./src/assets/tkrimg.jpg"
             />
             <ProfileCard
               name="Dr. T. Harinath Reddy"
               title="Secretary"
               description="The pivotal source of encouragement in the college. He puts in all his efforts to see students excel and is always looking for avenues to provide them with a cutting edge to develop their capabilities and potential."
-              imageUrl="/./src/assets/hariimg.jpg" // <<-- REPLACE WITH ACTUAL IMAGE PATH
+              imageUrl="/./src/assets/hariimg.jpg" 
             />
             <ProfileCard
               name="Sri. T. Amarnath Reddy"
               title="Treasurer"
               description="He is dedicated to developing a global perspective among students to cope with the fast-changing technological landscape. He champions a holistic approach, focusing on values, discipline, and innovation to ensure students achieve their full potential."
-              imageUrl="./src/assets/amarimg.jpg" // <<-- REPLACE WITH ACTUAL IMAGE PATH
+              imageUrl="./src/assets/amarimg.jpg" 
             />
             <ProfileCard
               name="Dr. D. V. Ravi Shankar"
               title="Principal"
               description="An eminent academician who heads the college. He holds an AMIE in Mechanical Engineering, M.Tech, and a Ph.D from JNT University, Hyderabad. He has published numerous research papers in national and international journals."
-              imageUrl="./src/assets/krishimg.jpg" // <<-- REPLACE WITH ACTUAL IMAGE PATH
+              imageUrl="./src/assets/krishimg.jpg" 
             />
           </div>
         </section>

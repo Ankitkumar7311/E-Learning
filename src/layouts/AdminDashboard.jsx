@@ -46,7 +46,7 @@ const AdminDashboard = () => {
       <div className="min-h-screen bg-gray-50 font-sans">
         <main className="p-4 sm:p-8">
           <div className="max-w-screen-xl mx-auto">
-            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200">
+            <div className="bg-white p-6 sm:p-8 rounded-2xl  border border-gray-200">
               <h2 className="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h2>
 
               {/* Action Buttons Grid */}

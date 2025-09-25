@@ -5,8 +5,6 @@ import RegulationAddedpopup from "./popups/RegulationAddedpopup";
 const RegulationForm = () => {
   const navigate = useNavigate();
 
-  const regulations = ["R15", "R17", "R19", "R21", "2025"];
-  const branches = ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
   const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
   const defaultSubjects = Array.from({ length: 5 }, () => ({
@@ -38,11 +36,27 @@ const RegulationForm = () => {
     });
   };
 
+  const addSubject = () => {
+    setFormData((prev) => ({
+      ...prev,
+      subjectDto: [...prev.subjectDto, { name: "", subjectCode: "" }],
+    }));
+  };
+
+  const removeSubject = (indexToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      subjectDto: prev.subjectDto.filter(
+        (_, index) => index !== indexToRemove
+      ),
+    }));
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting body:", formData);
 
-    // ✅ Client-side validation
     const isFormValid =
       formData.regulation &&
       formData.branch &&
@@ -102,6 +116,20 @@ const RegulationForm = () => {
       </select>
     </div>
   );
+  
+  const InputField = ({ label, name, value, onChange, placeholder }) => (
+    <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+      <label className="sm:w-40 w-full">{label} :</label>
+      <input
+        type="text"
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
+      />
+    </div>
+  );
 
   return (
     <div className="w-full flex justify-center mt-10 px-4">
@@ -111,18 +139,18 @@ const RegulationForm = () => {
       >
         <h2 className="text-xl font-semibold mb-4">Add Regulation</h2>
 
-        <SelectField
+        <InputField
           label="Regulation"
           name="regulation"
-          options={regulations}
+          placeholder="Enter Regulation"
           value={formData.regulation}
           onChange={handleChange}
         />
 
-        <SelectField
+        <InputField
           label="Branch"
           name="branch"
-          options={branches}
+          placeholder="Enter Branch"
           value={formData.branch}
           onChange={handleChange}
         />
@@ -144,10 +172,9 @@ const RegulationForm = () => {
             {formData.subjectDto.map((sub, index) => (
               <div
                 key={index}
-                className="flex flex-col sm:flex-row gap-2 sm:gap-3 bg-gray-50 p-2 rounded"
+                className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 bg-gray-50 p-2 rounded"
               >
                 <div className="text-sm font-medium">{index + 1}.</div>
-
                 <input
                   type="text"
                   placeholder="Subject Name"
@@ -157,7 +184,6 @@ const RegulationForm = () => {
                   }
                   className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
                 />
-
                 <input
                   type="text"
                   placeholder="Subject Code"
@@ -167,8 +193,32 @@ const RegulationForm = () => {
                   }
                   className="w-full sm:w-48 p-2 rounded-md bg-blue-100"
                 />
+                
+                {formData.subjectDto.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeSubject(index)}
+                    className="bg-blue-400 text-black font-bold h-9 w-9 flex items-center justify-center rounded-lg hover:bg-red-400 transition"
+                  >
+                    X
+                  </button>
+                )}
               </div>
             ))}
+          </div>
+
+          <div className="flex justify-end mt-2">
+            {/* ✅ This button now has an SVG icon */}
+            <button
+              type="button"
+              onClick={addSubject}
+              className="bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+              <span>Add Subject</span>
+            </button>
           </div>
         </div>
 
@@ -180,7 +230,6 @@ const RegulationForm = () => {
         </button>
       </form>
     </div>
-    
   );
 };
 
