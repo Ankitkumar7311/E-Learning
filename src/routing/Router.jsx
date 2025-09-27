@@ -145,7 +145,7 @@ const routes = createBrowserRouter([
         element: <UpdateTeach />,
       },
       {
-        path:'/student/help-support' , element:<HelpSupport/>
+        path:'/teacher/help-support' , element:<HelpSupport/>
       }
     ],
   },
