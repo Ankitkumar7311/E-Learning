@@ -27,10 +27,12 @@ const TeacherLogin = () => {
       body: JSON.stringify({ email: data.email }),
     })
       .then((res) => {
+        console.log(res);
         if (!res.ok) {
           if (res.status === 404) throw new Error("Email not found in database");
           else throw new Error("Failed to login. Status: " + res.status);
         }
+        
         return res.json();
       })
       .then((profile) => {

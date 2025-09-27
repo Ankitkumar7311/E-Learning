@@ -43,6 +43,7 @@ import FindQB from "../modules/student/find/FindQB";
 import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
 import RequestPopup from "../modules/student/find/RequestPopup";
 import Announcment from "../modules/student/find/Announcment";
+import HelpSupport from "../pages/HelpSupport";
 // Layouts
 const PublicLayout = () => (
   <>
@@ -143,6 +144,9 @@ const routes = createBrowserRouter([
         path: "update-profile",
         element: <UpdateTeach />,
       },
+      {
+        path:'/student/help-support' , element:<HelpSupport/>
+      }
     ],
   },
 
@@ -167,6 +171,7 @@ const routes = createBrowserRouter([
       { path: "academic-calendar", element: <AcadamicCalender /> },
       { path: "subjects/encapsulation", element: <Encapsulation /> },
       {path:"RequestPopup", element:<RequestPopup/>},
+      {path:"help-support" , element:<HelpSupport/>} // ✅ This path is correct: /student/help-support
 
     ],
   },
@@ -181,4 +186,3 @@ const routes = createBrowserRouter([
 ]);
 
 export default routes;
-  
