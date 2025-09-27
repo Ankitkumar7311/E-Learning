@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SearchStudents = () => {
   const [filters, setFilters] = useState({
@@ -51,9 +53,10 @@ const SearchStudents = () => {
 
       const data = await response.json();
       setStudents(Array.isArray(data) ? data : [data]);
+      toast.success("Students fetched successfully!");
     } catch (error) {
       console.error("Error fetching students:", error);
-      alert("Error fetching students. Check console.");
+      toast.error("Error fetching students. Check console.");
     } finally {
       setLoading(false);
     }
@@ -76,9 +79,10 @@ const SearchStudents = () => {
 
       const data = await response.json();
       setStudents(Array.isArray(data) ? data : [data]);
+      toast.success("Student(s) fetched successfully!");
     } catch (error) {
       console.error("Error fetching student:", error);
-      alert("Error fetching student. Check console.");
+      toast.error("Error fetching student. Check console.");
     } finally {
       setLoading(false);
     }
@@ -91,6 +95,7 @@ const SearchStudents = () => {
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-gray-100 p-4 font-sans">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
       <div className="bg-white rounded-xl shadow-lg w-full max-w-5xl p-6 space-y-6 border border-gray-200">
         {/* Header */}
         <div className="flex justify-between items-center pb-4 border-b border-gray-300">

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import TeacherTable from "./TeacherTable";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const API_BASE_URL = "http://localhost:8080/VidyaSarthi";
 
@@ -38,6 +40,7 @@ const AddRemoveFaculty = () => {
       setFacultyList(data);
     } catch (error) {
       console.error("Failed to fetch faculty:", error);
+      toast.error("Failed to fetch faculty.");
     }
   }, []);
 
@@ -45,7 +48,6 @@ const AddRemoveFaculty = () => {
     fetchAllFaculty();
   }, [fetchAllFaculty]);
 
-  // ✅ THIS IS THE CORRECTED SECTION
   useEffect(() => {
     const fetchNameById = async () => {
       if (removeId.trim()) {
@@ -75,7 +77,7 @@ const AddRemoveFaculty = () => {
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     if (!addForm.name || !addForm.facultyId || !addForm.email || !addForm.password) {
-      alert("Please fill all fields to add a faculty.");
+      toast.error("Please fill all fields to add a faculty.");
       return;
     }
     try {
@@ -85,19 +87,19 @@ const AddRemoveFaculty = () => {
         body: JSON.stringify(addForm),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      alert("Faculty added successfully!");
+      toast.success("Faculty added successfully!");
       await fetchAllFaculty();
       setAddForm({ name: "", facultyId: "", email: "", password: "" });
     } catch (error) {
       console.error("Failed to add faculty:", error);
-      alert("Error: Could not add faculty.");
+      toast.error("Error: Could not add faculty.");
     }
   };
 
   const handleRemoveSubmit = async (e) => {
     e.preventDefault();
     if (!removeId) {
-      alert("Please enter a Faculty ID to remove.");
+      toast.error("Please enter a Faculty ID to remove.");
       return;
     }
     try {
@@ -105,18 +107,19 @@ const AddRemoveFaculty = () => {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      alert("Faculty removed successfully!");
+      toast.success("Faculty removed successfully!");
       await fetchAllFaculty();
       setRemoveId("");
       setRemoveName("");
     } catch (error) {
       console.error("Failed to remove faculty:", error);
-      alert("Error: Could not remove faculty.");
+      toast.error("Error: Could not remove faculty.");
     }
   };
 
   return (
     <div className="w-full min-h-screen overflow-x-hidden bg-gray-100 p-6 flex flex-col items-center">
+      <ToastContainer position="top-right" autoClose={3000} />
       <section className="w-full max-w-5xl flex flex-wrap justify-center gap-8 mb-10">
         {/* Add Faculty Form */}
         <form onSubmit={handleAddSubmit} className="bg-white p-6 rounded-2xl shadow-md w-full sm:max-w-sm">

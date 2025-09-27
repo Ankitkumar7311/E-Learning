@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Editmaterialedit = () => {
   const [uploadSource, setUploadSource] = useState('Upload from Local');
@@ -10,11 +12,22 @@ const Editmaterialedit = () => {
 
   const handleUploadChanges = () => {
     console.log('Uploading changes...');
-    alert('Changes are being uploaded!');
+    toast.success('Changes are being uploaded!', {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full mx-auto">
+      {/* Toast Container */}
+      <ToastContainer />
+
       <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">Upload Pdf:</h2>
         
