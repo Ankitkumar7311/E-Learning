@@ -1,3 +1,149 @@
+// import React from "react";
+// import { useNavigate } from "react-router-dom";
+// import { useForm } from "react-hook-form";
+// import bg from "../assets/Rectangle.png";
+// import curveBg from "../assets/Curve.png";
+// import card from "../assets/card.png";
+// import { useAuth } from "./AuthContext";
+
+// const StudentLogin = () => {
+//   const navigate = useNavigate();
+//   const { login } = useAuth();
+
+//   const {
+//     register,
+//     handleSubmit,
+//     formState: { errors },
+//   } = useForm();
+
+//   const onSubmit = (data) => {
+//     console.log("Student Login Data:", data);
+//     login({ role: "student", user: data.email });
+//     navigate("/student/dashboard");
+//   };
+
+//   return (
+//     <>
+//       <section
+//         className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-2 sm:px-4"
+//         style={{ backgroundImage: `url(${curveBg})` }}
+//       >
+//         <div
+//                 className="relative rounded-3xl shadow-xl overflow-hidden
+//                 w-full sm:w-[90vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
+//                 min-h-[90vh] md:min-h-fit
+//                 md:aspect-[16/9] bg-no-repeat bg-cover bg-center flex items-center justify-center"
+//                 style={{ backgroundImage: `url(${bg})` }}
+//               >
+//                 <div
+//                   className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%]
+//                   w-full rounded-2xl p-8 sm:p-6 bg-transparent overflow-hidden
+//                   flex items-center justify-center"
+//                   style={{
+//                     backgroundImage: `url(${card})`,
+//                     backgroundRepeat: "no-repeat",
+//                     backgroundPosition: "right top",
+//                     backgroundSize: "100% 100%",
+//                   }}
+//                 >
+//             <div className="h-full overflow-y-auto pr-1 sm:pr-3">
+//               <h1 className="font-roboto font-semibold text-2xl sm:text-2xl md:text-3xl lg:text-4xl leading-normal text-center">
+//                 Student LogIn
+//               </h1>
+
+//               <hr className="border border-black mb-3 hidden md:block w-2/3 mx-auto" />
+
+//               <p className="font-montserrat text-xs sm:text-base md:text-lg text-gray-700 mb-4 text-center">
+//                 Welcome onboard with us!
+//               </p>
+
+//               <form
+//                 onSubmit={handleSubmit(onSubmit)}
+//                 className="flex flex-col gap-3"
+//               >
+//                 {/* Email */}
+//                 <label className="font-medium text-sm sm:text-base md:text-lg leading-tight">
+//                   Institute Email ID
+//                 </label>
+//                 <input
+//                   type="email"
+//                   placeholder="Enter your username"
+//                   className="w-full bg-[#D8E7F5] rounded-xl px-4 sm:px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+//                   {...register("email", {
+//                     required: "Email is required",
+//                     pattern: {
+//                       value: /^\S+@\S+$/i,
+//                       message: "Invalid email format",
+//                     },
+//                   })}
+//                 />
+//                 {errors.email && (
+//                   <p className="text-red-500 text-xs sm:text-sm">{errors.email.message}</p>
+//                 )}
+
+//                 {/* Password */}
+//                 <label className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
+//                   Password
+//                 </label>
+//                 <input
+//                   type="password"
+//                   placeholder="Enter your password"
+//                   className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+//                   {...register("password", {
+//                     required: "Password is required",
+//                   })}
+//                 />
+//                 {errors.password && (
+//                   <p className="text-red-500 text-xs sm:text-sm">
+//                     {errors.password.message}
+//                   </p>
+//                 )}
+
+//                 <button
+//                   type="button"
+//                   className="self-end text-xs sm:text-sm md:text-base text-black hover:underline"
+//                 >
+//                   Forgot Password?
+//                 </button>
+
+//                 <button
+//                   type="submit"
+//                   className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-sm sm:text-base md:text-lg py-2.5 md:py-3"
+//                 >
+//                   LogIn as Student
+//                 </button>
+//               </form>
+//               <div className="mt-6 space-y-2">
+//               <p className="text-xs sm:text-sm md:text-lg text-center mt-2">
+//                  Are you a Admin?{" "}
+//                 <b
+//                   className="hover:underline cursor-pointer"
+//                   onClick={() => navigate("/login")}
+//                 >
+//                   LogIn as an Admin
+//                 </b>
+//               </p>
+
+//               <p className="text-xs sm:text-sm  text-center md:text-lg">
+//                  Are you a Teacher?{" "}
+//                 <b
+//                   className="hover:underline cursor-pointer"
+//                   onClick={() => navigate("/teacher-login")}
+//                 >
+//                   LogIn as a Teacher
+//                 </b>
+//               </p>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+//     </>
+//   );
+// };
+
+// export default StudentLogin;
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -23,97 +169,90 @@ const StudentLogin = () => {
   };
 
   return (
-    <>
-      <section
-        className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-2 sm:px-4"
-        style={{ backgroundImage: `url(${curveBg})` }}
+    <section
+      className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-4"
+      style={{ backgroundImage: `url(${curveBg})` }}
+    >
+      <div
+        className="relative rounded-3xl shadow-xl overflow-hidden
+        w-full sm:w-[90vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
+        min-h-[90vh] bg-no-repeat bg-cover bg-center flex items-center justify-center"
+        style={{ backgroundImage: `url(${bg})` }}
       >
         <div
-          className="relative rounded-3xl shadow-xl overflow-hidden
-        w-[95vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px]
-        md:aspect-[16/9] bg-no-repeat bg-cover bg-center flex items-center justify-center"
-          style={{ backgroundImage: `url(${bg})` }}
+          className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%]
+          w-full rounded-2xl p-8 sm:p-6 bg-transparent flex items-center justify-center"
+          style={{
+            backgroundImage: `url(${card})`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "right top",
+            backgroundSize: "100% 100%",
+          }}
         >
-          <div
-            className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%]
-          w-full rounded-2xl p-6 sm:p-8 md:p-10 bg-transparent overflow-hidden"
-            style={{
-              backgroundImage: `url(${card})`,
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "right top",
-              backgroundSize: "100% 100%",
-            }}
-          >
-            <div className="h-full overflow-y-auto pr-1 sm:pr-3">
-              <h1 className="font-roboto font-semibold text-2xl sm:text-2xl md:text-3xl lg:text-4xl leading-normal text-center">
-                Student LogIn
-              </h1>
+          <div className="w-full max-w-md">
+            <h1 className="font-roboto font-semibold text-2xl sm:text-3xl md:text-4xl leading-normal text-center">
+              Student LogIn
+            </h1>
+            <hr className="border border-black mb-3 hidden md:block w-2/3 mx-auto" />
+            <p className="font-montserrat text-sm sm:text-base md:text-lg text-gray-700 mb-6 text-center">
+              Welcome onboard with us!
+            </p>
 
-              <hr className="border border-black mb-3 hidden md:block w-2/3 mx-auto" />
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+              {/* Email */}
+              <label className="font-medium text-sm sm:text-base md:text-lg leading-tight">
+                Institute Email ID
+              </label>
+              <input
+                type="email"
+                placeholder="Enter your username"
+                className="w-full bg-[#D8E7F5] rounded-xl px-4 sm:px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^\S+@\S+$/i,
+                    message: "Invalid email format",
+                  },
+                })}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-xs sm:text-sm">{errors.email.message}</p>
+              )}
 
-              <p className="font-montserrat text-xs sm:text-base md:text-lg text-gray-700 mb-4 text-center">
-                Welcome onboard with us!
-              </p>
+              {/* Password */}
+              <label className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
+                {...register("password", {
+                  required: "Password is required",
+                })}
+              />
+              {errors.password && (
+                <p className="text-red-500 text-xs sm:text-sm">{errors.password.message}</p>
+              )}
 
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex flex-col gap-3"
+              <button
+                type="button"
+                className="self-end text-xs sm:text-sm md:text-base text-black hover:underline"
               >
-                {/* Email */}
-                <label className="font-medium text-sm sm:text-base md:text-lg leading-tight">
-                  Institute Email ID
-                </label>
-                <input
-                  type="email"
-                  placeholder="Enter your username"
-                  className="w-full bg-[#D8E7F5] rounded-xl px-4 sm:px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: "Invalid email format",
-                    },
-                  })}
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-xs sm:text-sm">{errors.email.message}</p>
-                )}
+                Forgot Password?
+              </button>
 
-                {/* Password */}
-                <label className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="Enter your password"
-                  className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
-                  {...register("password", {
-                    required: "Password is required",
-                  })}
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-xs sm:text-sm">
-                    {errors.password.message}
-                  </p>
-                )}
+              <button
+                type="submit"
+                className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-sm sm:text-base md:text-lg py-2.5 md:py-3"
+              >
+                LogIn as Student
+              </button>
+            </form>
 
-                <button
-                  type="button"
-                  className="self-end text-xs sm:text-sm md:text-base text-black hover:underline"
-                >
-                  Forgot Password?
-                </button>
-
-                <button
-                  type="submit"
-                  className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-sm sm:text-base md:text-lg py-2.5 md:py-3"
-                >
-                  LogIn as Student
-                </button>
-              </form>
-              <div className="mt-6 space-y-2">
-              <p className="text-xs sm:text-sm md:text-lg text-center mt-2">
-                 Are you a Admin?{" "}
+            <div className="mt-6 space-y-2 text-center">
+              <p className="text-xs sm:text-sm md:text-base">
+                Are you an Admin?{" "}
                 <b
                   className="hover:underline cursor-pointer"
                   onClick={() => navigate("/login")}
@@ -121,9 +260,8 @@ const StudentLogin = () => {
                   LogIn as an Admin
                 </b>
               </p>
-
-              <p className="text-xs sm:text-sm  text-center md:text-lg">
-                 Are you a Teacher?{" "}
+              <p className="text-xs sm:text-sm md:text-base">
+                Are you a Teacher?{" "}
                 <b
                   className="hover:underline cursor-pointer"
                   onClick={() => navigate("/teacher-login")}
@@ -131,16 +269,12 @@ const StudentLogin = () => {
                   LogIn as a Teacher
                 </b>
               </p>
-              </div>
             </div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 
 export default StudentLogin;
-
-
-
