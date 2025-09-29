@@ -6,6 +6,14 @@ import curveBg from "../assets/Curve.png";
 import card from "../assets/card.png";
 import { useAuth } from "./AuthContext";
 
+/**
+ * TeacherLogin
+ * - Logs in via /VidyaSarthi/loginAcc
+ * - If facultyId not present in login response, calls /VidyaSarthi/getFacultyId (POST { email })
+ * - Persists facultyId into auth.login(...) and localStorage (vidyaSarthiAuth)
+ *
+ * NOTE: Update base URLs if you use a different host/production URL.
+ */
 const TeacherLogin = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -23,6 +31,7 @@ const TeacherLogin = () => {
     setLoading(true);
 
     try {
+      // 1) Primary login call
       const response = await fetch("http://localhost:8080/VidyaSarthi/loginAcc", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,11 +40,7 @@ const TeacherLogin = () => {
 
       if (!response.ok) {
         let errorBody = {};
-        try {
-          errorBody = await response.json();
-        } catch (e) {
-          // ignore JSON parse error
-        }
+        try { errorBody = await response.json(); } catch (_) {}
         const message =
           errorBody?.message ||
           `Login failed with status ${response.status}. Please check your credentials or server status.`;
@@ -44,43 +49,78 @@ const TeacherLogin = () => {
 
       const result = await response.json();
 
-      // Extract data from response
+      // 2) Extract useful fields from login response
       const profile = result?.dto || {};
       const backendEmail = profile?.email || result?.email || data.email;
-      const facultyId = profile?.facultyId || profile?.id || result?.facultyId || null;
+      let facultyId = profile?.facultyId || profile?.facultyID || result?.facultyId || null;
       const token = result?.token || null;
 
-      if (result?.success && (profile || result)) {
-        // CREATE A PROPER USER OBJECT - this is the key fix!
+      // 3) If API didn't return facultyId in login response, call getFacultyId endpoint
+      if (!facultyId && backendEmail) {
+        try {
+          const res2 = await fetch("http://localhost:8080/VidyaSarthi/getFacultyId", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: backendEmail }),
+          });
+
+          if (res2.ok) {
+            const dto = await res2.json();
+            // EmailDto shape: { email, facultyId }
+            facultyId = dto?.facultyId || dto?.facultyID || dto?.facultyid || facultyId;
+          } else {
+            // Non-fatal: log for debugging, do not block login
+            console.warn("getFacultyId returned non-OK status:", res2.status, await res2.text().catch(()=>""));
+          }
+        } catch (e) {
+          console.warn("Failed to call /getFacultyId:", e);
+        }
+      }
+
+      // 4) Only proceed if login result indicates success (adjust if your backend uses different flag)
+      if (result?.success || result?.token || profile) {
+        // Build a robust user object for auth context
         const userObject = {
           email: backendEmail,
           id: profile?.id || result?.id || null,
           name: profile?.name || result?.name || null,
           role: "teacher",
-          facultyId: facultyId,
-          // Add any other user properties from the backend response
-          ...profile  // This spreads any additional properties from dto
+          facultyId: facultyId || null,
+          ...profile, // include any other fields from dto
         };
 
-        // Call login with the proper structure
-        login({
-          user: userObject,  // Pass the user OBJECT, not just email string
-          token: token,
-          role: "teacher",
-          facultyId: facultyId,
-        });
-
-        // Also store email in localStorage for backward compatibility
+        // 5) Call login from auth context - include facultyId in both user and top-level
         try {
-          localStorage.setItem("userEmail", backendEmail);
+          login({
+            user: userObject,
+            token: token,
+            role: "teacher",
+            facultyId: facultyId || null,
+          });
         } catch (e) {
-          console.warn("Could not persist userEmail to localStorage.", e);
+          console.warn("Auth login threw an error (check AuthContext signature):", e);
+          // If your AuthContext expects a different shape, adjust this call accordingly.
         }
 
-        // Navigate to dashboard
-        navigate("/teacher/dashboard", {
-          state: { email: backendEmail, facultyId: facultyId },
-        });
+        // 6) Persist into localStorage under vidyaSarthiAuth for backward compatibility
+        try {
+          const key = "vidyaSarthiAuth";
+          const existing = JSON.parse(localStorage.getItem(key) || "{}");
+          const merged = {
+            ...existing,
+            user: userObject,
+            token: token || existing.token,
+            facultyId: facultyId || existing.facultyId || null,
+          };
+          localStorage.setItem(key, JSON.stringify(merged));
+          // Also keep a simple userEmail key in case other code expects it
+          localStorage.setItem("userEmail", backendEmail);
+        } catch (e) {
+          console.warn("Could not persist auth to localStorage:", e);
+        }
+
+        // 7) Navigate to dashboard and pass facultyId via location state if desired
+        navigate("/teacher/dashboard", { state: { email: backendEmail, facultyId: facultyId || null } });
       } else {
         const msg = result?.message || "Authentication failed. Invalid username or password.";
         throw new Error(msg);
@@ -128,10 +168,7 @@ const TeacherLogin = () => {
             {/* Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3" noValidate>
               {/* Email */}
-              <label
-                htmlFor="email"
-                className="font-medium text-sm sm:text-base md:text-lg leading-tight"
-              >
+              <label htmlFor="email" className="font-medium text-sm sm:text-base md:text-lg leading-tight">
                 Institute Email ID
               </label>
               <input
@@ -151,10 +188,7 @@ const TeacherLogin = () => {
               {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
               {/* Password */}
-              <label
-                htmlFor="password"
-                className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight"
-              >
+              <label htmlFor="password" className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
                 Password
               </label>
               <input
@@ -196,19 +230,13 @@ const TeacherLogin = () => {
             <div className="mt-6 space-y-2 text-center">
               <p className="text-xs sm:text-sm md:text-base">
                 Have Admin Access?{" "}
-                <b
-                  className="hover:underline cursor-pointer"
-                  onClick={() => navigate("/login")}
-                >
+                <b className="hover:underline cursor-pointer" onClick={() => navigate("/login")}>
                   LogIn as an Admin
                 </b>
               </p>
               <p className="text-xs sm:text-sm md:text-base">
                 Have Student Access?{" "}
-                <b
-                  className="hover:underline cursor-pointer"
-                  onClick={() => navigate("/student-login")}
-                >
+                <b className="hover:underline cursor-pointer" onClick={() => navigate("/student-login")}>
                   LogIn as a Student
                 </b>
               </p>
