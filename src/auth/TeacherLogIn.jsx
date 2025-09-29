@@ -10,6 +10,7 @@ const TeacherLogin = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -17,35 +18,79 @@ const TeacherLogin = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setError("");
+    setLoading(true);
 
-    fetch("http://localhost:8080/VidyaSarthi/faculty/getFacultyEmail", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: data.email, password: data.password }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          if (res.status === 404) throw new Error("Email not found in database");
-          else throw new Error("Failed to login. Status: " + res.status);
+    try {
+      const response = await fetch("http://localhost:8080/VidyaSarthi/loginAcc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: data.email, password: data.password }),
+      });
+
+      if (!response.ok) {
+        let errorBody = {};
+        try {
+          errorBody = await response.json();
+        } catch (e) {
+          // ignore JSON parse error
         }
-        return res.json();
-      })
-      .then((profile) => {
-        // profile se facultyId bhi lena
-        login({
+        const message =
+          errorBody?.message ||
+          `Login failed with status ${response.status}. Please check your credentials or server status.`;
+        throw new Error(message);
+      }
+
+      const result = await response.json();
+
+      // Extract data from response
+      const profile = result?.dto || {};
+      const backendEmail = profile?.email || result?.email || data.email;
+      const facultyId = profile?.facultyId || profile?.id || result?.facultyId || null;
+      const token = result?.token || null;
+
+      if (result?.success && (profile || result)) {
+        // CREATE A PROPER USER OBJECT - this is the key fix!
+        const userObject = {
+          email: backendEmail,
+          id: profile?.id || result?.id || null,
+          name: profile?.name || result?.name || null,
           role: "teacher",
-          user: profile.email,
-          facultyId: profile.facultyId,
+          facultyId: facultyId,
+          // Add any other user properties from the backend response
+          ...profile  // This spreads any additional properties from dto
+        };
+
+        // Call login with the proper structure
+        login({
+          user: userObject,  // Pass the user OBJECT, not just email string
+          token: token,
+          role: "teacher",
+          facultyId: facultyId,
         });
 
-        // facultyId ko dashboard me bhejna
+        // Also store email in localStorage for backward compatibility
+        try {
+          localStorage.setItem("userEmail", backendEmail);
+        } catch (e) {
+          console.warn("Could not persist userEmail to localStorage.", e);
+        }
+
+        // Navigate to dashboard
         navigate("/teacher/dashboard", {
-          state: { email: profile.email, facultyId: profile.facultyId },
+          state: { email: backendEmail, facultyId: facultyId },
         });
-      })
-      .catch((err) => setError(err.message));
+      } else {
+        const msg = result?.message || "Authentication failed. Invalid username or password.";
+        throw new Error(msg);
+      }
+    } catch (err) {
+      console.error("Login Error:", err);
+      setError(err.message || "An unexpected error occurred during login.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -81,17 +126,19 @@ const TeacherLogin = () => {
             </p>
 
             {/* Form */}
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex flex-col gap-3"
-            >
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3" noValidate>
               {/* Email */}
-              <label className="font-medium text-sm sm:text-base md:text-lg leading-tight">
+              <label
+                htmlFor="email"
+                className="font-medium text-sm sm:text-base md:text-lg leading-tight"
+              >
                 Institute Email ID
               </label>
               <input
+                id="email"
                 type="email"
                 placeholder="Enter your email"
+                aria-invalid={errors.email ? "true" : "false"}
                 className="w-full bg-[#D8E7F5] rounded-xl px-5 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                 {...register("email", {
                   required: "Email is required",
@@ -101,41 +148,47 @@ const TeacherLogin = () => {
                   },
                 })}
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
               {/* Password */}
-              <label className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight">
+              <label
+                htmlFor="password"
+                className="font-medium text-sm sm:text-base md:text-lg mt-2 leading-tight"
+              >
                 Password
               </label>
               <input
+                id="password"
                 type="password"
                 placeholder="Enter your password"
+                aria-invalid={errors.password ? "true" : "false"}
                 className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
                 {...register("password", { required: "Password is required" })}
               />
-              {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password.message}</p>
-              )}
+              {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
 
               {/* Forgot Password */}
               <button
                 type="button"
                 className="self-end text-xs sm:text-sm md:text-base text-black hover:underline"
+                onClick={() => navigate("/forgot-password")}
               >
                 Forgot Password?
               </button>
 
               {/* Error */}
-              {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+              {error && <p role="alert" className="text-red-500 text-sm mt-1">{error}</p>}
 
               {/* Submit */}
               <button
                 type="submit"
-                className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-sm sm:text-base md:text-lg py-2.5 md:py-3 mt-2"
+                disabled={loading}
+                className={`bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-sm sm:text-base md:text-lg py-2.5 md:py-3 mt-2 ${
+                  loading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+                aria-busy={loading}
               >
-                LogIn as Teacher
+                {loading ? "Logging in..." : "LogIn as Teacher"}
               </button>
             </form>
 
