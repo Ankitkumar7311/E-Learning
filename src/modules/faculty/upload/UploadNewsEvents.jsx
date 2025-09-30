@@ -86,7 +86,7 @@ const UploadNewsEvents = () => {
   const isSubmitDisabled = loading || !formData.description;
 
   return (
-    <div className="w-full max-w-5xl mx-auto bg-white shadow-md rounded-xl p-6 sm:p-8 border">
+    <div className="w-full max-w-5xl mx-auto bg-white  rounded-xl p-6 sm:p-8">
       <h2 className="text-lg sm:text-xl font-semibold mb-6 text-center sm:text-left">
         Upload Announcement
       </h2>
