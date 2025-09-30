@@ -100,3 +100,6 @@ export default ProfileRight;
 
 
 
+// http://localhost:8080/VidyaSarthi/faculty/checkStatus/{facultyId}
+// http://localhost:8080/VidyaSarthi/faculty/totalModule/{facultyId}
+

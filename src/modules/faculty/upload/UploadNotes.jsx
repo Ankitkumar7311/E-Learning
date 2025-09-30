@@ -5,19 +5,19 @@ import { useApiClient } from "../../../context/AuthorizedFetch";
 // Inline SVG Upload Icon
 const UploadIcon = (props) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-    <path fill="currentColor" d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5 12.5 32.8 12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64z"/>
+    <path fill="currentColor" d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5 12.5 32.8 12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64z" />
   </svg>
 );
 
 // Inline SVG Close Icon
 const TimesIcon = (props) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-    <path fill="currentColor" d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 4.7 55.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 4.7 411.3c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.3 456.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"/>
+    <path fill="currentColor" d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 4.7 55.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 4.7 411.3c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.3 456.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z" />
   </svg>
 );
 
 // Unique ID generator
-const generateUniqueId = () => `material-${Date.now()}-${Math.random().toString(36).substring(2,9)}`;
+const generateUniqueId = () => `material-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
 // Message modal
 const MessageModal = ({ message, type = "success", onClose }) => {
@@ -114,7 +114,7 @@ const UploadNotes = () => {
 
   // Hard-coded branches and semesters
   const BRANCHES = ["CSE", "CIVIL", "EEE"];
-  const SEMESTERS = [1,2,3,4,5,6,7,8];
+  const SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
 
   // If signed-in user has email but no facultyId, fetch it and persist in auth context/localStorage
   useEffect(() => {
@@ -240,19 +240,19 @@ const UploadNotes = () => {
       files: Array(rowsCount).fill(null),
     }));
     // clear file inputs DOM values
-    fileInputRefs.current.forEach(f => { try { f.value = ""; } catch (_) {} });
+    fileInputRefs.current.forEach(f => { try { f.value = ""; } catch (_) { } });
   }, [regulations, rowsCount]);
 
   const handleBranchChange = useCallback((e) => {
     const branch = e.target.value;
     setFormData(prev => ({ ...prev, selectedBranch: branch, subjects: Array(rowsCount).fill(""), files: Array(rowsCount).fill(null) }));
-    fileInputRefs.current.forEach(f => { try { f.value = ""; } catch (_) {} });
+    fileInputRefs.current.forEach(f => { try { f.value = ""; } catch (_) { } });
   }, [rowsCount]);
 
   const handleSemesterChange = useCallback((e) => {
     const sem = e.target.value;
     setFormData(prev => ({ ...prev, selectedSemester: sem, subjects: Array(rowsCount).fill(""), files: Array(rowsCount).fill(null) }));
-    fileInputRefs.current.forEach(f => { try { f.value = ""; } catch (_) {} });
+    fileInputRefs.current.forEach(f => { try { f.value = ""; } catch (_) { } });
   }, [rowsCount]);
 
   const handleSubjectChange = useCallback((index, value) => {
@@ -273,7 +273,7 @@ const UploadNotes = () => {
 
   const resetFileInputs = useCallback(() => {
     fileInputRefs.current.forEach(input => {
-      try { input.value = ""; } catch (_) {}
+      try { input.value = ""; } catch (_) { }
     });
   }, []);
 
@@ -352,8 +352,9 @@ const UploadNotes = () => {
       fd.append("facultyId", facultyId);
       fd.append("regulationId", reg.regulationId);
       fd.append("pdf", r.file);
+      fd.append("pdfName", r.file?.name );
       // <-- REQUIRED CHANGE: send original filename so backend can store/use it
-      fd.append("pdfName", r.file?.name || "");
+     
 
       try {
         const resp = await apiRef.current("/addNewNotes", { method: "POST", body: fd });
@@ -361,7 +362,7 @@ const UploadNotes = () => {
           successCount++;
         } else {
           let reason = `HTTP ${resp.status}`;
-          try { reason = await resp.text(); } catch (_) {}
+          try { reason = await resp.text(); } catch (_) { }
           failed.push({ subjectCode: r.subjectCode, reason });
         }
       } catch (err) {
