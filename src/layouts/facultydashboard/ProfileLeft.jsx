@@ -2,17 +2,25 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
 import teacher from "../../assets/teacher.jpg";
+import { useApiClient } from "../../context/AuthorizedFetch";
 
 const ProfileLeft = ({ email }) => {
   const navigate = useNavigate();
+  const apiClient = useApiClient();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!email) {
+      setLoading(false);
+      return;
+    }
+
     const fetchProfile = async () => {
+      setLoading(true);
       try {
-        const res = await fetch(
-          "http://localhost:8080/VidyaSarthi/faculty/getFacultyEmail",
+        const res = await apiClient(
+          "/faculty/getFacultyDetail",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -20,23 +28,24 @@ const ProfileLeft = ({ email }) => {
           }
         );
 
-        if (!res.ok) throw new Error("Failed to fetch");
+        if (!res.ok) throw new Error("Failed to fetch profile details");
 
         const data = await res.json();
         if (data && Object.keys(data).length > 0) {
-          setProfile(data); // backend se aaya real data
+          setProfile(data);
         } else {
-          setProfile(null); // agar backend empty object
+          setProfile(null);
         }
       } catch (err) {
-        setProfile(null); // backend fail hua
+        console.error("Error fetching profile:", err);
+        setProfile(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [email]);
+  }, [email, apiClient]);
 
   const handleUpdate = () => {
     if (!profile) return;
@@ -45,10 +54,11 @@ const ProfileLeft = ({ email }) => {
     });
   };
 
-  if (loading)
+  if (loading) {
     return <p className="text-center mt-10 text-gray-600">Loading profile...</p>;
+  }
 
-  if (!profile)
+  if (!profile) {
     return (
       <div className="flex justify-center w-full md:w-1/2 px-3 py-5">
         <div className="flex flex-col rounded-2xl bg-white shadow-lg w-full max-w-sm p-6">
@@ -56,6 +66,7 @@ const ProfileLeft = ({ email }) => {
         </div>
       </div>
     );
+  }
 
   return (
     <div className="flex justify-center w-full md:w-1/2 px-3 py-5">
@@ -74,12 +85,23 @@ const ProfileLeft = ({ email }) => {
         <hr className="border-gray-300 my-4" />
 
         <div className="text-sm leading-6 space-y-3 text-gray-700">
-          <p>
-            <span className="font-semibold">Subject:</span> {profile.subject}
+          <div>
+            <span className="font-semibold">Subjects:</span>
+            {/* START: This block is updated for maximum reliability */}
+            <ul className="list-disc list-inside mt-1">
+              {profile.subjects && profile.subjects.length > 0 ? (
+                profile.subjects.map((subject) => (
+                  <li key={subject.id}>{subject.name}</li>
+                ))
+              ) : (
+                <li>N/A</li>
+              )}
+            </ul>
+            {/* END: Updated block */}
             <br />
             <span className="font-semibold">Faculty ID:</span>{" "}
             {profile.facultyId}
-          </p>
+          </div>
 
           <hr className="border-gray-200" />
 
