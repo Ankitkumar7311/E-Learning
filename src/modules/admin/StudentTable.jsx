@@ -54,7 +54,12 @@ const StudentTable = () => {
   const fetchStudents = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:8080/VidyaSarthi/studentList");
+      const token = localStorage.getItem("token"); // ✅ get token
+      const response = await fetch("http://localhost:8080/VidyaSarthi/studentList", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
       setStudents(data);
@@ -97,7 +102,9 @@ const StudentTable = () => {
   const paginatedData = filteredStudents.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
-  );  return (
+  );
+
+  return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Student List</h2>
@@ -216,4 +223,3 @@ const StudentTable = () => {
 };
 
 export default StudentTable;
-

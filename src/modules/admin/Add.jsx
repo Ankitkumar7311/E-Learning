@@ -43,9 +43,13 @@ const Add = () => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:8080/VidyaSarthi/signUp", {
+      const token = localStorage.getItem("token"); // 🔑 get token
+      const response = await fetch("http://localhost:8080/VidyaSarthi/addStudent", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
         body: JSON.stringify(formData),
       });
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -65,7 +69,12 @@ const Add = () => {
     }
     setStudentNameToRemove('Loading...');
     try {
-      const response = await fetch(`http://localhost:8080/VidyaSarthi/student/${studentIdToRemove}`);
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8080/VidyaSarthi/student/${studentIdToRemove}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       if (!response.ok) throw new Error('Student not found');
       const data = await response.json();
       setStudentNameToRemove(data.name || 'Name not found');
@@ -83,8 +92,12 @@ const Add = () => {
       return;
     }
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`http://localhost:8080/VidyaSarthi/deleteStudent/${studentIdToRemove}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       });
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       alert("Student removed successfully!");
