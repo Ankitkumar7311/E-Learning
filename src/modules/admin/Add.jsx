@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StudentTable from "./StudentTable";
 
 const InputField = ({ name, value, onChange, onBlur, type = "text", placeholder, disabled = false }) => (
@@ -30,11 +30,31 @@ const Add = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [studentIdToRemove, setStudentIdToRemove] = useState('');
   const [studentNameToRemove, setStudentNameToRemove] = useState('');
+  const [students, setStudents] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  const fetchStudents = async () => {
+    try {
+      const storedToken = JSON.parse(localStorage.getItem("vidyaSarthiAuth"))?.token;
+      const response = await fetch("http://localhost:8080/VidyaSarthi/studentList", {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      });
+      if (!response.ok) throw new Error("Failed to fetch students");
+      const data = await response.json();
+      setStudents(data);
+    } catch (error) {
+      console.error(error);
+      setStudents([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
@@ -42,54 +62,70 @@ const Add = () => {
       alert("Please fill out all fields.");
       return;
     }
+
     try {
-      const response = await fetch("http://localhost:8080/VidyaSarthi/signUp", {
+      const storedToken = JSON.parse(localStorage.getItem("vidyaSarthiAuth"))?.token;
+
+      const response = await fetch("http://localhost:8080/VidyaSarthi/addStudent", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${storedToken}`,
+        },
         body: JSON.stringify(formData),
       });
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(JSON.stringify(errorData));
+      }
+
       alert("Student added successfully!");
       setFormData(initialFormState);
+      await fetchStudents();
       window.dispatchEvent(new CustomEvent('studentsUpdated'));
     } catch (error) {
       console.error("Failed to add student:", error);
-      alert("Error adding student. Please check the console.");
+      alert("Error adding student. Check console for details.");
     }
   };
 
-  const handleFetchStudentName = async () => {
+  // ✅ Updated: use students state from backend
+  const handleFetchStudentName = () => {
     if (!studentIdToRemove) {
       setStudentNameToRemove('');
       return;
     }
-    setStudentNameToRemove('Loading...');
-    try {
-      const response = await fetch(`http://localhost:8080/VidyaSarthi/student/${studentIdToRemove}`);
-      if (!response.ok) throw new Error('Student not found');
-      const data = await response.json();
-      setStudentNameToRemove(data.name || 'Name not found');
-    } catch (error) {
-      console.error("Failed to fetch student name:", error);
+
+    const student = students.find(s => String(s.studentId) === String(studentIdToRemove));
+    if (student) {
+      setStudentNameToRemove(student.name);
+    } else {
       setStudentNameToRemove('');
-      alert(error.message);
+      alert("Student not found");
     }
   };
 
   const handleRemoveSubmit = async (e) => {
     e.preventDefault();
-    if (!studentIdToRemove || !studentNameToRemove || studentNameToRemove === 'Loading...') {
+    if (!studentIdToRemove || !studentNameToRemove) {
       alert("Please enter a valid Student ID and fetch the student's name first.");
       return;
     }
+
     try {
+      const storedToken = JSON.parse(localStorage.getItem("vidyaSarthiAuth"))?.token;
+
       const response = await fetch(`http://localhost:8080/VidyaSarthi/deleteStudent/${studentIdToRemove}`, {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${storedToken}` },
       });
+
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       alert("Student removed successfully!");
       setStudentIdToRemove('');
       setStudentNameToRemove('');
+      await fetchStudents();
       window.dispatchEvent(new CustomEvent('studentsUpdated'));
     } catch (error) {
       console.error("Failed to remove student:", error);
@@ -136,7 +172,7 @@ const Add = () => {
         </div>
       </div>
 
-      {/* ✅ Scrollable Student Table */}
+      {/* Scrollable Student Table */}
       <div className="w-full overflow-x-auto mt-8">
         <div className="min-w-[700px]">
           <StudentTable />

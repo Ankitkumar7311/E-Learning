@@ -13,6 +13,7 @@ const StudentTable = () => {
   const deletingSpeed = 60;
   const delayBetweenPhrases = 1500;
 
+  // Animated placeholder effect
   useEffect(() => {
     if (!isSearchActive) {
       setPlaceholder("");
@@ -51,10 +52,16 @@ const StudentTable = () => {
     return () => clearTimeout(timeoutId);
   }, [isSearchActive]);
 
+  // Fetch students with admin token
   const fetchStudents = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:8080/VidyaSarthi/studentList");
+      const storedToken = JSON.parse(localStorage.getItem("vidyaSarthiAuth"))?.token;
+      const response = await fetch("http://localhost:8080/VidyaSarthi/studentList", {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      });
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
       setStudents(data);
@@ -66,10 +73,12 @@ const StudentTable = () => {
     }
   }, []);
 
+  // Initial fetch
   useEffect(() => {
     fetchStudents();
   }, [fetchStudents]);
 
+  // Listen to "studentsUpdated" event for auto-refresh
   useEffect(() => {
     const handleUpdate = () => {
       fetchStudents();
@@ -97,7 +106,9 @@ const StudentTable = () => {
   const paginatedData = filteredStudents.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
-  );  return (
+  );
+
+  return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Student List</h2>
@@ -115,7 +126,11 @@ const StudentTable = () => {
                 aria-label="Open search bar"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </button>
             </div>
@@ -147,7 +162,6 @@ const StudentTable = () => {
         </div>
       </div>
 
-      {/* ✅ Scrollable table with preserved styles */}
       <div className="w-full overflow-x-auto rounded-lg shadow-lg">
         <div className="min-w-[700px]">
           <table className="w-full table-fixed">
@@ -168,15 +182,22 @@ const StudentTable = () => {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={columns.length} className="p-4 text-center text-gray-500">Loading...</td>
+                  <td colSpan={columns.length} className="p-4 text-center text-gray-500">
+                    Loading...
+                  </td>
                 </tr>
               ) : paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="p-4 text-center text-gray-500">No students found.</td>
+                  <td colSpan={columns.length} className="p-4 text-center text-gray-500">
+                    No students found.
+                  </td>
                 </tr>
               ) : (
                 paginatedData.map((row, idx) => (
-                  <tr key={row.studentId || idx} className={`${idx % 2 === 0 ? "bg-blue-100" : "bg-blue-50"} hover:bg-blue-200 transition`}>
+                  <tr
+                    key={row.studentId || idx}
+                    className={`${idx % 2 === 0 ? "bg-blue-100" : "bg-blue-50"} hover:bg-blue-200 transition`}
+                  >
                     <td className="px-4 py-2 text-center border-r-3 border-white min-w-[120px]">{row.studentId}</td>
                     <td className="px-4 py-2 text-center border-r-3 border-white min-w-[200px]">{row.name}</td>
                     <td className="px-4 py-2 text-center border-r-3 border-white min-w-[250px]">{row.email}</td>
@@ -216,4 +237,3 @@ const StudentTable = () => {
 };
 
 export default StudentTable;
-
