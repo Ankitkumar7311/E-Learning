@@ -1,32 +1,25 @@
+// src/components/RegulationForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import RegulationAddedpopup from "./popups/RegulationAddedpopup";
+import { useAuth } from "../../context/AuthContext"; // adjust path if needed
 
 const RegulationForm = () => {
   const navigate = useNavigate();
+  const { token: contextToken } = useAuth();
 
-  const regulations = ["R15", "R17", "R19", "R21", "2025"];
-  const branches = ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
-  const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
-
-  const defaultSubjects = Array.from({ length: 5 }, () => ({
-    name: "",
-    subjectCode: "",
-  }));
+  const token =
+    contextToken || JSON.parse(localStorage.getItem("vidyaSarthiAuth"))?.token;
 
   const [formData, setFormData] = useState({
     regulation: "",
     branch: "",
     semester: "",
-    subjectDto: defaultSubjects,
+    subjectDto: [{ name: "", subjectCode: "" }],
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "semester" && value !== "" ? Number(value) : value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubjectChange = (index, field, value) => {
@@ -38,33 +31,61 @@ const RegulationForm = () => {
     });
   };
 
+  const addSubjectRow = () => {
+    setFormData((prev) => ({
+      ...prev,
+      subjectDto: [...prev.subjectDto, { name: "", subjectCode: "" }],
+    }));
+  };
+
+  const removeSubjectRow = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      subjectDto: prev.subjectDto.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting body:", formData);
 
-    // ✅ Client-side validation
-    const isFormValid =
-      formData.regulation &&
-      formData.branch &&
-      formData.semester &&
-      formData.subjectDto.every(
-        (sub) => sub.name.trim() && sub.subjectCode.trim()
-      );
+    const filledSubjects = formData.subjectDto.filter(
+      (sub) => sub.name.trim() && sub.subjectCode.trim()
+    );
 
-    if (!isFormValid) {
-      alert("Please fill in all fields before submitting.");
+    if (!formData.regulation || !formData.branch || !formData.semester || filledSubjects.length === 0) {
+      alert("Please fill in all required fields and at least one subject.");
       return;
     }
 
+    // ✅ ONLY CHANGE: take exactly what admin types, e.g., "R2027"
+    const regulationId = formData.regulation;
+    const semesterNumber = Number(formData.semester);
+
+    const bodyToSend = {
+      name: formData.regulation,
+      regulationId: regulationId,
+      newSubjects: filledSubjects.map((sub) => ({
+        subjectCode: sub.subjectCode,
+        name: sub.name,
+        semester: semesterNumber,
+        regulationId: regulationId,
+        branchType: formData.branch,
+      })),
+    };
+
+    console.log("Submitting body:", bodyToSend);
+    console.log("Token being sent:", token);
+
     try {
       const response = await fetch(
-        "http://localhost:8080/VidyaSarthi/addRegulation",
+        "http://localhost:8080/VidyaSarthi/addNewRegulation",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(bodyToSend),
         }
       );
 
@@ -79,29 +100,10 @@ const RegulationForm = () => {
         alert(text || "Something went wrong!");
       }
     } catch (error) {
-      console.error("Error during signup:", error);
+      console.error("Error during submission:", error);
       alert("Server error. Please try again later.");
     }
   };
-
-  const SelectField = ({ label, name, options, value, onChange }) => (
-    <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-      <label className="sm:w-40 w-full">{label} :</label>
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
-      >
-        <option value="">Choose {label}</option>
-        {options.map((opt, idx) => (
-          <option key={idx} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
 
   return (
     <div className="w-full flex justify-center mt-10 px-4">
@@ -111,29 +113,41 @@ const RegulationForm = () => {
       >
         <h2 className="text-xl font-semibold mb-4">Add Regulation</h2>
 
-        <SelectField
-          label="Regulation"
-          name="regulation"
-          options={regulations}
-          value={formData.regulation}
-          onChange={handleChange}
-        />
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <label className="sm:w-40 w-full">Regulation :</label>
+          <input
+            type="text"
+            name="regulation"
+            value={formData.regulation}
+            onChange={handleChange}
+            placeholder="Enter Regulation (e.g., R2027)"
+            className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
+          />
+        </div>
 
-        <SelectField
-          label="Branch"
-          name="branch"
-          options={branches}
-          value={formData.branch}
-          onChange={handleChange}
-        />
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <label className="sm:w-40 w-full">Branch :</label>
+          <input
+            type="text"
+            name="branch"
+            value={formData.branch}
+            onChange={handleChange}
+            placeholder="Enter Branch (e.g., CIVIL)"
+            className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
+          />
+        </div>
 
-        <SelectField
-          label="Semester"
-          name="semester"
-          options={semesters}
-          value={formData.semester}
-          onChange={handleChange}
-        />
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <label className="sm:w-40 w-full">Semester :</label>
+          <input
+            type="number"
+            name="semester"
+            value={formData.semester}
+            onChange={handleChange}
+            placeholder="Enter Semester (e.g., 1)"
+            className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
+          />
+        </div>
 
         <div>
           <label className="block font-medium mb-2">
@@ -167,9 +181,25 @@ const RegulationForm = () => {
                   }
                   className="w-full sm:w-48 p-2 rounded-md bg-blue-100"
                 />
+
+                <button
+                  type="button"
+                  onClick={() => removeSubjectRow(index)}
+                  className="bg-red-500 text-white px-3 rounded hover:bg-red-600"
+                >
+                  Remove
+                </button>
               </div>
             ))}
           </div>
+
+          <button
+            type="button"
+            onClick={addSubjectRow}
+            className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
+            Add Subject
+          </button>
         </div>
 
         <button
@@ -180,7 +210,6 @@ const RegulationForm = () => {
         </button>
       </form>
     </div>
-    
   );
 };
 

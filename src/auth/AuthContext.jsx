@@ -98,8 +98,8 @@ export const AuthProvider = ({ children }) => {
     }));
     persist(nextState);
 
-    // Try to fetch facultyId if we have an email and don't have facultyId
-    if (!nextState.facultyId) {
+    // 🔥 FIX: Only fetch facultyId if role is faculty
+    if (nextState.role === "faculty" && !nextState.facultyId) {
       const email = nextState.user?.email || userData.email;
       if (email) {
         try {
