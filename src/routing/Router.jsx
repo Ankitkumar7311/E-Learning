@@ -42,6 +42,8 @@ import FindQB from "../modules/student/find/FindQB";
 import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
 import RequestPopup from "../modules/student/find/RequestPopup";
 
+import EditMaterialPage from "../modules/faculty/upload/EditMaterialPage";
+
 // Layouts
 const PublicLayout = () => (
   <>
@@ -121,28 +123,45 @@ const routes = createBrowserRouter([
     ],
   },
 
+  // {
+  //   path: "/teacher",
+  //   element: (
+  //     <ProtectedRoute role="teacher">
+  //       <TeacherLayout />
+  //     </ProtectedRoute>
+  //   ),
+  //   children: [
+  //     {
+  //       path: "dashboard",
+  //       element: <Profile />, // main teacher dashboard
+  //     },
+  //     { path: "request-report", element: <RequestReport /> },
+  //     {
+  //       path: "edit-material", element:<EditMaterial/>
+  //     },
+  //     {
+  //       path: "update-profile",
+  //       element: <UpdateTeach />,
+  //     },
+  //   ],
+  // },
+
   {
-    path: "/teacher",
-    element: (
-      <ProtectedRoute role="teacher">
-        <TeacherLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        path: "dashboard",
-        element: <Profile />, // main teacher dashboard
-      },
-      { path: "request-report", element: <RequestReport /> },
-      {
-        path: "edit-material", element:<EditMaterial/>
-      },
-      {
-        path: "update-profile",
-        element: <UpdateTeach />,
-      },
-    ],
-  },
+  path: "/teacher",
+  element: (
+    <ProtectedRoute role="teacher">
+      <TeacherLayout />
+    </ProtectedRoute>
+  ),
+  children: [
+    { path: "dashboard", element: <Profile /> },
+    { path: "request-report", element: <RequestReport /> },
+    // edit routes:
+    { path: "edit-material", element: <EditMaterial /> }, // optional page listing materials
+    { path: "edit-material/:materialId", element: <EditMaterialPage /> }, // <-- new route
+    { path: "update-profile", element: <UpdateTeach /> },
+  ],
+},
 
   {
     path: "/student",

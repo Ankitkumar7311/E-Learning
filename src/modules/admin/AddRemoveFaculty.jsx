@@ -3,7 +3,11 @@ import TeacherTable from "./TeacherTable";
 
 const API_BASE_URL = "http://localhost:8080/VidyaSarthi";
 
-// Reusable Input Component
+// 🔑 Your Bearer Token
+const AUTH_TOKEN =
+  "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJleHAiOjE3NTkzMDM3OTgsImlhdCI6MTc1OTMwMDE5OSwicm9sZXMiOlsiQWRtaW4iXX0.ADQf5j2hNeFjhRu7qVD3QcBTbJmklsL_zxgNLAMXxWQt9WwEbsn4039Wa3xo2480tUMERqSNVZIYpHROggRHoExwx546iCzXJ9hBDPxkHmrkiAd763BaQIAiQw6LjNWan-sLWfYMpVbzmwES1m6d7LMIDaZ98MPPTz86DOjSuMcOEgx94iLzxuZ9dJDi25BSxnQzsQr-7qIIAJHn7PPHdChgTycasJ3ZG-KJBRLJxp6eXbHwjNLdoNAWqKoeQYrcEYqOZ3ZqobkoOVJdFxqSeWgylk4idmIEfiB-oMgSM0lo54_cymY0qCG7vhu8rDYXY_V6lGcGk2hBFhZRHa1a_g";
+
+// ✅ Reusable Input Component
 const InputField = ({ ...props }) => (
   <input
     {...props}
@@ -13,7 +17,7 @@ const InputField = ({ ...props }) => (
   />
 );
 
-// Reusable Button Component
+// ✅ Reusable Button Component
 const ActionButton = ({ children, ...props }) => (
   <button
     {...props}
@@ -26,14 +30,24 @@ const ActionButton = ({ children, ...props }) => (
 
 const AddRemoveFaculty = () => {
   const [facultyList, setFacultyList] = useState([]);
-  const [addForm, setAddForm] = useState({ name: "", facultyId: "", email: "", password: "" });
+  const [addForm, setAddForm] = useState({
+    name: "",
+    facultyId: "",
+    email: "",
+    password: "",
+  });
   const [removeId, setRemoveId] = useState("");
   const [removeName, setRemoveName] = useState("");
 
+  // ✅ Fetch all faculty
   const fetchAllFaculty = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/faculties`);
-      if (!response.ok) throw new Error('Network response was not ok');
+      const response = await fetch(`${API_BASE_URL}/faculties`, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
+      if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
       setFacultyList(data);
     } catch (error) {
@@ -45,11 +59,17 @@ const AddRemoveFaculty = () => {
     fetchAllFaculty();
   }, [fetchAllFaculty]);
 
+  // ✅ Fetch faculty name by ID (for remove form preview)
   useEffect(() => {
     const fetchNameById = async () => {
       if (removeId.trim()) {
         try {
-          const response = await fetch(`${API_BASE_URL}/faculty/${removeId}`);
+          const response = await fetch(
+            `${API_BASE_URL}/faculty/${removeId}`,
+            {
+              headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
+            }
+          );
           if (!response.ok) {
             setRemoveName("Faculty not found");
             return;
@@ -67,20 +87,26 @@ const AddRemoveFaculty = () => {
     return () => clearTimeout(timerId);
   }, [removeId]);
 
+  // ✅ Handle input change for Add Form
   const handleAddChange = (e) => {
     setAddForm({ ...addForm, [e.target.name]: e.target.value });
   };
 
+  // ✅ Add Faculty
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     if (!addForm.name || !addForm.facultyId || !addForm.email || !addForm.password) {
       alert("Please fill all fields to add a faculty.");
       return;
     }
+
     try {
-      const response = await fetch(`${API_BASE_URL}/addFaculty`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(`${API_BASE_URL}/addNewTeacher`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
         body: JSON.stringify(addForm),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -93,6 +119,7 @@ const AddRemoveFaculty = () => {
     }
   };
 
+  // ✅ Remove Faculty
   const handleRemoveSubmit = async (e) => {
     e.preventDefault();
     if (!removeId) {
@@ -100,9 +127,15 @@ const AddRemoveFaculty = () => {
       return;
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/deleteFaculty/${removeId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/deleteFaculty/${removeId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${AUTH_TOKEN}`,
+          },
+        }
+      );
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       alert("Faculty removed successfully!");
       await fetchAllFaculty();
@@ -118,23 +151,68 @@ const AddRemoveFaculty = () => {
     <div className="w-full min-h-screen overflow-x-hidden bg-gray-100 p-6 flex flex-col items-center">
       <section className="w-full max-w-5xl flex flex-wrap justify-center gap-8 mb-10">
         {/* Add Faculty Form */}
-        <form onSubmit={handleAddSubmit} className="bg-white p-6 rounded-2xl shadow-md w-full sm:max-w-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">Add Faculty</h2>
+        <form
+          onSubmit={handleAddSubmit}
+          className="bg-white p-6 rounded-2xl shadow-md w-full sm:max-w-sm"
+        >
+          <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">
+            Add Faculty
+          </h2>
           <div className="flex flex-col gap-y-5">
-            <InputField name="name" placeholder="Enter Faculty Name" value={addForm.name} onChange={handleAddChange} required />
-            <InputField name="facultyId" placeholder="Enter Faculty Id" value={addForm.facultyId} onChange={handleAddChange} required />
-            <InputField name="email" type="email" placeholder="Enter Faculty Email" value={addForm.email} onChange={handleAddChange} required />
-            <InputField name="password" type="password" placeholder="Enter Password" value={addForm.password} onChange={handleAddChange} required />
+            <InputField
+              name="name"
+              placeholder="Enter Faculty Name"
+              value={addForm.name}
+              onChange={handleAddChange}
+              required
+            />
+            <InputField
+              name="facultyId"
+              placeholder="Enter Faculty Id"
+              value={addForm.facultyId}
+              onChange={handleAddChange}
+              required
+            />
+            <InputField
+              name="email"
+              type="email"
+              placeholder="Enter Faculty Email"
+              value={addForm.email}
+              onChange={handleAddChange}
+              required
+            />
+            <InputField
+              name="password"
+              type="password"
+              placeholder="Enter Password"
+              value={addForm.password}
+              onChange={handleAddChange}
+              required
+            />
             <ActionButton type="submit">Add</ActionButton>
           </div>
         </form>
 
         {/* Remove Faculty Form */}
-        <form onSubmit={handleRemoveSubmit} className="bg-white p-6 rounded-2xl shadow-md w-full sm:max-w-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">Remove Faculty</h2>
+        <form
+          onSubmit={handleRemoveSubmit}
+          className="bg-white p-6 rounded-2xl shadow-md w-full sm:max-w-sm"
+        >
+          <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">
+            Remove Faculty
+          </h2>
           <div className="flex flex-col gap-y-5">
-            <InputField placeholder="Enter Faculty ID to remove" value={removeId} onChange={(e) => setRemoveId(e.target.value)} required />
-            <InputField placeholder="Name (Auto-fetched)" value={removeName} disabled />
+            <InputField
+              placeholder="Enter Faculty ID to remove"
+              value={removeId}
+              onChange={(e) => setRemoveId(e.target.value)}
+              required
+            />
+            <InputField
+              placeholder="Name (Auto-fetched)"
+              value={removeName}
+              disabled
+            />
             <ActionButton type="submit">Remove</ActionButton>
           </div>
         </form>
