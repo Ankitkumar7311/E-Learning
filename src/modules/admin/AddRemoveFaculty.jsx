@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import TeacherTable from "./TeacherTable";
+import { useAuth } from "../../auth/AuthContext";
 
 const API_BASE_URL = "http://localhost:8080/VidyaSarthi";
-
-// 🔑 Your Bearer Token
-const AUTH_TOKEN =
-  "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJleHAiOjE3NTkzMDM3OTgsImlhdCI6MTc1OTMwMDE5OSwicm9sZXMiOlsiQWRtaW4iXX0.ADQf5j2hNeFjhRu7qVD3QcBTbJmklsL_zxgNLAMXxWQt9WwEbsn4039Wa3xo2480tUMERqSNVZIYpHROggRHoExwx546iCzXJ9hBDPxkHmrkiAd763BaQIAiQw6LjNWan-sLWfYMpVbzmwES1m6d7LMIDaZ98MPPTz86DOjSuMcOEgx94iLzxuZ9dJDi25BSxnQzsQr-7qIIAJHn7PPHdChgTycasJ3ZG-KJBRLJxp6eXbHwjNLdoNAWqKoeQYrcEYqOZ3ZqobkoOVJdFxqSeWgylk4idmIEfiB-oMgSM0lo54_cymY0qCG7vhu8rDYXY_V6lGcGk2hBFhZRHa1a_g";
 
 // ✅ Reusable Input Component
 const InputField = ({ ...props }) => (
@@ -18,17 +15,20 @@ const InputField = ({ ...props }) => (
 );
 
 // ✅ Reusable Button Component
-const ActionButton = ({ children, ...props }) => (
+const ActionButton = ({ children, disabled, ...props }) => (
   <button
     {...props}
+    disabled={disabled}
     className={`w-full sm:w-[200px] h-[50px] bg-yellow-500 text-white font-bold rounded-[20px] 
-    hover:bg-yellow-600 transition duration-300 shadow`}
+      hover:bg-yellow-600 transition duration-300 shadow 
+      ${disabled ? "opacity-50 cursor-not-allowed hover:bg-yellow-500" : ""}`}
   >
     {children}
   </button>
 );
 
 const AddRemoveFaculty = () => {
+  const { token } = useAuth();
   const [facultyList, setFacultyList] = useState([]);
   const [addForm, setAddForm] = useState({
     name: "",
@@ -41,51 +41,51 @@ const AddRemoveFaculty = () => {
 
   // ✅ Fetch all faculty
   const fetchAllFaculty = useCallback(async () => {
+    if (!token) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/faculties`, {
-        headers: {
-          Authorization: `Bearer ${AUTH_TOKEN}`,
-        },
+      const response = await fetch(`${API_BASE_URL}/facultyList`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!response.ok) throw new Error("Network response was not ok");
+      if (!response.ok) throw new Error(`Error fetching faculty: ${response.status}`);
       const data = await response.json();
-      setFacultyList(data);
+      // Adjust if API returns data object
+      setFacultyList(Array.isArray(data) ? data : data.data || []);
     } catch (error) {
-      console.error("Failed to fetch faculty:", error);
+      console.error(error);
+      alert("Failed to fetch faculty list.");
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     fetchAllFaculty();
   }, [fetchAllFaculty]);
 
-  // ✅ Fetch faculty name by ID (for remove form preview)
+  // ✅ Fetch faculty name by ID for remove form
   useEffect(() => {
-    const fetchNameById = async () => {
-      if (removeId.trim()) {
-        try {
-          const response = await fetch(
-            `${API_BASE_URL}/faculty/${removeId}`,
-            {
-              headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
-            }
-          );
-          if (!response.ok) {
-            setRemoveName("Faculty not found");
-            return;
-          }
-          const data = await response.json();
-          setRemoveName(data.name || "Name not available");
-        } catch (error) {
-          setRemoveName("Error fetching name");
+    if (!token) return;
+    if (!removeId.trim()) {
+      setRemoveName("");
+      return;
+    }
+
+    const timerId = setTimeout(async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/faculty/${removeId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) {
+          setRemoveName("Faculty not found");
+          return;
         }
-      } else {
-        setRemoveName("");
+        const data = await response.json();
+        setRemoveName(data.name || "Name not available");
+      } catch (error) {
+        setRemoveName("Error fetching name");
       }
-    };
-    const timerId = setTimeout(fetchNameById, 500);
+    }, 500);
+
     return () => clearTimeout(timerId);
-  }, [removeId]);
+  }, [removeId, token]);
 
   // ✅ Handle input change for Add Form
   const handleAddChange = (e) => {
@@ -99,23 +99,24 @@ const AddRemoveFaculty = () => {
       alert("Please fill all fields to add a faculty.");
       return;
     }
+    if (!token) return;
 
     try {
       const response = await fetch(`${API_BASE_URL}/addNewTeacher`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${AUTH_TOKEN}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(addForm),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       alert("Faculty added successfully!");
-      await fetchAllFaculty();
       setAddForm({ name: "", facultyId: "", email: "", password: "" });
+      fetchAllFaculty();
     } catch (error) {
-      console.error("Failed to add faculty:", error);
-      alert("Error: Could not add faculty.");
+      console.error(error);
+      alert("Failed to add faculty.");
     }
   };
 
@@ -126,24 +127,21 @@ const AddRemoveFaculty = () => {
       alert("Please enter a Faculty ID to remove.");
       return;
     }
+    if (!token) return;
+
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/deleteFaculty/${removeId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${AUTH_TOKEN}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/deleteFaculty/${facultyIdToRemove}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       alert("Faculty removed successfully!");
-      await fetchAllFaculty();
       setRemoveId("");
       setRemoveName("");
+      fetchAllFaculty();
     } catch (error) {
-      console.error("Failed to remove faculty:", error);
-      alert("Error: Could not remove faculty.");
+      console.error(error);
+      alert("Failed to remove faculty.");
     }
   };
 
@@ -151,74 +149,29 @@ const AddRemoveFaculty = () => {
     <div className="w-full min-h-screen overflow-x-hidden bg-gray-100 p-6 flex flex-col items-center">
       <section className="w-full max-w-5xl flex flex-wrap justify-center gap-8 mb-10">
         {/* Add Faculty Form */}
-        <form
-          onSubmit={handleAddSubmit}
-          className="bg-white p-6 rounded-2xl shadow-md w-full sm:max-w-sm"
-        >
-          <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">
-            Add Faculty
-          </h2>
+        <form onSubmit={handleAddSubmit} className="bg-white p-6 rounded-2xl shadow-md w-full sm:max-w-sm">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">Add Faculty</h2>
           <div className="flex flex-col gap-y-5">
-            <InputField
-              name="name"
-              placeholder="Enter Faculty Name"
-              value={addForm.name}
-              onChange={handleAddChange}
-              required
-            />
-            <InputField
-              name="facultyId"
-              placeholder="Enter Faculty Id"
-              value={addForm.facultyId}
-              onChange={handleAddChange}
-              required
-            />
-            <InputField
-              name="email"
-              type="email"
-              placeholder="Enter Faculty Email"
-              value={addForm.email}
-              onChange={handleAddChange}
-              required
-            />
-            <InputField
-              name="password"
-              type="password"
-              placeholder="Enter Password"
-              value={addForm.password}
-              onChange={handleAddChange}
-              required
-            />
-            <ActionButton type="submit">Add</ActionButton>
+            <InputField name="name" placeholder="Enter Faculty Name" value={addForm.name} onChange={handleAddChange} required />
+            <InputField name="facultyId" placeholder="Enter Faculty Id" value={addForm.facultyId} onChange={handleAddChange} required />
+            <InputField name="email" type="email" placeholder="Enter Faculty Email" value={addForm.email} onChange={handleAddChange} required />
+            <InputField name="password" type="password" placeholder="Enter Password" value={addForm.password} onChange={handleAddChange} required />
+            <ActionButton type="submit" disabled={!token}>Add</ActionButton>
           </div>
         </form>
 
         {/* Remove Faculty Form */}
-        <form
-          onSubmit={handleRemoveSubmit}
-          className="bg-white p-6 rounded-2xl shadow-md w-full sm:max-w-sm"
-        >
-          <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">
-            Remove Faculty
-          </h2>
+        <form onSubmit={handleRemoveSubmit} className="bg-white p-6 rounded-2xl shadow-md w-full sm:max-w-sm">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">Remove Faculty</h2>
           <div className="flex flex-col gap-y-5">
-            <InputField
-              placeholder="Enter Faculty ID to remove"
-              value={removeId}
-              onChange={(e) => setRemoveId(e.target.value)}
-              required
-            />
-            <InputField
-              placeholder="Name (Auto-fetched)"
-              value={removeName}
-              disabled
-            />
-            <ActionButton type="submit">Remove</ActionButton>
+            <InputField placeholder="Enter Faculty ID to remove" value={removeId} onChange={(e) => setRemoveId(e.target.value)} required />
+            <InputField placeholder="Name (Auto-fetched)" value={removeName} disabled />
+            <ActionButton type="submit" disabled={!token}>Remove</ActionButton>
           </div>
         </form>
       </section>
 
-      {/* ✅ Scrollable Teacher Table */}
+      {/* Teacher Table */}
       <div className="w-full overflow-x-auto">
         <div className="min-w-[700px]">
           <TeacherTable faculty={facultyList} />
