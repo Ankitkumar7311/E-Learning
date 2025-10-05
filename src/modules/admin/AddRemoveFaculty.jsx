@@ -35,6 +35,8 @@ const AddRemoveFaculty = () => {
     facultyId: "",
     email: "",
     password: "",
+    address: "",
+    designation: "",
   });
   const [removeId, setRemoveId] = useState("");
   const [removeName, setRemoveName] = useState("");
@@ -48,7 +50,6 @@ const AddRemoveFaculty = () => {
       });
       if (!response.ok) throw new Error(`Error fetching faculty: ${response.status}`);
       const data = await response.json();
-      // Adjust if API returns data object
       setFacultyList(Array.isArray(data) ? data : data.data || []);
     } catch (error) {
       console.error(error);
@@ -60,7 +61,7 @@ const AddRemoveFaculty = () => {
     fetchAllFaculty();
   }, [fetchAllFaculty]);
 
-  // ✅ Fetch faculty name by ID for remove form
+  // ✅ FIX: Fetch faculty name correctly using facultyId
   useEffect(() => {
     if (!token) return;
     if (!removeId.trim()) {
@@ -70,16 +71,21 @@ const AddRemoveFaculty = () => {
 
     const timerId = setTimeout(async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/faculty/${removeId}`, {
+        // ✅ FIX: Ensure correct endpoint matches backend
+        const response = await fetch(`${API_BASE_URL}/getFacultyById/${removeId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) {
           setRemoveName("Faculty not found");
           return;
         }
+
         const data = await response.json();
-        setRemoveName(data.name || "Name not available");
+
+        // ✅ FIX: Ensure the right key is used (backend often returns 'facultyName' or 'name')
+        setRemoveName(data.name || data.facultyName || "Name not available");
       } catch (error) {
+        console.error(error);
         setRemoveName("Error fetching name");
       }
     }, 500);
@@ -95,7 +101,8 @@ const AddRemoveFaculty = () => {
   // ✅ Add Faculty
   const handleAddSubmit = async (e) => {
     e.preventDefault();
-    if (!addForm.name || !addForm.facultyId || !addForm.email || !addForm.password) {
+    const { name, facultyId, email, password, address, designation } = addForm;
+    if (!name || !facultyId || !email || !password || !address || !designation) {
       alert("Please fill all fields to add a faculty.");
       return;
     }
@@ -112,7 +119,14 @@ const AddRemoveFaculty = () => {
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       alert("Faculty added successfully!");
-      setAddForm({ name: "", facultyId: "", email: "", password: "" });
+      setAddForm({
+        name: "",
+        facultyId: "",
+        email: "",
+        password: "",
+        address: "",
+        designation: "",
+      });
       fetchAllFaculty();
     } catch (error) {
       console.error(error);
@@ -130,10 +144,12 @@ const AddRemoveFaculty = () => {
     if (!token) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/deleteFaculty/${facultyIdToRemove}`, {
+      // ✅ FIX: Ensure endpoint matches backend
+      const response = await fetch(`${API_BASE_URL}/deleteFaculty/${removeId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       alert("Faculty removed successfully!");
       setRemoveId("");
@@ -156,6 +172,8 @@ const AddRemoveFaculty = () => {
             <InputField name="facultyId" placeholder="Enter Faculty Id" value={addForm.facultyId} onChange={handleAddChange} required />
             <InputField name="email" type="email" placeholder="Enter Faculty Email" value={addForm.email} onChange={handleAddChange} required />
             <InputField name="password" type="password" placeholder="Enter Password" value={addForm.password} onChange={handleAddChange} required />
+            <InputField name="address" placeholder="Enter Address" value={addForm.address} onChange={handleAddChange} required />
+            <InputField name="designation" placeholder="Enter Designation" value={addForm.designation} onChange={handleAddChange} required />
             <ActionButton type="submit" disabled={!token}>Add</ActionButton>
           </div>
         </form>
