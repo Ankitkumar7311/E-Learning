@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useApiClient } from '../../context/AuthorizedFetch';
 
-// Helper function to get token (copied from EditMaterial.jsx for consistency)
+// FIXED: Get token from the correct localStorage key
 const getTokenFromLocalStorage = () => {
     try {
-        const stored = JSON.parse(localStorage.getItem('vidyaSarthiAuth') || '{}');
-        return stored?.token || null;
+        const token = localStorage.getItem('token');
+        return token || null;
     } catch (e) {
+        console.error('Error getting token:', e);
         return null;
     }
 };
@@ -19,24 +19,17 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
     const [uploading, setUploading] = useState(false);
     const [loadingPreview, setLoadingPreview] = useState(true); 
     const [previewError, setPreviewError] = useState(null);    
-    const [message, setMessage] = useState(null); // This state will hold the general warning/success message
-
-    let apiClient = null;
-    try {
-        apiClient = useApiClient();
-    } catch (e) {
-        apiClient = null;
-    }
+    const [message, setMessage] = useState(null);
 
     const API_BASE = apiBase || 'http://localhost:8080/VidyaSarthi';
 
-    // --- Function to fetch the Material (Blob) ---
+    // Function to fetch the Material (Blob)
     const fetchMaterialForPreview = async (id) => {
         setLoadingPreview(true);
         setPreviewError(null);
         setFileUrl(null);
         setFileType(null);
-        setMessage(null); // Clear previous message before new fetch
+        setMessage(null);
 
         let currentFileUrl = null;
 
@@ -47,12 +40,16 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
             return;
         }
 
+        console.log('📡 Fetching material preview for:', id);
+
         try {
             const res = await fetch(`${API_BASE}/getMaterial/${encodeURIComponent(id)}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
             });
+
+            console.log('📡 Preview response status:', res.status);
 
             if (!res.ok) {
                 let msg = `Failed to fetch material preview: Server responded with status ${res.status}`;
@@ -70,7 +67,6 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
             
             let type = 'unknown';
             
-            // Logic to check multiple MIME TYPES
             if (contentType.includes('application/pdf')) {
                 type = 'pdf';
             } else if (contentType.includes('image/')) {
@@ -79,27 +75,25 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
                 type = 'word';
             }
             
+            console.log('✅ Material preview loaded. Type:', type);
+            
             setFileType(type);
             setFileUrl(url);
             
-            // --- NEW LOGIC: Set warning message if file is not PDF ---
             if (type !== 'pdf') {
                 setMessage(`Warning: Current file is a ${type.toUpperCase()}. Only PDF files can be uploaded using the replacement field below.`);
             }
-            // --------------------------------------------------------
             
-            return currentFileUrl; // Return URL for cleanup tracking
+            return currentFileUrl;
 
         } catch (err) {
-            console.error('Failed to fetch material for preview', err);
+            console.error('❌ Failed to fetch material for preview', err);
             setPreviewError(err.message || 'Failed to load preview.');
         } finally {
             setLoadingPreview(false);
         }
     };
-    // ----------------------------------------------------
 
-    // --- useEffect to fetch on mount/materialId change ---
     useEffect(() => {
         let cleanupUrl = null;
 
@@ -109,7 +103,7 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
                    cleanupUrl = url; 
                 }
             }).catch(() => {
-                // Fetch errors are handled inside fetchMaterialForPreview
+                // Errors handled in fetchMaterialForPreview
             });
         }
 
@@ -119,20 +113,17 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
             }
         };
     }, [materialId, API_BASE]);
-    // -----------------------------------------------------
 
     const handleFileSelect = (e) => {
         const f = e.target.files && e.target.files[0];
         setSelectedFile(f);
         if (f) {
-            // Clear general message only if selection is valid and a PDF (to avoid overwriting file type warning)
             if (f.type === 'application/pdf') {
                  setMessage(null);
             } else {
                  setMessage('Please select a PDF file. The input field is restricted to PDF.');
             }
         } else {
-            // Re-show the original warning if the user clears the selection
             if (fileType !== 'pdf') {
                 setMessage(`Warning: Current file is a ${fileType.toUpperCase()}. Only PDF files can be uploaded using the replacement field below.`);
             } else {
@@ -141,14 +132,12 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
         }
     };
 
-    // (handleReplace function remains the same as previously defined)
     const handleReplace = async () => {
         if (!selectedFile) {
             setMessage('Please select a PDF to upload for replacement.');
             return;
         }
 
-        // Double check client-side mime type before upload
         if (selectedFile.type !== 'application/pdf') {
              setMessage('Upload failed: Please select a PDF file.');
              return;
@@ -156,6 +145,8 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
 
         setUploading(true);
         setMessage(null);
+
+        console.log('📤 Uploading replacement material...');
 
         try {
             const formData = new FormData();
@@ -166,20 +157,13 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
             const headers = {};
             if (token) headers['Authorization'] = `Bearer ${token}`;
 
-            let res;
+            const res = await fetch(`${API_BASE}/faculty/editUploadedMaterial`, {
+                method: 'POST',
+                headers,
+                body: formData,
+            });
 
-            if (apiClient) {
-                res = await apiClient('/faculty/editUploadedMaterial', {
-                    method: 'POST',
-                    body: formData,
-                });
-            } else {
-                res = await fetch(`${API_BASE}/faculty/editUploadedMaterial`, {
-                    method: 'POST',
-                    headers,
-                    body: formData,
-                });
-            }
+            console.log('📡 Upload response status:', res.status);
 
             if (!res.ok) {
                 let text = `Upload failed with status ${res.status}`;
@@ -191,24 +175,23 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
             }
 
             await res.text();
+            console.log('✅ Material replaced successfully');
             setMessage('Material replaced successfully.');
 
             setSelectedFile(null);
-            
             setFilename(selectedFile.name); 
-            if (typeof onReload === 'function') onReload();
             
+            if (typeof onReload === 'function') onReload();
             fetchMaterialForPreview(materialId); 
 
         } catch (err) {
-            console.error('Replace failed', err);
+            console.error('❌ Replace failed', err);
             setMessage(err.message || 'Replace failed');
         } finally {
             setUploading(false);
         }
     };
     
-    // --- Function to render the correct preview element (unchanged) ---
     const renderPreview = () => {
         if (loadingPreview) {
             return (
@@ -272,8 +255,6 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
             );
         }
     };
-    // ----------------------------------------------------
-
 
     return (
         <div className="bg-white p-8 rounded-lg shadow-lg max-w-3xl w-full mx-auto">
@@ -311,16 +292,11 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
                     </div>
                     {selectedFile && <p className="mt-2 text-sm text-gray-600">Selected: <strong>{selectedFile.name}</strong></p>}
                     
-                    {/* Display message/warning */}
                     {message && (
                         <p className={`mt-2 text-sm ${message.includes('success') ? 'text-green-700' : (message.includes('Warning') ? 'text-yellow-600' : 'text-red-600')}`}>
                             {message}
                         </p>
                     )}
-                </div>
-
-                <div className="flex justify-end gap-2">
-                    {/* Edit Metadata button removed */}
                 </div>
             </div>
         </div>

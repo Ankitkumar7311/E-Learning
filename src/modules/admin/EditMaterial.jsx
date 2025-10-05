@@ -2,34 +2,32 @@ import React, { useState, useEffect } from 'react';
 import logo from '../../assets/Ellipse.png';
 import Editmaterialedit from './Editmaterialedit';
 
-// safe API base detection (CRA/Vite/fallback)
-const API_BASE = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_BASE)
-  ? process.env.REACT_APP_API_BASE
-  : (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE)
-    ? import.meta.env.VITE_API_BASE
-    : 'http://localhost:8080/VidyaSarthi';
+const API_BASE = 'http://localhost:8080/VidyaSarthi';
 
-// Helper to get faculty ID from localStorage (based on your description)
+// FIXED: Get faculty ID from the correct localStorage key
 const getFacultyId = () => {
   try {
-    const stored = JSON.parse(localStorage.getItem('vidyaSarthiAuth') || '{}');
-    return stored?.facultyId || null; // Assuming 'facultyId' is stored here
+    const storedUser = localStorage.getItem('user');
+    if (!storedUser) return null;
+    
+    const user = JSON.parse(storedUser);
+    return user?.facultyId || user?.userId || null;
   } catch (e) {
+    console.error('Error getting facultyId:', e);
     return null;
   }
 };
 
-// --- NEW HELPER: Get Token from localStorage ---
+// FIXED: Get token from the correct localStorage key
 const getTokenFromLocalStorage = () => {
   try {
-    const stored = JSON.parse(localStorage.getItem('vidyaSarthiAuth') || '{}');
-    return stored?.token || null;
+    const token = localStorage.getItem('token');
+    return token || null;
   } catch (e) {
+    console.error('Error getting token:', e);
     return null;
   }
 };
-// ----------------------------------------------
-
 
 const EditMaterial = () => {
   const [showEdit, setShowEdit] = useState(false);
@@ -41,6 +39,8 @@ const EditMaterial = () => {
 
   const facultyId = getFacultyId();
 
+  console.log('📋 EditMaterial - Faculty ID:', facultyId);
+
   // Function to fetch the list of materials
   const fetchMaterialList = async (id) => {
     if (!id) {
@@ -48,27 +48,27 @@ const EditMaterial = () => {
       return;
     }
     
-    // --- Get Token ---
     const token = getTokenFromLocalStorage();
     if (!token) {
-        setError('Authorization token not found. Please log in.');
-        return;
+      setError('Authorization token not found. Please log in.');
+      return;
     }
-    // -----------------
 
     setLoading(true);
     setError(null);
     setMaterialList([]);
 
+    console.log('📡 Fetching material list for faculty:', id);
+
     try {
       const res = await fetch(`${API_BASE}/faculty/getMaterialListFaculty/${encodeURIComponent(id)}`, {
-        // --- Add Authorization Header ---
         headers: {
-            'Authorization': `Bearer ${token}`, // Passing the token here
-            'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        // --------------------------------
       });
+
+      console.log('📡 Material list response status:', res.status);
 
       if (!res.ok) {
         let msg = `Server responded with status ${res.status}`;
@@ -77,19 +77,19 @@ const EditMaterial = () => {
           if (json && json.message) msg = json.message;
         } catch (e) { /* ignore */ }
         
-        // Handle 401 specifically
         if (res.status === 401) {
-             msg = "Authentication failed (401). Token might be expired or invalid.";
+          msg = "Authentication failed (401). Token might be expired or invalid.";
         }
         
         throw new Error(msg);
       }
 
       const list = await res.json();
+      console.log('✅ Material list received:', list);
       setMaterialList(list || []);
 
     } catch (err) {
-      console.error('Failed to fetch material list', err);
+      console.error('❌ Failed to fetch material list', err);
       setError(err.message || 'Failed to fetch material list');
     } finally {
       setLoading(false);

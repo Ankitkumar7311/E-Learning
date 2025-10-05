@@ -1,100 +1,218 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
+// src/auth/AuthContext.jsx
+import { createContext, useState, useContext, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
-// Key for localStorage
-const AUTH_KEY = 'vidyaSarthiAuth';
-
-const DEFAULT_AUTH_STATE = {
-  isAuthenticated: false,
-  token: null,
-  user: null,
-  role: null,
-  facultyId: null,
-  login: () => { console.error('Login called outside AuthProvider'); },
-  logout: () => { console.error('Logout called outside AuthProvider'); },
-};
-
-const AuthContext = createContext(DEFAULT_AUTH_STATE);
-
-// convenience: baseUrl used by your app's fetch helper
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/VidyaSarthi';
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState(() => {
-    const stored = localStorage.getItem(AUTH_KEY);
-    try {
-      return stored ? { ...DEFAULT_AUTH_STATE, ...JSON.parse(stored) } : DEFAULT_AUTH_STATE;
-    } catch (e) {
-      console.error('Failed to parse stored auth state:', e);
-      return DEFAULT_AUTH_STATE;
-    }
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // helper to persist state
-  const persist = (next) => {
-    try {
-      localStorage.setItem(AUTH_KEY, JSON.stringify(next));
-    } catch (e) {
-      console.warn('Failed to persist auth state', e);
-    }
-  };
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkAuth = () => {
+      try {
+        // Prefer vidyaSarthiAuth (if present) for token & facultyId compatibility with legacy code
+        const vsRaw = localStorage.getItem('vidyaSarthiAuth');
+        const token = localStorage.getItem('token') || (vsRaw ? (JSON.parse(vsRaw || '{}')?.token) : null);
+        const storedUser = localStorage.getItem('user');
+        const storedRole = localStorage.getItem('role');
 
-  // login: accepts an object { token, user, role, email }
-  // After saving token/user it will call /getFacultyId with { email } and persist facultyId if returned.
-  const login = async (data) => {
-    const next = {
-      isAuthenticated: true,
-      token: data.token || null,
-      user: data.user || null,
-      role: data.role || null,
-      facultyId: data.facultyId || null,
+        console.log('🔍 Checking existing auth:', { token: !!token, storedUser, storedRole });
+
+        if (token && storedUser && storedRole) {
+          setIsAuthenticated(true);
+          setUser(JSON.parse(storedUser));
+          setRole(storedRole);
+          console.log('✅ Restored session:', { role: storedRole });
+        }
+      } catch (error) {
+        console.error('❌ Error checking auth:', error);
+        logout();
+      } finally {
+        setLoading(false);
+      }
     };
 
-    setAuthState(next);
-    persist(next);
+    checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    // if facultyId was provided by caller, nothing to fetch
-    if (next.facultyId) return next;
-
-    // otherwise try to fetch facultyId from server using email
-    const email = next.user?.email || (data.email || null);
-    if (!email) return next;
-
+  const login = async (credentials) => {
+    console.log('🔐 Login function called with:', credentials);
+    
     try {
-      const res = await fetch(`${BASE_URL}/getFacultyId`, {
+      // YOUR BACKEND EXPECTS "username" not "email"
+      const loginPayload = {
+        username: credentials.email || credentials.username,
+        password: credentials.password
+      };
+      
+      console.log('📤 Sending to backend:', loginPayload);
+      
+      // YOUR ACTUAL BACKEND LOGIN ENDPOINT
+      const response = await fetch('http://localhost:8080/VidyaSarthi/loginAcc', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(next.token ? { Authorization: `Bearer ${next.token}` } : {}) },
-        body: JSON.stringify({ email }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginPayload),
       });
 
-      if (!res.ok) {
-        console.warn('getFacultyId returned', res.status, res.statusText);
-        return next;
+      console.log('📡 Response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Login failed' }));
+        console.error('❌ Login failed:', errorData);
+        throw new Error(errorData.message || 'Login failed');
       }
 
-      const payload = await res.json();
-      const facultyId = payload?.facultyId || payload?.facultyID || payload?.facultyid;
-      if (facultyId) {
-        const merged = { ...next, facultyId };
-        setAuthState(merged);
-        persist(merged);
-        return merged;
+      const data = await response.json();
+      console.log('✅ RAW Login response data:', data);
+
+      // Validate response has required fields
+      if (!data.success) {
+        throw new Error('Login was not successful');
       }
-    } catch (e) {
-      console.warn('Failed to fetch facultyId during login', e);
+
+      if (!data.token || !data.role || !data.userId) {
+        console.error('❌ Missing required fields:', data);
+        throw new Error('Invalid response from server');
+      }
+
+      // YOUR BACKEND RETURNS: { token, role, success, email, userId }
+      const token = data.token;
+      const userRole = data.role; // "Faculty", "Student", or "Admin"
+      
+      // Build user object
+      const userData = {
+        userId: data.userId,
+        email: data.email,
+        role: userRole,
+      };
+
+      // Add role-specific ID fields
+      if (userRole === 'Faculty') {
+        userData.facultyId = data.userId;
+      } else if (userRole === 'Student') {
+        userData.studentId = data.userId;
+      } else if (userRole === 'Admin') {
+        userData.adminId = data.userId;
+      }
+
+      // Normalize role to lowercase for routing
+      const normalizedRole = userRole.toLowerCase();
+
+      console.log('🔄 Processed login data:', { 
+        token: !!token, 
+        userData, 
+        normalizedRole 
+      });
+
+      // Store in localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('role', normalizedRole);
+
+      // Also keep vidyaSarthiAuth key for compatibility with other modules that rely on it
+      try {
+        const vs = { token };
+        // include facultyId if present (so other code can read it)
+        if (userData.facultyId) vs.facultyId = userData.facultyId;
+        localStorage.setItem('vidyaSarthiAuth', JSON.stringify(vs));
+      } catch (err) {
+        console.warn('Could not write vidyaSarthiAuth to localStorage', err);
+      }
+
+      console.log('💾 Saved to localStorage:', { 
+        token: !!token, 
+        user: userData, 
+        role: normalizedRole 
+      });
+
+      // Update state
+      setIsAuthenticated(true);
+      setUser(userData);
+      setRole(normalizedRole);
+
+      console.log('🎉 Auth state updated:', { 
+        isAuthenticated: true, 
+        user: userData, 
+        role: normalizedRole 
+      });
+
+      // IMPORTANT: Return the auth state for the Login component
+      return {
+        isAuthenticated: true,
+        user: userData,
+        role: normalizedRole,
+        token
+      };
+
+    } catch (error) {
+      console.error('❌ Login error in AuthContext:', error);
+      logout(); // Clear any partial state
+      throw error;
+    }
+  };
+
+  const logout = () => {
+    console.log('🚪 Logging out...');
+
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('role');
+      localStorage.removeItem('vidyaSarthiAuth'); // ensure compatibility with other modules
+    } catch (err) {
+      console.warn('Error clearing local auth storage:', err);
     }
 
-    return next;
+    setIsAuthenticated(false);
+    setUser(null);
+    setRole(null);
+
+    // notify any listeners in the app that a logout happened
+    try {
+      window.dispatchEvent(new CustomEvent('app:logout'));
+    } catch (e) {
+      // ignore
+    }
+
+    console.log('✅ Logged out successfully');
   };
 
-  // logout: clear everything
-  const logout = () => {
-    setAuthState(DEFAULT_AUTH_STATE);
-    try { localStorage.removeItem(AUTH_KEY); } catch (e) { console.warn('Failed to remove auth key', e); }
+  const value = {
+    isAuthenticated,
+    user,
+    role,
+    loading,
+    login,
+    logout,
   };
 
-  const contextValue = useMemo(() => ({ ...authState, login, logout }), [authState]);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => useContext(AuthContext);
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

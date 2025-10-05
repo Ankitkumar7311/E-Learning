@@ -1,202 +1,4 @@
-// import React, { useState } from "react";
-// import AdminNavBar from "./AdminNavBar";
-// import Editmaterialedit from "./Editmaterialedit"; // 👈 your existing component
-// import CustomModal from "../faculty/common_modal/CustomModal";
-
-// const RequestReport = () => {
-//   const [data, setData] = useState([
-//     { id: 1, request: "CS304", module: "ME304", comment: "Information is wrong" },
-//     { id: 2, request: "CS304", module: "ME304", comment: "Please Add DOF's concept in detail" },
-//     { id: 3, request: "CS304", module: "ME304", comment: "Photo is wrong" },
-//     { id: 4, request: "CS304", module: "ME304", comment: "Link not working" },
-//   ]);
-//   const totalCount = data.length;
-
-
-//   const [openModal, setOpenModal] = useState(false);
-//   const [selectedId, setSelectedId] = useState(null);
-
-//   return (
-//     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start">
-//       {/* Content */}
-//       <div className="flex-1 flex items-center justify-center p-1 font-sans">
-//         <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl overflow-hidden">
-//           <div className="p-6">
-//             <table className="min-w-full border border-gray-300 divide-y divide-gray-200">
-//               <thead className="bg-gray-50">
-//                 <tr>
-//                   {["S.N.", "Request Code", "Module Code", "Comment", "Action"].map((head, idx) => (
-//                     <th
-//                       key={idx}
-//                       className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
-//                         idx < 4 ? "border-r border-gray-300" : ""
-//                       }`}
-//                     >
-//                       {head}
-//                     </th>
-//                   ))}
-//                 </tr>
-//               </thead>
-//               <tbody className="bg-white divide-y divide-gray-200">
-//                 {data.map((item) => (
-//                   <tr key={item.id}>
-//                     <td className="px-6 py-4 text-sm font-medium text-gray-900 border-r border-gray-300">
-//                       {item.id}.
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-gray-500 border-r border-gray-300">
-//                       {item.request}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-gray-500 border-r border-gray-300">
-//                       {item.module}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-gray-500 border-r border-gray-300">
-//                       {item.comment}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-gray-500">
-//                       <button
-//                         onClick={() => {
-//                           setSelectedId(item.id);
-//                           setOpenModal(true);
-//                         }}
-//                         className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-//                       >
-//                         Edit
-//                       </button>
-//                     </td>
-//                   </tr>
-//                 ))}
-                
-//                 {/* ✅ Total Row */}
-//                 <tr className="bg-gray-50 font-medium">
-//                   <td
-//                     colSpan="4"
-//                     className="px-6 py-4 text-right border-r border-gray-300"
-//                   >
-//                     Total
-//                   </td>
-//                   <td className="px-6 py-4 text-left font-bold text-gray-900">
-//                     {totalCount}
-//                   </td>
-//                 </tr>
-//               </tbody>
-//             </table>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Modal with your custom component */}
-//       {openModal && (
-//         <CustomModal isOpen={openModal} onClose={() => setOpenModal(false)} title="Edit Material">
-//           {/* 👇 Here you insert your already built component */}
-//           <Editmaterialedit requestId={selectedId} onClose={() => setOpenModal(false)} />
-//         </CustomModal>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default RequestReport;
-// import React, { useState } from "react";
-// import AdminNavBar from "./AdminNavBar";
-// import Editmaterialedit from "./Editmaterialedit"; // Your existing component
-// import CustomModal from "../faculty/common_modal/CustomModal"; // Modal wrapper
-
-// const RequestReport = () => {
-//   const [data, setData] = useState([
-//     { id: 1, request: "CS304", module: "ME304", comment: "Information is wrong" },
-//     { id: 2, request: "CS304", module: "ME304", comment: "Please Add DOF's concept in detail" },
-//     { id: 3, request: "CS304", module: "ME304", comment: "Photo is wrong" },
-//     { id: 4, request: "CS304", module: "ME304", comment: "Link not working" },
-//   ]);
-//   const totalCount = data.length;
-
-//   const [openModal, setOpenModal] = useState(false);
-//   const [selectedId, setSelectedId] = useState(null);
-
-//   return (
-//     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-start px-4">
-//       {/* Optional: Admin Navigation */}
-//       {/* <AdminNavBar /> */}
-
-//       {/* Main Content */}
-//       <div className="w-full max-w-5xl mt-6">
-//         <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-//           {/* ✅ Scroll wrapper for small screens */}
-//           <div className="p-6 overflow-x-auto">
-//             <table className="min-w-full border border-gray-300 divide-y divide-gray-200">
-//               <thead className="bg-gray-50">
-//                 <tr>
-//                   {["S.N.", "Request Code", "Module Code", "Comment", "Action"].map((head, idx) => (
-//                     <th
-//                       key={idx}
-//                       className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
-//                         idx < 4 ? "border-r border-gray-300" : ""
-//                       }`}
-//                     >
-//                       {head}
-//                     </th>
-//                   ))}
-//                 </tr>
-//               </thead>
-//               <tbody className="bg-white divide-y divide-gray-200">
-//                 {data.map((item) => (
-//                   <tr key={item.id}>
-//                     <td className="px-6 py-4 text-sm font-medium text-gray-900 border-r border-gray-300">
-//                       {item.id}.
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-gray-500 border-r border-gray-300">
-//                       {item.request}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-gray-500 border-r border-gray-300">
-//                       {item.module}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-gray-500 border-r border-gray-300">
-//                       {item.comment}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-gray-500">
-//                       <button
-//                         onClick={() => {
-//                           setSelectedId(item.id);
-//                           setOpenModal(true);
-//                         }}
-//                         className="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-//                       >
-//                         Edit
-//                       </button>
-//                     </td>
-//                   </tr>
-//                 ))}
-
-//                 {/* Total Row */}
-//                 <tr className="bg-gray-50 font-medium">
-//                   <td colSpan="4" className="px-6 py-4 text-right border-r border-gray-300">
-//                     Total
-//                   </td>
-//                   <td className="px-6 py-4 text-left font-bold text-gray-900">
-//                     {totalCount}
-//                   </td>
-//                 </tr>
-//               </tbody>
-//             </table>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Modal */}
-//       {openModal && (
-//         <CustomModal isOpen={openModal} onClose={() => setOpenModal(false)} title="Edit Material">
-//           <Editmaterialedit requestId={selectedId} onClose={() => setOpenModal(false)} />
-//         </CustomModal>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default RequestReport;
-// src/modules/admin/RequestReport.jsx
-import React, { useState, useEffect, useCallback } from 'react';
-import { useApiClient } from '../../context/AuthorizedFetch';
-import { useAuth } from '../../auth/AuthContext';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // --- SVG Icons for buttons ---
@@ -219,70 +21,133 @@ const EditIcon = () => (
     </svg>
 );
 
+// Resolve API base (CRA / Vite / fallback)
+const API_BASE = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_BASE)
+    ? process.env.REACT_APP_API_BASE
+    : (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE)
+        ? import.meta.env.VITE_API_BASE
+        : 'http://localhost:8080/VidyaSarthi';
+
+// Helpers to read token / facultyId from localStorage (same approach as your working component)
+const getFacultyIdFromLocalStorage = () => {
+    try {
+        const stored = localStorage.getItem('user');
+        if (!stored) return null;
+        const parsed = JSON.parse(stored);
+        return parsed?.facultyId || parsed?.userId || null;
+    } catch (e) {
+        console.error('Error parsing user from localStorage', e);
+        return null;
+    }
+};
+
+const getTokenFromLocalStorage = () => {
+    try {
+        return localStorage.getItem('token') || null;
+    } catch (e) {
+        console.error('Error getting token from localStorage', e);
+        return null;
+    }
+};
+
 const RequestReport = () => {
     const [complaints, setComplaints] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const apiClient = useApiClient();
-    const { facultyId } = useAuth();
+
     const navigate = useNavigate();
+
+    const facultyId = getFacultyIdFromLocalStorage();
 
     const fetchComplaints = useCallback(async () => {
         if (!facultyId) {
-            setError("Faculty ID not found. Please log in again.");
+            setError('Faculty ID not found. Please log in again.');
+            setLoading(false);
+            return;
+        }
+
+        const token = getTokenFromLocalStorage();
+        if (!token) {
+            setError('Authorization token not found. Please log in again.');
             setLoading(false);
             return;
         }
 
         setLoading(true);
         setError(null);
-        try {
-            const response = await apiClient(`/faculty/getAllComplains/${facultyId}`);
 
-            if (!response.ok) {
-                let errorText = `Failed to fetch complaints. Status: ${response.status}`;
+        try {
+            const res = await fetch(`${API_BASE}/faculty/getAllComplains/${encodeURIComponent(facultyId)}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!res.ok) {
+                let msg = `Failed to fetch complaints. Status: ${res.status}`;
                 try {
-                    const errData = await response.json();
-                    errorText = errData.message || errorText;
-                } catch (e) {}
-                throw new Error(errorText);
+                    const j = await res.json();
+                    if (j && j.message) msg = j.message;
+                } catch (_) { }
+                throw new Error(msg);
             }
 
-            const data = await response.json();
-            const sortedData = (data || []).sort((a, b) => {
+            const data = await res.json();
+
+            const sorted = (data || []).sort((a, b) => {
                 if (a.complainStatus === 'ACTION_REQUIRED') return -1;
                 if (b.complainStatus === 'ACTION_REQUIRED') return 1;
                 return 0;
             });
-            setComplaints(sortedData);
+
+            setComplaints(sorted);
         } catch (err) {
-            console.error("Error fetching complaints:", err);
-            setError(err.message);
+            console.error('Error fetching complaints:', err);
+            setError(err.message || 'Failed to fetch complaints');
         } finally {
             setLoading(false);
         }
-    }, [apiClient, facultyId]);
+    }, [facultyId]);
 
     useEffect(() => {
-        if (facultyId) fetchComplaints();
-    }, [fetchComplaints, facultyId]);
+        fetchComplaints();
+    }, [fetchComplaints]);
 
     const handleUpdateStatus = async (complainId, newStatus) => {
+        const token = getTokenFromLocalStorage();
+        if (!token) {
+            alert('Authorization token missing. Please login again.');
+            return;
+        }
+
         try {
-            const response = await apiClient('/faculty/updateComplainStatus', {
+            const res = await fetch(`${API_BASE}/faculty/updateComplainStatus`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: complainId, updatedStatus: newStatus }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ id: complainId, updatedStatus: newStatus })
             });
-            if (!response.ok) throw new Error(`Failed to update status to ${newStatus}`);
+
+            if (!res.ok) {
+                let msg = `Failed to update status. Server returned ${res.status}`;
+                try {
+                    const j = await res.json();
+                    if (j && j.message) msg = j.message;
+                } catch (_) { }
+                throw new Error(msg);
+            }
+
+            // Refresh list after update
             fetchComplaints();
         } catch (err) {
-            console.error("Error updating status:", err);
-            alert(`Error: ${err.message}`);
+            console.error('Error updating status:', err);
+            alert(err.message || 'Failed to update status');
         }
     };
 
-    // Navigate to edit page with materialId param and pass selectedMaterialName via state
     const handleEdit = (complain) => {
         const selectedMaterialName = complain.pdfName || complain.filename || complain.materialId || 'N/A';
         navigate(`/teacher/edit-material/${encodeURIComponent(complain.materialId)}`, {
@@ -298,7 +163,7 @@ const RequestReport = () => {
 
         return (
             <span className={`px-3 py-1 text-sm font-semibold rounded-full ${colorClass}`}>
-                {status.replace('_', ' ')}
+                {String(status).replace('_', ' ')}
             </span>
         );
     };
@@ -367,9 +232,7 @@ const RequestReport = () => {
                                 );
                             }) : (
                                 <tr>
-                                    <td colSpan="7" className="text-center py-8 text-gray-500">
-                                        No complaints found.
-                                    </td>
+                                    <td colSpan="7" className="text-center py-8 text-gray-500">No complaints found.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -381,4 +244,3 @@ const RequestReport = () => {
 };
 
 export default RequestReport;
-

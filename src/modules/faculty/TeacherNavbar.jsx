@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
 import logo from "../../assets/Ellipse.png"; // Make sure this path is correct
-
+import Logout from "../admin/popups/Logout";
 const TeacherNavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -83,12 +83,7 @@ const TeacherNavBar = () => {
             >
               Help & Support
             </Link>
-            <Link to="/login">
-              <button className="flex items-center space-x-2 rounded-lg bg-yellow-400 py-2 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
-                <span>Log out</span>
-                <FiLogOut className="h-5 w-5" />
-              </button>
-            </Link>
+            <Logout />
           </div>
 
           {/* --- Hamburger Menu Button for TABLET & MOBILE --- */}

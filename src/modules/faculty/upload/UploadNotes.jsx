@@ -1,25 +1,20 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useAuth } from "../../../auth/AuthContext";
-import { useApiClient } from "../../../context/AuthorizedFetch";
+// src/modules/faculty/upload/UploadNotes.jsx
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-// Inline SVG Upload Icon
+// Inline icons (kept from your original)
 const UploadIcon = (props) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
     <path fill="currentColor" d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5 12.5 32.8 12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64z" />
   </svg>
 );
-
-// Inline SVG Close Icon
 const TimesIcon = (props) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
     <path fill="currentColor" d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 4.7 55.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 4.7 411.3c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.3 456.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z" />
   </svg>
 );
 
-// Unique ID generator
-const generateUniqueId = () => `material-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-
-// Message modal
+// message modal
 const MessageModal = ({ message, type = "success", onClose }) => {
   const bg = type === "success" ? "bg-green-100 border-green-400 text-green-700" : "bg-red-100 border-red-400 text-red-700";
   return (
@@ -37,26 +32,62 @@ const MessageModal = ({ message, type = "success", onClose }) => {
   );
 };
 
+// Resolve API base (CRA / Vite / fallback)
+const API_BASE = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_BASE)
+  ? process.env.REACT_APP_API_BASE
+  : (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE)
+    ? import.meta.env.VITE_API_BASE
+    : 'http://localhost:8080/VidyaSarthi';
+
+// helpers to read auth
+const getFacultyIdFromLocalStorage = () => {
+  try {
+    const vs = localStorage.getItem('vidyaSarthiAuth');
+    if (vs) {
+      const parsed = JSON.parse(vs || '{}');
+      return parsed?.facultyId || null;
+    }
+    const stored = localStorage.getItem('user');
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    return parsed?.facultyId || parsed?.userId || null;
+  } catch (e) {
+    console.error('Error reading facultyId from localStorage', e);
+    return null;
+  }
+};
+const getTokenFromLocalStorage = () => {
+  try {
+    // prefer vidyaSarthiAuth token if present
+    const vs = localStorage.getItem('vidyaSarthiAuth');
+    if (vs) {
+      const parsed = JSON.parse(vs || '{}');
+      if (parsed?.token) return parsed.token;
+    }
+    return localStorage.getItem('token') || null;
+  } catch (e) {
+    console.error('Error reading token from localStorage', e);
+    return null;
+  }
+};
+
+// small util to generate unique material id
+const generateUniqueId = () => `material-${Date.now()}-${Math.random().toString(36).slice(2,9)}`;
+
 const UploadNotes = () => {
-  // get whole auth object so we can update it when we fetch facultyId
-  const auth = useAuth();
-  const apiClient = useApiClient();
+  const navigate = useNavigate();
 
-  // keep a stable ref to apiClient to avoid causing effects to re-run if apiClient identity changes
-  const apiRef = React.useRef(apiClient);
-  React.useEffect(() => { apiRef.current = apiClient; }, [apiClient]);
-
-  // UI / data states
+  // state
   const [regulations, setRegulations] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState({ regulations: false, subjects: false, facultyId: false });
   const [error, setError] = useState(null);
+  const [submission, setSubmission] = useState({ open: false, message: "", isError: false });
 
-  // Four priority rows
-  const initialRows = useMemo(() => ["A", "B", "C", "D"], []);
-  const rowsCount = initialRows.length;
+  // rows config
+  const rows = useMemo(() => ["A", "B", "C", "D"], []);
+  const rowsCount = rows.length;
 
-  // form state: keep regulation as object, subjects and files arrays
   const [formData, setFormData] = useState({
     selectedRegulation: null,
     selectedBranch: "",
@@ -65,116 +96,68 @@ const UploadNotes = () => {
     files: Array(rowsCount).fill(null),
   });
 
-  // submission state
-  const [submissionStatus, setSubmissionStatus] = useState({ submitted: false, error: null, message: null });
-  const [isUploading, setIsUploading] = useState(false);
-
-  // refs to file inputs so we can clear them programmatically
+  // file input refs
   const fileInputRefs = useRef([]);
   fileInputRefs.current = fileInputRefs.current.slice(0, rowsCount);
-
   const pushFileRef = (el) => {
     if (!el) return;
     if (!fileInputRefs.current.includes(el)) fileInputRefs.current.push(el);
   };
 
-  // Fetch regulations on mount (only once)
+  const [isUploading, setIsUploading] = useState(false);
+
+  const token = getTokenFromLocalStorage();
+  const storedFacultyId = getFacultyIdFromLocalStorage();
+
+  // fetch regulations
   useEffect(() => {
     let cancelled = false;
     const fetchRegulations = async () => {
-      setLoading((s) => ({ ...s, regulations: true }));
+      setLoading(s => ({ ...s, regulations: true }));
       setError(null);
       try {
-        const res = await apiRef.current("/getRegulationList", { method: "GET" });
-        if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+        const res = await fetch(`${API_BASE}/faculty/getRegulationList`, {
+          method: "GET",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!res.ok) throw new Error(`Failed to load regulations (${res.status})`);
         const data = await res.json();
-
+        // expect array or object - normalise to array of { regulationId, display, raw }
         if (Array.isArray(data)) {
-          const mapped = data.map((r) => ({
-            regulationId: r.regulationId ?? r.regulation ?? r.regulation_id ?? r.id ?? String(r),
-            display: r.name ?? r.display ?? r.name ?? String(r),
+          const mapped = data.map(r => ({
+            regulationId: r.regulationId ?? r.id ?? String(r),
+            display: r.name ?? r.display ?? String(r),
+            raw: r,
+          }));
+          if (!cancelled) setRegulations(mapped);
+        } else if (data && data.regulations) {
+          // support wrapper
+          const mapped = Object.values(data.regulations).map((r, idx) => ({
+            regulationId: r.regulationId ?? r.id ?? String(idx),
+            display: r.name ?? r.display ?? String(r),
             raw: r,
           }));
           if (!cancelled) setRegulations(mapped);
         } else {
-          // if server returned objects in a wrapper
-          console.warn("Unexpected /getRegulationList response:", data);
+          // fallback to empty
           if (!cancelled) setRegulations([]);
         }
       } catch (err) {
         if (!cancelled) setError(err.message || "Network error fetching regulations.");
       } finally {
-        if (!cancelled) setLoading((s) => ({ ...s, regulations: false }));
+        if (!cancelled) setLoading(s => ({ ...s, regulations: false }));
       }
     };
 
     fetchRegulations();
     return () => { cancelled = true; };
-  }, []); // empty deps -> runs once
+  }, [token]);
 
-  // Hard-coded branches and semesters
-  const BRANCHES = ["CSE", "CIVIL", "EEE"];
-  const SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
-
-  // If signed-in user has email but no facultyId, fetch it and persist in auth context/localStorage
-  useEffect(() => {
-    let cancelled = false;
-    const maybeFetchFacultyId = async () => {
-      const email = auth?.user?.email || auth?.email;
-      if (!email) return;
-      if (auth?.facultyId) return; // already have it
-
-      setLoading((s) => ({ ...s, facultyId: true }));
-      try {
-        // API expects { email } in request body
-        const res = await apiRef.current("/getFacultyId", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-        const result = await res.json();
-
-        const newFacultyId = result?.facultyId || result?.facultyID || result?.facultyid;
-        if (newFacultyId) {
-          // update localStorage-backed auth state by calling login with existing fields
-          // some AuthProviders expect a particular shape; we conservatively pass existing token/user/role
-          try {
-            if (typeof auth.login === 'function') {
-              auth.login({ token: auth.token, user: auth.user, role: auth.role, facultyId: newFacultyId });
-            } else {
-              // fallback: directly update localStorage so future page loads see it
-              const key = 'vidyaSarthiAuth';
-              try {
-                const stored = JSON.parse(localStorage.getItem(key) || '{}');
-                const merged = { ...stored, facultyId: newFacultyId };
-                localStorage.setItem(key, JSON.stringify(merged));
-              } catch (e) {
-                console.warn('Could not persist facultyId to localStorage', e);
-              }
-            }
-          } catch (e) {
-            console.warn('Failed to call auth.login to persist facultyId', e);
-          }
-        }
-      } catch (err) {
-        console.warn('Failed to fetch facultyId:', err?.message || err);
-      } finally {
-        if (!cancelled) setLoading((s) => ({ ...s, facultyId: false }));
-      }
-    };
-
-    maybeFetchFacultyId();
-    return () => { cancelled = true; };
-  }, [auth?.user?.email, auth?.email]);
-
-  // Fetch subjects when regulation + branch + semester are all selected
+  // fetch subjects when regulation+branch+semester selected
   useEffect(() => {
     const reg = formData.selectedRegulation;
     const branch = formData.selectedBranch;
     const semester = formData.selectedSemester;
-
     if (!reg || !branch || !semester) {
       setSubjects([]);
       return;
@@ -182,52 +165,42 @@ const UploadNotes = () => {
 
     let cancelled = false;
     const fetchSubjects = async () => {
-      setLoading((s) => ({ ...s, subjects: true }));
+      setLoading(s => ({ ...s, subjects: true }));
       setError(null);
       setSubjects([]);
-
-      const dto = {
-        regulationId: reg.regulationId,
-        semester: Number(semester),
-        branch: branch,
-      };
-
       try {
-        const res = await apiRef.current("/getNewSubjectList", {
+        const dto = { regulationId: reg.regulationId, semester: Number(semester), branch };
+        const res = await fetch(`${API_BASE}/faculty/getNewSubjectList`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           body: JSON.stringify(dto),
         });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+        if (!res.ok) throw new Error(`Failed to load subjects (${res.status})`);
         const result = await res.json();
-
-        // SubjectListDto shape -> { subject: { code: name, ... } }
+        // support SubjectListDto shape: { subject: { code: name } }
         if (result && result.subject && typeof result.subject === "object") {
           const list = Object.entries(result.subject).map(([code, name]) => ({ subjectCode: code, subjectName: name }));
           if (!cancelled) setSubjects(list);
         } else if (Array.isArray(result)) {
-          // fallback: if server returns array
           if (!cancelled) setSubjects(result.map(s => ({ subjectCode: s.subjectCode ?? s.code ?? s.id, subjectName: s.subjectName ?? s.name })));
-        } else if (Array.isArray(result?.subjectList)) {
-          if (!cancelled) setSubjects(result.subjectList.map(s => ({ subjectCode: s.subjectCode ?? s.code ?? s.id, subjectName: s.subjectName ?? s.name })));
         } else {
-          console.warn("getNewSubjectList unexpected shape:", result);
           if (!cancelled) setSubjects([]);
         }
       } catch (err) {
         if (!cancelled) setError(err.message || "Network error fetching subjects.");
       } finally {
-        if (!cancelled) setLoading((s) => ({ ...s, subjects: false }));
+        if (!cancelled) setLoading(s => ({ ...s, subjects: false }));
       }
     };
 
     fetchSubjects();
-
     return () => { cancelled = true; };
-  }, [formData.selectedRegulation?.regulationId, formData.selectedBranch, formData.selectedSemester]);
+  }, [formData.selectedRegulation?.regulationId, formData.selectedBranch, formData.selectedSemester, token]);
 
-  // Handlers
+  // update handlers
   const handleRegulationChange = useCallback((e) => {
     const id = e.target.value;
     const selected = regulations.find(r => r.regulationId === id) || null;
@@ -277,58 +250,100 @@ const UploadNotes = () => {
     });
   }, []);
 
-  // Submit handler: upload per row (keeps behavior of your existing backend)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmissionStatus({ submitted: false, error: null, message: null });
+  // try to resolve facultyId (prefer stored, else try to fetch via email param in localStorage user)
+  const resolveFacultyId = useCallback(async () => {
+    let facultyId = storedFacultyId;
+    if (facultyId) return facultyId;
 
-    const reg = formData.selectedRegulation;
-    if (!reg) {
-      setSubmissionStatus({ submitted: true, error: true, message: "Please select a regulation!" });
-      return;
-    }
+    // try to fetch using email in stored 'user' or vidyaSarthiAuth
+    try {
+      const vsRaw = localStorage.getItem('vidyaSarthiAuth');
+      let email = null;
+      if (vsRaw) {
+        const parsed = JSON.parse(vsRaw || '{}');
+        email = parsed?.user?.email || parsed?.email || null;
+      } else {
+        const uRaw = localStorage.getItem('user');
+        if (uRaw) {
+          try {
+            const p = JSON.parse(uRaw);
+            email = p?.email || null;
+          } catch (_) {}
+        }
+      }
 
-    if (!formData.selectedBranch || !formData.selectedSemester) {
-      setSubmissionStatus({ submitted: true, error: true, message: "Please select branch and semester!" });
-      return;
-    }
+      if (!email) return null;
 
-    // ensure we have facultyId: read from auth context first, if missing try to fetch synchronously
-    let facultyId = auth?.facultyId;
-    if (!facultyId) {
-      // try to fetch synchronously (best-effort) before upload
-      try {
-        const email = auth?.user?.email || auth?.email;
-        if (email) {
-          const res = await apiRef.current("/getFacultyId", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          });
-          if (res.ok) {
-            const payload = await res.json();
-            facultyId = payload?.facultyId || payload?.facultyID || payload?.facultyid;
-            if (facultyId && typeof auth.login === 'function') {
-              auth.login({ token: auth.token, user: auth.user, role: auth.role, facultyId });
+      const res = await fetch(`${API_BASE}/faculty/getFacultyId`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        console.warn('getFacultyId returned', res.status);
+        return null;
+      }
+
+      const payload = await res.json();
+      facultyId = payload?.facultyId || payload?.facultyID || payload?.facultyid || null;
+      if (facultyId) {
+        // persist to localStorage vidyaSarthiAuth if present, else into user object
+        try {
+          const key = 'vidyaSarthiAuth';
+          const existingRaw = localStorage.getItem(key);
+          if (existingRaw) {
+            const existing = JSON.parse(existingRaw || '{}');
+            localStorage.setItem(key, JSON.stringify({ ...existing, facultyId }));
+          } else {
+            // fallback: merge into 'user' object if present
+            const uRaw = localStorage.getItem('user');
+            if (uRaw) {
+              const u = JSON.parse(uRaw || '{}');
+              localStorage.setItem('user', JSON.stringify({ ...u, facultyId }));
+            } else {
+              localStorage.setItem(key, JSON.stringify({ facultyId }));
             }
           }
+        } catch (e) {
+          console.warn('Failed to persist facultyId locally', e);
         }
-      } catch (err) {
-        console.warn('Could not fetch facultyId before upload', err);
       }
+      return facultyId;
+    } catch (err) {
+      console.warn('Failed to resolve facultyId', err);
+      return null;
+    }
+  }, [storedFacultyId, token]);
+
+  // submit handler: upload each selected row
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setSubmission({ open: false, message: "", isError: false });
+    setError(null);
+
+    if (!formData.selectedRegulation) {
+      setSubmission({ open: true, message: "Please select a regulation.", isError: true });
+      return;
+    }
+    if (!formData.selectedBranch || !formData.selectedSemester) {
+      setSubmission({ open: true, message: "Please select branch and semester.", isError: true });
+      return;
     }
 
+    // ensure facultyId exists
+    const facultyId = await resolveFacultyId();
     if (!facultyId) {
-      setSubmissionStatus({ submitted: true, error: true, message: "Faculty ID missing. Please log in again or contact admin." });
+      setSubmission({ open: true, message: "Faculty ID not found. Please login again.", isError: true });
       return;
     }
 
-    if (!auth?.token) {
-      setSubmissionStatus({ submitted: true, error: true, message: "Auth token missing. Please log in again." });
+    if (!token) {
+      setSubmission({ open: true, message: "Auth token missing. Please login again.", isError: true });
       return;
     }
 
-    // prepare list of rows that have both subject and file
+    // collect rows with both subject and file
     const uploadRows = [];
     for (let i = 0; i < rowsCount; i++) {
       const file = formData.files[i];
@@ -337,7 +352,7 @@ const UploadNotes = () => {
     }
 
     if (uploadRows.length === 0) {
-      setSubmissionStatus({ submitted: true, error: true, message: "Please select at least one subject and upload a file." });
+      setSubmission({ open: true, message: "Please select at least one subject and upload a file.", isError: true });
       return;
     }
 
@@ -350,19 +365,22 @@ const UploadNotes = () => {
       fd.append("materialId", generateUniqueId());
       fd.append("subjectCode", r.subjectCode);
       fd.append("facultyId", facultyId);
-      fd.append("regulationId", reg.regulationId);
+      fd.append("regulationId", formData.selectedRegulation.regulationId);
       fd.append("pdf", r.file);
-      fd.append("pdfName", r.file?.name );
-      // <-- REQUIRED CHANGE: send original filename so backend can store/use it
-     
+      fd.append("pdfName", r.file?.name || "");
 
       try {
-        const resp = await apiRef.current("/addNewNotes", { method: "POST", body: fd });
+        const resp = await fetch(`${API_BASE}/faculty/addNewNotes`, {
+          method: "POST",
+          headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+          body: fd, // browser sets proper multipart boundary
+        });
+
         if (resp.ok) {
           successCount++;
         } else {
           let reason = `HTTP ${resp.status}`;
-          try { reason = await resp.text(); } catch (_) { }
+          try { reason = await resp.text(); } catch (_) {}
           failed.push({ subjectCode: r.subjectCode, reason });
         }
       } catch (err) {
@@ -373,36 +391,33 @@ const UploadNotes = () => {
     setIsUploading(false);
 
     if (successCount > 0 && failed.length === 0) {
-      setSubmissionStatus({ submitted: true, error: false, message: `Successfully uploaded ${successCount} notes!` });
-      // reset dynamic parts
+      setSubmission({ open: true, message: `Successfully uploaded ${successCount} notes!`, isError: false });
       setFormData(prev => ({ ...prev, subjects: Array(rowsCount).fill(""), files: Array(rowsCount).fill(null) }));
       resetFileInputs();
     } else if (successCount > 0) {
-      setSubmissionStatus({
-        submitted: true,
-        error: true,
-        message: `Uploaded ${successCount} successfully, but ${failed.length} failed. Check console for details.`,
-      });
+      setSubmission({ open: true, message: `Uploaded ${successCount} successfully, but ${failed.length} failed. Check console for details.`, isError: true });
       console.warn("Failed uploads:", failed);
     } else {
-      setSubmissionStatus({ submitted: true, error: true, message: `All uploads failed. Check server connection and logs.` });
+      setSubmission({ open: true, message: "All uploads failed. Check server logs.", isError: true });
       console.warn("All uploads failed:", failed);
     }
-  };
+  }, [formData, resolveFacultyId, rowsCount, token, resetFileInputs]);
 
-  const closeMessage = () => setSubmissionStatus({ submitted: false, error: null, message: null });
+  const closeSubmission = () => setSubmission({ open: false, message: "", isError: false });
+
+  // BRANCH & SEM options hard-coded
+  const BRANCHES = ["CSE", "CIVIL", "EEE"];
+  const SEMESTERS = [1,2,3,4,5,6,7,8];
 
   return (
     <div className="w-full max-w-5xl mx-auto bg-white shadow-2xl rounded-xl p-8 border border-gray-200">
-      {submissionStatus.message && (
-        <MessageModal message={submissionStatus.message} type={submissionStatus.error ? "error" : "success"} onClose={closeMessage} />
-      )}
+      {submission.open && <MessageModal message={submission.message} type={submission.isError ? "error" : "success"} onClose={closeSubmission} />}
 
       <h2 className="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-3">Upload Notes & Materials</h2>
-      <p className="text-gray-500 mb-8">Upload is associated with your Faculty ID: <strong>{auth?.facultyId || "N/A"}</strong></p>
+      <p className="text-gray-500 mb-4">Faculty ID: <strong>{storedFacultyId || "N/A"}</strong></p>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Regulation Selection */}
+        {/* Regulation */}
         <div className="flex flex-col md:flex-row md:items-center p-4 bg-blue-50 rounded-lg">
           <label className="w-full md:w-48 font-semibold text-blue-700 mb-2 md:mb-0">Choose Regulation:</label>
           <select
@@ -413,13 +428,11 @@ const UploadNotes = () => {
             className="flex-1 p-3 rounded-xl border border-blue-300 bg-white shadow-inner focus:ring-2 focus:ring-blue-500 transition duration-150 disabled:bg-gray-200"
           >
             <option value="">{loading.regulations ? "Loading Regulations..." : "-- Select Regulation --"}</option>
-            {regulations.map((reg) => (
-              <option key={reg.regulationId} value={reg.regulationId}>{reg.display}</option>
-            ))}
+            {regulations.map(reg => <option key={reg.regulationId} value={reg.regulationId}>{reg.display}</option>)}
           </select>
         </div>
 
-        {/* Branch & Semester (appear after regulation selected) */}
+        {/* Branch & Semester */}
         {formData.selectedRegulation && (
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 p-4 bg-blue-50 rounded-lg">
@@ -429,7 +442,6 @@ const UploadNotes = () => {
                 {BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}
               </select>
             </div>
-
             <div className="flex-1 p-4 bg-blue-50 rounded-lg">
               <label className="block font-semibold text-blue-700 mb-2">Semester</label>
               <select value={formData.selectedSemester} onChange={handleSemesterChange} className="w-full p-3 rounded-xl border border-blue-300 bg-white">
@@ -440,7 +452,7 @@ const UploadNotes = () => {
           </div>
         )}
 
-        {/* Subjects & Uploads */}
+        {/* Subject rows */}
         <div>
           <label className="block text-xl font-semibold mb-4 text-gray-700">
             Subject Materials Uploads
@@ -450,31 +462,27 @@ const UploadNotes = () => {
           {error && <p className="text-red-600 mb-4">{error}</p>}
 
           <div className="flex flex-col gap-5">
-            {initialRows.map((label, index) => (
-              <div key={index} className="flex flex-col lg:flex-row lg:items-center gap-3 border border-gray-200 p-4 rounded-xl shadow-md bg-white hover:shadow-lg transition duration-300">
-                {/* Subject Dropdown */}
+            {rows.map((label, index) => (
+              <div key={index} className="flex flex-col lg:flex-row lg:items-center gap-3 border border-gray-200 p-4 rounded-xl shadow-md bg-white">
                 <div className="w-full lg:w-1/3">
                   <label className="text-sm font-medium text-gray-600 block mb-1">Priority {label}. Subject:</label>
                   <select
                     value={formData.subjects[index]}
                     onChange={(e) => handleSubjectChange(index, e.target.value)}
                     disabled={!formData.selectedRegulation || !formData.selectedBranch || !formData.selectedSemester || loading.subjects}
-                    className="w-full p-2.5 rounded-lg border border-gray-300 bg-gray-50 focus:border-yellow-500 focus:ring focus:ring-yellow-500/50 disabled:bg-gray-100"
+                    className="w-full p-2.5 rounded-lg border border-gray-300 bg-gray-50"
                   >
                     <option value="">{loading.subjects ? "Loading..." : (subjects.length === 0 ? "No Subjects Found" : "-- Select Subject --")}</option>
-                    {subjects.map((sub) => (
-                      <option key={sub.subjectCode} value={sub.subjectCode}>
-                        {sub.subjectName ?? sub.name ?? `${sub.subjectCode}`}
-                      </option>
+                    {subjects.map(s => (
+                      <option key={s.subjectCode} value={s.subjectCode}>{s.subjectName ?? s.name ?? s.subjectCode}</option>
                     ))}
                   </select>
                 </div>
 
-                {/* File Upload */}
                 <div className="w-full lg:w-1/3">
                   <label className="text-sm font-medium text-gray-600 block mb-1">Choose File:</label>
                   <label
-                    className={`flex items-center gap-2 cursor-pointer text-white px-4 py-2.5 rounded-lg shadow-md w-full justify-center transition duration-200 ease-in-out
+                    className={`flex items-center gap-2 cursor-pointer text-white px-4 py-2.5 rounded-lg w-full justify-center
                       ${!formData.selectedRegulation ? "bg-gray-400" : "bg-yellow-400 hover:bg-yellow-500"}`}
                     htmlFor={`file-input-${index}`}
                   >
@@ -492,8 +500,7 @@ const UploadNotes = () => {
                   </label>
                 </div>
 
-                {/* File name display */}
-                <div className="w-full lg:w-1/3 flex items-center h-full pt-1 lg:pt-0">
+                <div className="w-full lg:w-1/3 flex items-center pt-1 lg:pt-0">
                   {formData.files[index] ? (
                     <div className="text-sm text-green-600 truncate bg-green-50 p-2 rounded-lg border border-green-200 w-full font-mono">
                       <span className="font-semibold text-gray-700">File:</span> {formData.files[index].name}
@@ -512,20 +519,10 @@ const UploadNotes = () => {
           <button
             type="submit"
             disabled={isUploading || !formData.selectedRegulation}
-            className={`font-extrabold text-white px-12 py-3 rounded-full shadow-lg transition duration-300 ease-in-out w-full md:w-auto
-              ${isUploading || !formData.selectedRegulation
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl transform hover:scale-105"
-              }`}
+            className={`font-extrabold text-white px-12 py-3 rounded-full shadow-lg w-full md:w-auto
+              ${isUploading || !formData.selectedRegulation ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"}`}
           >
-            {isUploading ? (
-              <span className="flex items-center gap-2">
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                Uploading...
-              </span>
-            ) : (
-              "Submit Notes Now"
-            )}
+            {isUploading ? "Uploading..." : "Submit Notes Now"}
           </button>
         </div>
       </form>

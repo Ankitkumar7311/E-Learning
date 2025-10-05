@@ -1,90 +1,250 @@
-// StudentLogin.jsx
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import bg from "../assets/Rectangle.png";
-import curveBg from "../assets/Curve.png";
-import card from "../assets/card.png";
-import { useAuth } from "../auth/AuthContext";
+// // // StudentLogin.jsx
+// // import React, { useState } from "react";
+// // import { useNavigate } from "react-router-dom";
+// // import { useForm } from "react-hook-form";
+// // import bg from "../assets/Rectangle.png";
+// // import curveBg from "../assets/Curve.png";
+// // import card from "../assets/card.png";
+// // import { useAuth } from "../auth/AuthContext";
+
+// // const StudentLogin = () => {
+// //   const navigate = useNavigate();
+// //   const { login } = useAuth();
+// //   const [loading, setLoading] = useState(false);
+// //   const [error, setError] = useState("");
+
+// //   const { register, handleSubmit, formState: { errors } } = useForm();
+
+// //   const onSubmit = async (data) => {
+// //     setError("");
+// //     setLoading(true);
+// //     try {
+// //       const res = await fetch("http://localhost:8080/VidyaSarthi/loginAcc", {
+// //         method: "POST",
+// //         headers: { "Content-Type": "application/json" },
+// //         body: JSON.stringify({ username: data.email, password: data.password }),
+// //       });
+
+// //       if (!res.ok) {
+// //         let errBody = {};
+// //         try { errBody = await res.json(); } catch (_) {}
+// //         throw new Error(errBody?.message || `Login failed (${res.status})`);
+// //       }
+
+// //       const result = await res.json();
+// //       const token = result?.token || null;
+// //       const dto = result?.dto || {};
+
+// //       if (!token) throw new Error("Authentication failed: token not returned.");
+
+// //       // try common fields for student dto
+// //       const studentId = dto?.studentId || dto?.studentID || dto?.studentid || null;
+// //       const userId = dto?.id || dto?.userId || dto?.studentId || null;
+// //       const emailFromDto = dto?.email || data.email;
+// //       const nameFromDto = dto?.name || dto?.fullName || null;
+
+// //       const userObject = {
+// //         ...dto,
+// //         email: emailFromDto,
+// //         name: nameFromDto,
+// //         id: userId,
+// //         studentId: studentId,
+// //         role: "student",
+// //       };
+
+// //       // Use the same login shape your Admin uses
+// //       await login({
+// //         user: userObject,
+// //         token,
+// //         role: "student",
+// //         facultyId: null,
+// //         adminId: null,
+// //       });
+
+// //       // Persist same keys as admin flow so ApiClient and other code find them
+// //       const key = "vidyaSarthiAuth";
+// //       const existing = JSON.parse(localStorage.getItem(key) || "{}");
+// //       const merged = {
+// //         ...existing,
+// //         user: userObject,
+// //         token,
+// //         role: "student",
+// //         studentId: studentId || existing.studentId || null,
+// //       };
+// //       localStorage.setItem(key, JSON.stringify(merged));
+// //       // also keep token/social keys for backward compatibility
+// //       localStorage.setItem("token", token);
+// //       if (userId) localStorage.setItem("userId", userId);
+// //       if (studentId) localStorage.setItem("studentId", studentId);
+// //       localStorage.setItem("userEmail", emailFromDto);
+
+// //       // navigate to student dashboard
+// //       navigate("/student/dashboard", { state: { studentId: studentId || userId, email: emailFromDto } });
+
+// //     } catch (err) {
+// //       console.error("Student login error:", err);
+// //       setError(err.message || "Login failed");
+// //       alert(err.message || "Login failed");
+// //     } finally {
+// //       setLoading(false);
+// //     }
+// //   };
+
+// //   return (
+// //     <section className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-2 sm:px-4" style={{ backgroundImage: `url(${curveBg})` }}>
+// //       <div className="relative rounded-3xl shadow-xl overflow-hidden w-[95vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px] md:aspect-[16/9] bg-no-repeat bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: `url(${bg})` }}>
+// //         <div className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%] w-full rounded-2xl p-6 sm:p-8 md:p-10 bg-transparent overflow-hidden" style={{ backgroundImage: `url(${card})`, backgroundRepeat: "no-repeat", backgroundPosition: "right top", backgroundSize: "100% 100%" }}>
+// //           <div className="h-full overflow-y-auto pr-1 sm:pr-3">
+// //             <h1 className="font-roboto font-semibold text-3xl text-center">Student LogIn</h1>
+// //             <p className="font-montserrat text-sm text-gray-700 mb-4 text-center">Welcome onboard with us!</p>
+
+// //             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+// //               <label className="font-medium">Institute Email ID</label>
+// //               <input type="text" placeholder="Enter your username" className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none" {...register("email", { required: "Email required", pattern: { value: /^\S+@\S+$/i, message: "Invalid email" } })} />
+// //               {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
+
+// //               <label className="font-medium">Password</label>
+// //               <input type="password" placeholder="Enter your password" className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none" {...register("password", { required: "Password required" })} />
+// //               {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
+
+// //               {error && <p className="text-red-500 text-sm">{error}</p>}
+
+// //               <button type="submit" disabled={loading} className="bg-[#F3B300] rounded-2xl w-full font-bold py-2 mt-2">{loading ? "Logging in..." : "LogIn as Student"}</button>
+// //             </form>
+// //           </div>
+// //         </div>
+// //       </div>
+// //     </section>
+// //   );
+// // };
+
+// // export default StudentLogin;
+
+
+// // import React, { useState } from "react";
+// // import { useNavigate } from "react-router-dom";
+// // import { useForm } from "react-hook-form";
+// // import bg from "../assets/Rectangle.png";
+// // import curveBg from "../assets/Curve.png";
+// // import card from "../assets/card.png";
+// // import { useAuth } from "../context/AuthContext";
+
+// // const StudentLogin = () => {
+// //   const navigate = useNavigate();
+// //   const { login } = useAuth();
+// //   const [loading, setLoading] = useState(false);
+// //   const [error, setError] = useState("");
+
+// //   const { register, handleSubmit, formState: { errors } } = useForm();
+
+// //   const onSubmit = async (data) => {
+// //     setError("");
+// //     setLoading(true);
+// //     try {
+// //       // The single login function handles everything
+// //       const finalAuthState = await login({
+// //         email: data.email,
+// //         password: data.password,
+// //       });
+
+// //       // Navigate to the student dashboard
+// //       navigate("/student/dashboard", {
+// //         state: { 
+// //             studentId: finalAuthState.user.studentId, 
+// //             email: finalAuthState.user.email 
+// //         },
+// //       });
+
+// //     } catch (err) {
+// //       console.error("Student login error:", err);
+// //       setError(err.message || "Login failed");
+// //     } finally {
+// //       setLoading(false);
+// //     }
+// //   };
+
+// //   // --- All your JSX remains exactly the same below ---
+// //   return (
+// //     <section className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-2 sm:px-4" style={{ backgroundImage: `url(${curveBg})` }}>
+// //         {/* ... your full form JSX ... */}
+// //     </section>
+// //   );
+// // };
+
+// // export default StudentLogin;
+
+// // src/auth/StudentLogin.jsx
+// import React, { useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { useForm } from 'react-hook-form';
+// import curveBg from '../assets/Curve.png';
+// import { useAuth } from '../context/AuthContext';
+
+// const StudentLogin = () => {
+//   const navigate = useNavigate();
+//   const { login } = useAuth();
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState('');
+
+//   const { register, handleSubmit, formState: { errors } } = useForm();
+
+//   const onSubmit = async (data) => {
+//     setError('');
+//     setLoading(true);
+//     try {
+//       const finalAuthState = await login({ email: data.email, password: data.password });
+//       const user = finalAuthState.user || {};
+//       navigate('/student/dashboard', { state: { studentId: user.studentId || user.id, email: user.email } });
+//     } catch (err) {
+//       console.error('Student login error:', err);
+//       setError(err.message || 'Login failed');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <section className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-2 sm:px-4" style={{ backgroundImage: `url(${curveBg})` }}>
+//       {/* Put your student login form UI here. Keep form onSubmit={handleSubmit(onSubmit)} and inputs registered like in Login.jsx */}
+//       <div>Student login form (copy your existing JSX and wire to handleSubmit/onSubmit)</div>
+//     </section>
+//   );
+// };
+
+// export default StudentLogin;
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import curveBg from '../assets/Curve.png';
+import { useAuth } from '../context/AuthContext';
 
 const StudentLogin = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
-    setError("");
+    setError('');
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8080/VidyaSarthi/loginAcc", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: data.email, password: data.password }),
+      const finalAuthState = await login({ email: data.email, password: data.password });
+      const user = finalAuthState.user || {};
+      
+      // Navigate using IDs from normalized user object
+      navigate('/student/dashboard', { 
+        state: { 
+          studentId: user.studentId || user.id, 
+          email: user.email 
+        } 
       });
-
-      if (!res.ok) {
-        let errBody = {};
-        try { errBody = await res.json(); } catch (_) {}
-        throw new Error(errBody?.message || `Login failed (${res.status})`);
-      }
-
-      const result = await res.json();
-      const token = result?.token || null;
-      const dto = result?.dto || {};
-
-      if (!token) throw new Error("Authentication failed: token not returned.");
-
-      // try common fields for student dto
-      const studentId = dto?.studentId || dto?.studentID || dto?.studentid || null;
-      const userId = dto?.id || dto?.userId || dto?.studentId || null;
-      const emailFromDto = dto?.email || data.email;
-      const nameFromDto = dto?.name || dto?.fullName || null;
-
-      const userObject = {
-        ...dto,
-        email: emailFromDto,
-        name: nameFromDto,
-        id: userId,
-        studentId: studentId,
-        role: "student",
-      };
-
-      // Use the same login shape your Admin uses
-      await login({
-        user: userObject,
-        token,
-        role: "student",
-        facultyId: null,
-        adminId: null,
-      });
-
-      // Persist same keys as admin flow so ApiClient and other code find them
-      const key = "vidyaSarthiAuth";
-      const existing = JSON.parse(localStorage.getItem(key) || "{}");
-      const merged = {
-        ...existing,
-        user: userObject,
-        token,
-        role: "student",
-        studentId: studentId || existing.studentId || null,
-      };
-      localStorage.setItem(key, JSON.stringify(merged));
-      // also keep token/social keys for backward compatibility
-      localStorage.setItem("token", token);
-      if (userId) localStorage.setItem("userId", userId);
-      if (studentId) localStorage.setItem("studentId", studentId);
-      localStorage.setItem("userEmail", emailFromDto);
-
-      // navigate to student dashboard
-      navigate("/student/dashboard", { state: { studentId: studentId || userId, email: emailFromDto } });
-
+      
     } catch (err) {
-      console.error("Student login error:", err);
-      setError(err.message || "Login failed");
-      alert(err.message || "Login failed");
+      console.error('Student login error:', err);
+      setError(err.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -92,27 +252,46 @@ const StudentLogin = () => {
 
   return (
     <section className="w-full min-h-screen flex items-center justify-center bg-no-repeat bg-cover px-2 sm:px-4" style={{ backgroundImage: `url(${curveBg})` }}>
-      <div className="relative rounded-3xl shadow-xl overflow-hidden w-[95vw] sm:w-[88vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-[1120px] md:aspect-[16/9] bg-no-repeat bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: `url(${bg})` }}>
-        <div className="md:absolute md:top-4 md:bottom-6 md:right-6 md:w-[46%] w-full rounded-2xl p-6 sm:p-8 md:p-10 bg-transparent overflow-hidden" style={{ backgroundImage: `url(${card})`, backgroundRepeat: "no-repeat", backgroundPosition: "right top", backgroundSize: "100% 100%" }}>
-          <div className="h-full overflow-y-auto pr-1 sm:pr-3">
-            <h1 className="font-roboto font-semibold text-3xl text-center">Student LogIn</h1>
-            <p className="font-montserrat text-sm text-gray-700 mb-4 text-center">Welcome onboard with us!</p>
+      {/* Student Login Form UI - Replace this placeholder with your actual form JSX */}
+      <div 
+        className="relative z-10 w-full max-w-md sm:max-w-sm lg:max-w-md xl:max-w-lg rounded-2xl pt-6 px-4 sm:p-5 md:p-6 bg-white bg-opacity-90 shadow-lg"
+      >
+        <h1 className="text-xl md:text-3xl font-medium mb-2 text-center">Student LogIn</h1>
+        <hr className="border border-black mb-2 w-2/3 mx-auto" />
+        <h4 className="text-xs md:text-lg mb-5 text-center">Welcome back!</h4>
+        
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+          <label className="font-medium text-sm md:text-base">Email ID</label>
+          <input
+            type="text"
+            placeholder="Enter your student email"
+            className="w-full bg-[#D8E7F5] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
+            {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email format' } })}
+          />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-              <label className="font-medium">Institute Email ID</label>
-              <input type="text" placeholder="Enter your username" className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none" {...register("email", { required: "Email required", pattern: { value: /^\S+@\S+$/i, message: "Invalid email" } })} />
-              {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
+          <label className="font-medium text-sm md:text-base">Password</label>
+          <input
+            type="password"
+            placeholder="Enter your password"
+            className="w-full bg-[#D8E7F5] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-blue-400"
+            {...register('password', { required: 'Password is required' })}
+          />
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
 
-              <label className="font-medium">Password</label>
-              <input type="password" placeholder="Enter your password" className="w-full bg-[#D8E7F5] rounded-xl px-4 py-2 outline-none" {...register("password", { required: "Password required" })} />
-              {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
+          {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
 
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-
-              <button type="submit" disabled={loading} className="bg-[#F3B300] rounded-2xl w-full font-bold py-2 mt-2">{loading ? "Logging in..." : "LogIn as Student"}</button>
-            </form>
-          </div>
-        </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-base md:text-lg py-2 mt-3"
+          >
+            {loading ? 'Logging in...' : 'Student LogIn'}
+          </button>
+          <button type="button" onClick={() => navigate('/login')} className="text-center text-sm mt-2 hover:underline">
+            Go back to General Login
+          </button>
+        </form>
       </div>
     </section>
   );

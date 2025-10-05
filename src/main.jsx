@@ -28,7 +28,7 @@ import { RouterProvider } from "react-router-dom";
 import "./index.css";
 import routes from "./routing/Router";
 
-import { AuthProvider } from "./auth/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 
 // Robust import for ApiClientProvider: accept named export or default export
 import * as ApiClientModule from "./context/AuthorizedFetch"; // adjust path if needed

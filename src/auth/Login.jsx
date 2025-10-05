@@ -1,168 +1,174 @@
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import academic from "../assets/academic.png"; // background
-import cardpic from "../assets/card.png";       // form card
-import { useAuth } from "../auth/AuthContext";
-import { useState } from "react";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-const Form = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const [role] = useState("admin");
-  const [error, setError] = useState("");
+export default function Login() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const { login } = useAuth();
+  
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
-    setError("");
+    setError('');
     setLoading(true);
-
+    
+    console.log('🔥 Login attempt started...'); // Debug
+    
     try {
-      const res = await fetch("http://localhost:8080/VidyaSarthi/loginAcc", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: data.email, password: data.password }),
+      const finalAuthState = await login({ 
+        email: data.email, 
+        password: data.password 
       });
-
-      if (!res.ok) {
-        let errBody = {};
-        try { errBody = await res.json(); } catch (_) {}
-        throw new Error(errBody?.message || `Login failed (${res.status})`);
-      }
-
-      const result = await res.json();
-      const token = result?.token || null;
-      const dto = result?.dto || {};
-      const facultyId = dto?.facultyId || dto?.facultyID || dto?.facultyid || null;
-      const userId = dto?.id || dto?.userId || dto?.adminId || null;
-      const emailFromDto = dto?.email || data.email;
-      const nameFromDto = dto?.name || null;
-
-      if (!token) throw new Error("Authentication failed: token not returned.");
-
-      const userObject = {
-        ...dto,
-        email: emailFromDto,
-        name: nameFromDto,
-        id: userId,
-        facultyId: facultyId,
-        role: role,
-      };
-
-      login({
-        user: userObject,
-        token: token,
-        role: role,
-        facultyId: facultyId || null,
-        adminId: role === "admin" ? userId : null,
-      });
-
-      // Persist to localStorage
-      const key = "vidyaSarthiAuth";
-      const existing = JSON.parse(localStorage.getItem(key) || "{}");
-      const merged = {
-        ...existing,
-        user: userObject,
-        token,
-        facultyId: facultyId || existing.facultyId || null,
-        adminId: role === "admin" ? userId || existing.adminId : existing.adminId,
-      };
-      localStorage.setItem(key, JSON.stringify(merged));
-      localStorage.setItem("userEmail", emailFromDto);
-      localStorage.setItem("token", token);
-      if (userId) localStorage.setItem("userId", userId);
-      if (facultyId) localStorage.setItem("facultyId", facultyId);
-
-      if (role === "admin") navigate("/admin/dashboard", { state: { adminId: userId, email: emailFromDto } });
-      else if (role === "teacher") navigate("/teacher/dashboard", { state: { facultyId, email: emailFromDto } });
-      else navigate("/", { state: { email: emailFromDto } });
-
+      
+      // Debug logs to see what we're getting
+      console.log('🔥 Login successful!');
+      console.log('🔥 Final Auth State:', finalAuthState);
+      console.log('🔥 Role:', finalAuthState?.role);
+      console.log('🔥 User:', finalAuthState?.user);
+      
+      // DON'T manually navigate - let AuthRedirect component handle it!
+      // The auth state change will trigger AuthRedirect to redirect automatically
+      console.log('🔥 Waiting for AuthRedirect to handle navigation...');
+      
     } catch (err) {
-      console.error("Login error:", err);
-      setError(err.message || "Login failed. Please try again.");
-      alert(err.message || "Login failed. Please check credentials.");
+      console.error('❌ Login error:', err);
+      setError(err.message || 'Login failed');
+      alert(err.message || 'Login failed. Please check credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      className="relative w-full min-h-screen flex flex-col lg:flex-row items-center justify-center bg-cover bg-center overflow-hidden"
-      style={{ backgroundImage: `url(${academic})` }}
-    >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/50"></div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-full mb-4">
+            <Lock className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
+          <p className="text-gray-600 mt-2">Sign in to your account</p>
+        </div>
 
-      {/* Form card shifted 100px to the right */}
-      <div
-        className="relative z-10 w-full max-w-md sm:max-w-sm lg:max-w-md xl:max-w-lg rounded-2xl pt-6 px-4 sm:p-5 md:p-6 bg-white bg-opacity-80 shadow-lg ml-[650px]"
-        style={{
-          backgroundImage: `url(${cardpic})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <h1 className="text-xl md:text-3xl font-medium font-roboto mb-2 text-center">
-          LogIn
-        </h1>
-        <hr className="border border-black mb-2 w-2/3 mx-auto" />
-        <h4 className="text-xs md:text-lg font-montserrat mb-5 text-center">
-          Welcome onboard with us!
-        </h4>
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
+            <p className="font-medium">Error</p>
+            <p className="text-sm">{error}</p>
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          <label className="font-medium text-sm md:text-base">Email ID</label>
-          <input
-            type="text"
-            placeholder="Enter your username"
-            className="w-full bg-[#D8E7F5] rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 outline-none focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm md:text-base"
-            {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" } })}
-          />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+        {/* Login Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Email Field */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="email"
+                {...register('email', { 
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address'
+                  }
+                })}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                placeholder="you@example.com"
+              />
+            </div>
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+            )}
+          </div>
 
-          <label className="font-medium text-sm md:text-base">Password</label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            className="w-full bg-[#D8E7F5] rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 outline-none focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm md:text-base"
-            {...register("password", { required: "Password is required" })}
-          />
-          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+          {/* Password Field */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                {...register('password', { 
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password must be at least 6 characters'
+                  }
+                })}
+                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+            )}
+          </div>
 
-          <button type="button" className="self-end text-xs md:text-sm text-black hover:underline">
-            Forgot Password?
-          </button>
+          {/* Remember Me & Forgot Password */}
+          <div className="flex items-center justify-between">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+              />
+              <span className="ml-2 text-sm text-gray-600">Remember me</span>
+            </label>
+            <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500">
+              Forgot password?
+            </a>
+          </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="bg-[#F3B300] hover:bg-yellow-600 transition rounded-2xl w-full font-bold text-base md:text-lg py-2 md:py-2.5 mt-3"
+            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Logging in..." : "LogIn"}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Signing in...
+              </span>
+            ) : (
+              'Sign In'
+            )}
           </button>
-
-          <div className="mt-3 space-y-1">
-            <p className="text-xs md:text-base text-center">
-              Are you a Student?{" "}
-              <b className="hover:underline cursor-pointer" onClick={() => navigate("/student-login")}>
-                LogIn as a Student
-              </b>
-            </p>
-            <p className="text-xs md:text-base text-center">
-              Are you a Teacher?{" "}
-              <b className="hover:underline cursor-pointer" onClick={() => navigate("/teacher-login")}>
-                LogIn as a Teacher
-              </b>
-            </p>
-          </div>
         </form>
+
+        {/* Sign Up Link */}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don't have an account?{' '}
+          <a href="#" className="text-indigo-600 hover:text-indigo-500 font-medium">
+            Sign up
+          </a>
+        </p>
+
+        {/* Debug Info (Remove in production) */}
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg text-xs text-gray-600">
+          <p className="font-semibold mb-2">🔍 Debug Mode Active</p>
+          <p>Check your browser console for login flow logs</p>
+        </div>
       </div>
     </div>
   );
-};
-
-export default Form;
+}

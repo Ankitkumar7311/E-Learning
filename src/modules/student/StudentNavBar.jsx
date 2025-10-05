@@ -1,39 +1,41 @@
+// src/components/StudentNavBar.jsx
 import React, { useState } from "react";
-import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
-import logo from "../../assets/Ellipse.png";
 import { Link, useLocation } from "react-router-dom";
+import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
+import logo from "../../assets/Ellipse.png"; // keep your existing path
+import Logout from "../admin/popups/Logout"; // same path used in TeacherNavBar
 
 const StudentNavBar = () => {
-  // State to manage the mobile/tablet menu visibility
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
-  const buttons = {
+  // map routes -> visible title (like teacher example)
+  const pageTitles = {
     "/student/documents": "College Materials",
-    "/student/dashboard": "Student dashboard",
-    "/student/academic-calendar": "Academic calendar",
+    "/student/dashboard": "Student Dashboard",
+    "/student/academic-calendar": "Academic Calendar",
     "/student/faculty-qb": "Question Banks",
-    "/student/request-question": "Request-Questions",
+    "/student/request-question": "Request Questions",
     "/student/announcements": "Announcements",
     "/student/subjects/encapsulation": "Encapsulation",
   };
-  const buttontext = buttons[location.pathname] || "Student Panel";
 
-  // A reusable component for menu items to keep the code clean
+  const pageTitle = pageTitles[location.pathname] || "Student Panel";
+
+  // A component for menu items to avoid repetition
   const MenuItems = ({ isMobile = false }) => (
     <div
       className={`flex ${
-        isMobile
-          ? "flex-col space-y-4 px-6 pt-8 text-lg"
-          : "flex-col space-y-3 p-6"
+        isMobile ? "flex-col space-y-4 px-6 pt-8 text-lg" : "flex-col space-y-3 p-6"
       }`}
     >
       <button
         type="button"
         className="w-full rounded-lg bg-slate-100 px-4 py-3 text-left font-semibold text-slate-800"
       >
-        {buttontext}
+        {pageTitle}
       </button>
+
       <Link
         to="/request-report"
         className="block rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-100"
@@ -41,6 +43,9 @@ const StudentNavBar = () => {
       >
         Help & Support
       </Link>
+
+      {/* keep a simple logout entry inside the menu (this link will behave like a fallback).
+          Desktop shows the proper Logout component (with modal & proper clearing). */}
       <Link to="/login" onClick={() => setIsMenuOpen(false)}>
         <button className="flex w-full items-center justify-center space-x-2 rounded-lg bg-yellow-400 py-3 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
           <span>Log out</span>
@@ -54,24 +59,26 @@ const StudentNavBar = () => {
     <>
       <nav className="sticky top-0 z-30 bg-white/95 shadow-lg backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-          
-          {/* --- Left Section (Logo, Title, and Desktop Page Button) --- */}
+          {/* Left Section */}
           <div className="flex items-center gap-4 lg:gap-8">
             <div className="flex flex-shrink-0 items-center gap-3">
-              <img src={logo} alt="Vidya Sarthi Logo" className="h-12 w-12" />
+              <img src={logo} alt="Vidya Sarthi Logo" className="h-14 w-14" />
               <div>
-                <h1 className="text-lg font-bold text-gray-800">Student Panel</h1>
-                <p className="text-[0.9375rem] text-gray-500">E-learning</p>
+                <span className="block text-lg font-bold text-gray-800">Student Panel</span>
+                <span className="hidden text-sm font-semibold text-gray-600 sm:block">E-learning</span>
               </div>
             </div>
-            
-            {/* --- THIS BUTTON WAS MOVED HERE --- */}
-            <button className="hidden rounded-full border border-slate-300 bg-slate-200 px-6 py-2.5 font-semibold text-slate-700 lg:block">
-              {buttontext}
+
+            {/* Page Title Button - visible on desktop only */}
+            <button
+              type="button"
+              className="hidden rounded-full border border-slate-300 bg-slate-200 px-6 py-2.5 font-semibold text-slate-700 lg:block"
+            >
+              {pageTitle}
             </button>
           </div>
 
-          {/* --- Right Section for DESKTOP (Help & Logout) --- */}
+          {/* Right Section for DESKTOP */}
           <div className="hidden items-center space-x-8 lg:flex">
             <Link
               to="/request-report"
@@ -79,15 +86,12 @@ const StudentNavBar = () => {
             >
               Help & Support
             </Link>
-            <Link to="/login">
-              <button className="flex items-center space-x-2 rounded-lg bg-yellow-400 py-2 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
-                <span>Log out</span>
-                <FiLogOut className="h-5 w-5" />
-              </button>
-            </Link>
+
+            {/* Desktop logout uses the Logout component (shows modal and clears auth properly) */}
+            <Logout />
           </div>
 
-          {/* --- Hamburger Menu Button for TABLET & MOBILE --- */}
+          {/* Hamburger Menu Button for TABLET & MOBILE */}
           <div className="flex items-center lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -101,17 +105,15 @@ const StudentNavBar = () => {
         </div>
       </nav>
 
-      {/* --- MENUS for TABLET and MOBILE --- */}
-
       {/* Backdrop for Tablet Sidebar */}
       {isMenuOpen && (
         <div
           className="fixed inset-0 z-40 hidden bg-black/40 md:block lg:hidden"
           onClick={() => setIsMenuOpen(false)}
-        ></div>
+        />
       )}
 
-      {/* TABLET: Left Sidebar Menu */}
+      {/* Tablet Sidebar */}
       <div
         className={`fixed top-0 left-0 z-50 h-screen w-72 transform bg-white shadow-xl transition-transform duration-300 ease-in-out lg:hidden ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -127,7 +129,7 @@ const StudentNavBar = () => {
         </div>
       </div>
 
-      {/* MOBILE: Full-screen Menu */}
+      {/* Mobile Full-screen Menu */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 flex h-full w-full flex-col bg-white md:hidden">
           <div className="flex items-center justify-between p-4">
