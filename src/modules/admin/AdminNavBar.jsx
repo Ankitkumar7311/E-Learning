@@ -1,10 +1,11 @@
+// src/components/AdminNavBar.jsx
 import React, { useState } from "react";
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
 import logo from "../../assets/Ellipse.png";
 import { Link, useLocation } from "react-router-dom";
+import Logout from "../admin/popups/Logout"; // Desktop logout (modal + proper clearing)
 
 const AdminNavBar = () => {
-  // State to manage menu visibility
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -18,7 +19,7 @@ const AdminNavBar = () => {
   };
   const buttontext = buttons[location.pathname] || "Admin Panel";
 
-  // A reusable component for menu items to keep the code clean
+  // Reusable menu items (mobile/tablet)
   const MenuItems = ({ isMobile = false }) => (
     <div
       className={`flex ${
@@ -33,6 +34,7 @@ const AdminNavBar = () => {
       >
         {buttontext}
       </button>
+
       <Link
         to="/request-report"
         className="block rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-100"
@@ -40,6 +42,8 @@ const AdminNavBar = () => {
       >
         Help & Support
       </Link>
+
+      {/* Fallback logout entry for mobile/menu (keeps menu simple) */}
       <Link to="/login" onClick={() => setIsMenuOpen(false)}>
         <button className="flex w-full items-center justify-center space-x-2 rounded-lg bg-yellow-400 py-3 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
           <span>Log out</span>
@@ -51,7 +55,6 @@ const AdminNavBar = () => {
 
   return (
     <>
-      {/* Set a lower z-index to allow menus to overlap it */}
       <nav className="sticky top-0 z-30 bg-white/95 shadow-lg backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           {/* Left Section: Logo and Title */}
@@ -69,6 +72,7 @@ const AdminNavBar = () => {
             <button className="rounded-2xl bg-gray-200 py-2 px-6 font-semibold text-gray-700 hover:bg-blue-100">
               {buttontext}
             </button>
+
             {/* Right-aligned links */}
             <div className="flex items-center space-x-8">
               <Link
@@ -77,12 +81,9 @@ const AdminNavBar = () => {
               >
                 Help & Support
               </Link>
-              <Link to="/login">
-                <button className="flex items-center space-x-2 rounded-lg bg-yellow-400 py-2 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
-                  <span>Log out</span>
-                  <FiLogOut className="h-5 w-5" />
-                </button>
-              </Link>
+
+              {/* Desktop logout uses the Logout component (modal + proper clearing) */}
+              <Logout />
             </div>
           </div>
 
@@ -94,24 +95,18 @@ const AdminNavBar = () => {
               className="inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100"
             >
               <span className="sr-only">Open main menu</span>
-              {isMenuOpen ? (
-                 <FiX className="h-6 w-6" />
-              ) : (
-                 <FiMenu className="h-6 w-6" />
-              )}
+              {isMenuOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
             </button>
           </div>
         </div>
       </nav>
-
-      {/* --- MENUS for TABLET and MOBILE --- */}
 
       {/* Backdrop for Tablet Sidebar */}
       {isMenuOpen && (
         <div
           className="fixed inset-0 z-40 hidden bg-black/40 md:block lg:hidden"
           onClick={() => setIsMenuOpen(false)}
-        ></div>
+        />
       )}
 
       {/* TABLET: Left Sidebar Menu */}
@@ -125,7 +120,6 @@ const AdminNavBar = () => {
             <FiX className="h-6 w-6 text-gray-600" />
           </button>
         </div>
-        {/* Only render menu items on tablet, not mobile, to avoid duplication */}
         <div className="hidden md:block">
           <MenuItems />
         </div>

@@ -46,6 +46,18 @@ const ComplainsList = () => {
   const [err, setErr] = useState("");
   const [refreshCounter, setRefreshCounter] = useState(0);
 
+  // register complaint modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form, setForm] = useState({
+    comment: "",
+    materialId: "",
+    facultyId: "",
+    complainType: "REPORT", // default
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+
   const studentId = getStoredStudentId();
   const token = readToken();
 
@@ -89,6 +101,87 @@ const ComplainsList = () => {
   }, [studentId, token, refreshCounter]);
 
   const refresh = () => setRefreshCounter((c) => c + 1);
+
+  const openModal = () => {
+    setFormError("");
+    setFormSuccess("");
+    setForm({
+      comment: "",
+      materialId: "",
+      facultyId: "",
+      complainType: "REPORT",
+    });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setFormError("");
+    setFormSuccess("");
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+  };
+
+  const submitComplaint = async (e) => {
+    e && e.preventDefault();
+    setFormError("");
+    setFormSuccess("");
+
+    if (!studentId) {
+      setFormError("Student ID not available. Please login.");
+      return;
+    }
+
+    // basic validation
+    if (!form.comment || !form.materialId) {
+      setFormError("Please provide a comment and material ID.");
+      return;
+    }
+
+    const payload = {
+      comment: form.comment,
+      studentId: String(studentId),
+      materialId: form.materialId,
+      facultyId: form.facultyId || "",
+      complainType: form.complainType || "REPORT",
+      complainStatus: "ACTION_REQUIRED",
+    };
+
+    setSubmitting(true);
+    try {
+      const url = `${API_BASE}/student/registerNewComplain`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
+      });
+
+      // try to extract body text for friendly messages
+      const txt = await res.text().catch(() => "");
+      if (!res.ok) {
+        throw new Error(txt || `Status ${res.status}`);
+      }
+
+      setFormSuccess("Complaint registered successfully.");
+      // refresh list to show new complaint
+      refresh();
+      // auto-close after a small delay
+      setTimeout(() => {
+        closeModal();
+      }, 900);
+    } catch (err) {
+      console.error("Register complaint failed:", err);
+      setFormError(err.message || "Failed to register complaint.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const viewMaterial = async (materialId) => {
     if (!materialId) {
@@ -157,13 +250,23 @@ const ComplainsList = () => {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Registered Complains</h3>
+        <h3 className="text-lg font-semibold">Registered Complaints</h3>
         <div className="flex items-center gap-2">
           <button
             onClick={refresh}
             className="px-3 py-1 bg-yellow-400 hover:bg-yellow-500 text-white rounded text-sm"
+            title="Reload complaints list"
           >
             Refresh
+          </button>
+
+          {/* New button: Register Complaint */}
+          <button
+            onClick={openModal}
+            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
+            title="Register a new complaint (Report / Request)"
+          >
+            Register Complaint
           </button>
         </div>
       </div>
@@ -171,7 +274,7 @@ const ComplainsList = () => {
       {loading && (
         <div className="p-6 bg-white rounded shadow text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-3 text-sm text-gray-600">Loading complains...</p>
+          <p className="mt-3 text-sm text-gray-600">Loading complaints...</p>
         </div>
       )}
 
@@ -180,7 +283,7 @@ const ComplainsList = () => {
       )}
 
       {!loading && !err && complains.length === 0 && (
-        <div className="p-4 bg-gray-50 rounded text-sm text-gray-600">No complains found.</div>
+        <div className="p-4 bg-gray-50 rounded text-sm text-gray-600">No complaints found.</div>
       )}
 
       {!loading && !err && complains.length > 0 && (
@@ -226,6 +329,94 @@ const ComplainsList = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Modal for registering complaint */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+          <div className="w-full max-w-lg bg-white rounded-xl p-6 shadow-lg">
+            <div className="flex items-start justify-between mb-4">
+              <h4 className="text-lg font-semibold">Register Complaint</h4>
+              <button onClick={closeModal} className="text-xl font-bold leading-none">✕</button>
+            </div>
+
+            <form onSubmit={submitComplaint} className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium mb-1">Comment</label>
+                <textarea
+                  name="comment"
+                  value={form.comment}
+                  onChange={handleFormChange}
+                  rows={4}
+                  placeholder="Describe your issue or request..."
+                  className="w-full p-2 rounded bg-blue-100"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Material ID</label>
+                  <input
+                    name="materialId"
+                    value={form.materialId}
+                    onChange={handleFormChange}
+                    placeholder="e.g. pyq-1759696617179-9qhswvo"
+                    className="w-full p-2 rounded bg-blue-100"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">Faculty ID (optional)</label>
+                  <input
+                    name="facultyId"
+                    value={form.facultyId}
+                    onChange={handleFormChange}
+                    placeholder="e.g. FAC1018"
+                    className="w-full p-2 rounded bg-blue-100"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Type</label>
+                <select
+                  name="complainType"
+                  value={form.complainType}
+                  onChange={handleFormChange}
+                  className="w-full p-2 rounded bg-blue-100"
+                >
+                  <option value="REPORT">Report</option>
+                  <option value="REQUEST">Request</option>
+                </select>
+              </div>
+
+              {/* Hidden student id (in case backend needs it explicitly) */}
+              <input type="hidden" name="studentId" value={studentId || ""} />
+
+              {formError && <div className="p-2 bg-red-50 text-red-700 rounded">{formError}</div>}
+              {formSuccess && <div className="p-2 bg-green-50 text-green-700 rounded">{formSuccess}</div>}
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={`px-4 py-2 rounded text-white ${submitting ? "bg-yellow-300" : "bg-yellow-500 hover:bg-yellow-600"}`}
+                >
+                  {submitting ? "Submitting..." : "Submit Complaint"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

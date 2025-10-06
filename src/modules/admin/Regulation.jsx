@@ -1,186 +1,331 @@
+// src/components/RegulationForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import RegulationAddedpopup from "./popups/RegulationAddedpopup";
+import { useAuth } from "../../context/AuthContext"; // adjust path if needed
+
+const API_BASE = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_BASE)
+  ? process.env.REACT_APP_API_BASE
+  : (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE)
+    ? import.meta.env.VITE_API_BASE
+    : 'http://localhost:8080/VidyaSarthi';
+
+const readToken = () => {
+  try {
+    // prefer auth context if you pass it in separately
+    const vs = localStorage.getItem("vidyaSarthiAuth");
+    if (vs) {
+      const parsed = JSON.parse(vs || "{}");
+      if (parsed?.token) return parsed.token;
+    }
+    return localStorage.getItem("token") || null;
+  } catch (e) {
+    console.warn("readToken:", e);
+    return localStorage.getItem("token") || null;
+  }
+};
 
 const RegulationForm = () => {
   const navigate = useNavigate();
+  const auth = useAuth?.() || {};
+  const authToken = auth?.token || null;
+  const token = authToken || readToken();
 
-  const regulations = ["R15", "R17", "R19", "R21", "2025"];
-  const branches = ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
-  const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
+  // Top-level regulation info + list of semester groups
+  const [regulationName, setRegulationName] = useState("");
+  const [regulationId, setRegulationId] = useState("");
+  const [semesters, setSemesters] = useState([
+    // default one semester block
+    { semester: "", branch: "", subjects: [{ name: "", subjectCode: "" }] },
+  ]);
 
-  const defaultSubjects = Array.from({ length: 5 }, () => ({
-    name: "",
-    subjectCode: "",
-  }));
+  const [submitting, setSubmitting] = useState(false);
 
-  const [formData, setFormData] = useState({
-    regulation: "",
-    branch: "",
-    semester: "",
-    subjectDto: defaultSubjects,
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
+  // Adds a new semester block
+  const addSemester = () => {
+    setSemesters(prev => [
       ...prev,
-      [name]: name === "semester" && value !== "" ? Number(value) : value,
+      { semester: "", branch: "", subjects: [{ name: "", subjectCode: "" }] },
+    ]);
+  };
+
+  const removeSemester = (index) => {
+    setSemesters(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Update semester block fields
+  const handleSemesterFieldChange = (index, field, value) => {
+    setSemesters(prev => prev.map((s, i) => i === index ? { ...s, [field]: value } : s));
+  };
+
+  // Subject operations within a semester block
+  const addSubject = (semIndex) => {
+    setSemesters(prev => prev.map((s, i) => i === semIndex ? { ...s, subjects: [...s.subjects, { name: "", subjectCode: "" }] } : s));
+  };
+
+  const removeSubject = (semIndex, subjIndex) => {
+    setSemesters(prev => prev.map((s, i) => {
+      if (i !== semIndex) return s;
+      const nextSubjects = s.subjects.filter((_, idx) => idx !== subjIndex);
+      return { ...s, subjects: nextSubjects.length ? nextSubjects : [{ name: "", subjectCode: "" }] };
     }));
   };
 
-  const handleSubjectChange = (index, field, value) => {
-    setFormData((prev) => {
-      const newSubjects = prev.subjectDto.map((s, i) =>
-        i === index ? { ...s, [field]: value } : s
-      );
-      return { ...prev, subjectDto: newSubjects };
-    });
+  const handleSubjectChange = (semIndex, subjIndex, field, value) => {
+    setSemesters(prev => prev.map((s, i) => {
+      if (i !== semIndex) return s;
+      const subjects = s.subjects.map((sub, idx) => idx === subjIndex ? { ...sub, [field]: value } : sub);
+      return { ...s, subjects };
+    }));
+  };
+
+  const validate = () => {
+    if (!regulationId || !regulationName) {
+      alert("Please provide Regulation ID and Regulation Name.");
+      return false;
+    }
+    // ensure at least one valid subject
+    const flattened = semesters.flatMap(s => s.subjects.map(sub => ({ ...sub, semester: s.semester, branch: s.branch })));
+    const filled = flattened.filter(sub => sub.name?.trim() && sub.subjectCode?.trim());
+    if (filled.length === 0) {
+      alert("Please add at least one subject (with name and subject code).");
+      return false;
+    }
+    // check semester numbers are valid
+    for (const s of semesters) {
+      if (!s.semester || isNaN(Number(s.semester))) {
+        alert("Please enter valid semester number for all semester blocks.");
+        return false;
+      }
+      if (!s.branch || !s.branch.trim()) {
+        alert("Please provide branch for each semester block.");
+        return false;
+      }
+    }
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting body:", formData);
+    if (!validate()) return;
 
-    // ✅ Client-side validation
-    const isFormValid =
-      formData.regulation &&
-      formData.branch &&
-      formData.semester &&
-      formData.subjectDto.every(
-        (sub) => sub.name.trim() && sub.subjectCode.trim()
-      );
+    // build newSubjects as required by backend
+    const newSubjects = [];
+    for (const s of semesters) {
+      const semesterNumber = Number(s.semester);
+      const branchType = s.branch?.trim();
+      for (const sub of s.subjects) {
+        if (!sub.name?.trim() || !sub.subjectCode?.trim()) continue; // skip empty rows
+        newSubjects.push({
+          subjectCode: sub.subjectCode.trim(),
+          name: sub.name.trim(),
+          semester: semesterNumber,
+          regulationId: regulationId,
+          branchType,
+        });
+      }
+    }
 
-    if (!isFormValid) {
-      alert("Please fill in all fields before submitting.");
+    if (newSubjects.length === 0) {
+      alert("No valid subjects to submit.");
       return;
     }
 
+    const payload = {
+      name: regulationName,
+      regulationId: regulationId,
+      newSubjects,
+    };
+
+    setSubmitting(true);
     try {
-      const response = await fetch(
-        "http://localhost:8080/VidyaSarthi/addRegulation",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch(`${API_BASE}/addNewRegulation`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
+      });
 
-      const text = await response.text();
+      const text = await res.text().catch(() => "");
 
-      if (response.status === 409) {
-        alert("Duplicate entry: This regulation already exists.");
-      } else if (response.ok) {
-        alert(text || "Regulation added successfully!");
-        navigate("/Student-login");
+      if (res.status === 409) {
+        alert(text || "Duplicate: regulation already exists.");
+      } else if (!res.ok) {
+        console.error("Regulation create failed:", res.status, text);
+        alert(text || `Failed to add regulation (${res.status})`);
       } else {
-        alert(text || "Something went wrong!");
+        alert(text || "Regulation added successfully.");
+        // optional: navigate to admin/regulation list or reset form
+        navigate("/admin/dashboard");
       }
-    } catch (error) {
-      console.error("Error during signup:", error);
-      alert("Server error. Please try again later.");
+    } catch (err) {
+      console.error("Error adding regulation:", err);
+      alert("Network/server error. See console for details.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const SelectField = ({ label, name, options, value, onChange }) => (
-    <div className="mb-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-      <label className="sm:w-40 w-full">{label} :</label>
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
-      >
-        <option value="">Choose {label}</option>
-        {options.map((opt, idx) => (
-          <option key={idx} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-
   return (
     <div className="w-full flex justify-center mt-10 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-2xl p-6 w-full max-w-3xl space-y-4"
-      >
-        <h2 className="text-xl font-semibold mb-4">Add Regulation</h2>
+      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-2xl p-6 w-full max-w-4xl space-y-6">
+        <h2 className="text-xl font-semibold mb-2">Add Regulation</h2>
 
-        <SelectField
-          label="Regulation"
-          name="regulation"
-          options={regulations}
-          value={formData.regulation}
-          onChange={handleChange}
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Regulation Name</label>
+            <input
+              type="text"
+              value={regulationName}
+              onChange={(e) => setRegulationName(e.target.value)}
+              placeholder="Regulation 2027 (display name)"
+              className="w-full p-2 rounded-md bg-blue-50 border border-blue-200"
+              required
+            />
+          </div>
 
-        <SelectField
-          label="Branch"
-          name="branch"
-          options={branches}
-          value={formData.branch}
-          onChange={handleChange}
-        />
+          <div>
+            <label className="block text-sm font-medium mb-1">Regulation ID</label>
+            <input
+              type="text"
+              value={regulationId}
+              onChange={(e) => setRegulationId(e.target.value)}
+              placeholder="R2027 (exact id to send)"
+              className="w-full p-2 rounded-md bg-blue-50 border border-blue-200"
+              required
+            />
+          </div>
+        </div>
 
-        <SelectField
-          label="Semester"
-          name="semester"
-          options={semesters}
-          value={formData.semester}
-          onChange={handleChange}
-        />
-
+        {/* Semesters blocks */}
         <div>
-          <label className="block font-medium mb-2">
-            Subjects: <span className="text-sm">(Priority Wise)</span>
-          </label>
-
-          <div className="flex flex-col gap-2">
-            {formData.subjectDto.map((sub, index) => (
-              <div
-                key={index}
-                className="flex flex-col sm:flex-row gap-2 sm:gap-3 bg-gray-50 p-2 rounded"
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium">Semesters & Subjects</label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={addSemester}
+                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-sm"
               >
-                <div className="text-sm font-medium">{index + 1}.</div>
+                + Add Semester
+              </button>
+            </div>
+          </div>
 
-                <input
-                  type="text"
-                  placeholder="Subject Name"
-                  value={sub.name}
-                  onChange={(e) =>
-                    handleSubjectChange(index, "name", e.target.value)
-                  }
-                  className="w-full sm:flex-1 p-2 rounded-md bg-blue-100"
-                />
+          <div className="space-y-4">
+            {semesters.map((s, si) => (
+              <div key={si} className="border rounded-lg p-4 bg-gray-50">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex gap-3 items-center">
+                    <div>
+                      <label className="block text-xs font-medium">Semester No.</label>
+                      <input
+                        type="number"
+                        value={s.semester}
+                        onChange={(e) => handleSemesterFieldChange(si, "semester", e.target.value)}
+                        className="p-2 w-28 rounded-md bg-white border border-gray-200"
+                        placeholder="1"
+                        required
+                      />
+                    </div>
 
-                <input
-                  type="text"
-                  placeholder="Subject Code"
-                  value={sub.subjectCode}
-                  onChange={(e) =>
-                    handleSubjectChange(index, "subjectCode", e.target.value)
-                  }
-                  className="w-full sm:w-48 p-2 rounded-md bg-blue-100"
-                />
+                    <div>
+                      <label className="block text-xs font-medium">Branch</label>
+                      <input
+                        type="text"
+                        value={s.branch}
+                        onChange={(e) => handleSemesterFieldChange(si, "branch", e.target.value)}
+                        className="p-2 w-36 rounded-md bg-white border border-gray-200"
+                        placeholder="CIVIL"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium">Regulation ID (auto)</label>
+                      <input
+                        type="text"
+                        value={regulationId}
+                        readOnly
+                        className="p-2 w-40 rounded-md bg-gray-100 border border-gray-200 text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => removeSemester(si)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
+                    >
+                      Remove Semester
+                    </button>
+                  </div>
+                </div>
+
+                {/* Subjects for this semester */}
+                <div className="space-y-2">
+                  {s.subjects.map((sub, subi) => (
+                    <div key={subi} className="flex gap-2 items-center">
+                      <div className="w-8 text-sm text-gray-700">{subi + 1}.</div>
+                      <input
+                        type="text"
+                        value={sub.name}
+                        onChange={(e) => handleSubjectChange(si, subi, "name", e.target.value)}
+                        placeholder="Subject Name"
+                        className="flex-1 p-2 rounded-md bg-white border border-gray-200"
+                      />
+                      <input
+                        type="text"
+                        value={sub.subjectCode}
+                        onChange={(e) => handleSubjectChange(si, subi, "subjectCode", e.target.value)}
+                        placeholder="Subject Code"
+                        className="w-48 p-2 rounded-md bg-white border border-gray-200"
+                      />
+                      <input
+                        type="text"
+                        value={regulationId}
+                        readOnly
+                        className="w-40 p-2 rounded-md bg-gray-100 border border-gray-200 text-sm"
+                        title="This is auto-filled from regulation id"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeSubject(si, subi)}
+                        className="bg-red-400 text-white px-3 py-1 rounded hover:bg-red-500"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+
+                  <div className="mt-2">
+                    <button
+                      type="button"
+                      onClick={() => addSubject(si)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm"
+                    >
+                      + Add Subject to Semester {s.semester || si + 1}
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="bg-yellow-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-yellow-600 transition block mx-auto"
-        >
-          Submit Now
-        </button>
+        <div className="flex justify-center">
+          <button
+            type="submit"
+            disabled={submitting}
+            className={`bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700 transition ${submitting ? "opacity-50 cursor-not-allowed" : ""}`}
+          >
+            {submitting ? "Submitting..." : "Submit Regulation"}
+          </button>
+        </div>
       </form>
     </div>
-    
   );
 };
 

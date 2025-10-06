@@ -1,18 +1,44 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../../context/AuthContext";
+
+const API_BASE = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_BASE)
+  ? process.env.REACT_APP_API_BASE
+  : (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE)
+    ? import.meta.env.VITE_API_BASE
+    : 'http://localhost:8080/VidyaSarthi';
+
+const readToken = () => {
+  try {
+    const vs = localStorage.getItem("vidyaSarthiAuth");
+    if (vs) {
+      const parsed = JSON.parse(vs || "{}");
+      if (parsed?.token) return parsed.token;
+    }
+    return localStorage.getItem("token") || null;
+  } catch (e) {
+    console.warn("readToken error:", e);
+    return localStorage.getItem("token") || null;
+  }
+};
 
 const StudentTable = () => {
+  const auth = useAuth?.() || {};
+  const authToken = auth?.token || null;
+
   const [students, setStudents] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [placeholder, setPlaceholder] = useState("");
+  const [error, setError] = useState("");
 
   const rowsPerPage = 10;
   const typingSpeed = 120;
   const deletingSpeed = 60;
   const delayBetweenPhrases = 1500;
 
+  // Animated placeholder effect
   useEffect(() => {
     if (!isSearchActive) {
       setPlaceholder("");
@@ -51,27 +77,52 @@ const StudentTable = () => {
     return () => clearTimeout(timeoutId);
   }, [isSearchActive]);
 
+  // Fetch students with improved token handling
   const fetchStudents = useCallback(async () => {
     setIsLoading(true);
+    setError("");
+    
     try {
-      const response = await fetch("http://localhost:8080/VidyaSarthi/studentList");
-      if (!response.ok) throw new Error("Network response was not ok");
+      const token = authToken || readToken();
+      
+      if (!token) {
+        throw new Error("Authentication token not found. Please login again.");
+      }
+
+      const response = await fetch(`${API_BASE}/studentList`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Session expired. Please login again.");
+        }
+        throw new Error(`Failed to fetch students (${response.status})`);
+      }
+
       const data = await response.json();
       setStudents(data);
     } catch (error) {
       console.error("Failed to fetch students:", error);
+      setError(error.message);
       setStudents([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [authToken]);
 
+  // Initial fetch
   useEffect(() => {
     fetchStudents();
   }, [fetchStudents]);
 
+  // Listen to "studentsUpdated" event for auto-refresh
   useEffect(() => {
     const handleUpdate = () => {
+      console.log("Students updated event received");
       fetchStudents();
     };
     window.addEventListener("studentsUpdated", handleUpdate);
@@ -97,7 +148,26 @@ const StudentTable = () => {
   const paginatedData = filteredStudents.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
-  );  return (
+  );
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <p className="font-semibold">Error loading students</p>
+          <p className="text-sm">{error}</p>
+          <button 
+            onClick={fetchStudents}
+            className="mt-2 text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Student List</h2>
@@ -115,7 +185,11 @@ const StudentTable = () => {
                 aria-label="Open search bar"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </button>
             </div>
@@ -147,7 +221,6 @@ const StudentTable = () => {
         </div>
       </div>
 
-      {/* ✅ Scrollable table with preserved styles */}
       <div className="w-full overflow-x-auto rounded-lg shadow-lg">
         <div className="min-w-[700px]">
           <table className="w-full table-fixed">
@@ -168,15 +241,25 @@ const StudentTable = () => {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={columns.length} className="p-4 text-center text-gray-500">Loading...</td>
+                  <td colSpan={columns.length} className="p-4 text-center text-gray-500">
+                    <div className="flex justify-center items-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+                      <span className="ml-3">Loading students...</span>
+                    </div>
+                  </td>
                 </tr>
               ) : paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="p-4 text-center text-gray-500">No students found.</td>
+                  <td colSpan={columns.length} className="p-4 text-center text-gray-500">
+                    {searchQuery ? "No students found matching your search." : "No students found."}
+                  </td>
                 </tr>
               ) : (
                 paginatedData.map((row, idx) => (
-                  <tr key={row.studentId || idx} className={`${idx % 2 === 0 ? "bg-blue-100" : "bg-blue-50"} hover:bg-blue-200 transition`}>
+                  <tr
+                    key={row.studentId || idx}
+                    className={`${idx % 2 === 0 ? "bg-blue-100" : "bg-blue-50"} hover:bg-blue-200 transition`}
+                  >
                     <td className="px-4 py-2 text-center border-r-3 border-white min-w-[120px]">{row.studentId}</td>
                     <td className="px-4 py-2 text-center border-r-3 border-white min-w-[200px]">{row.name}</td>
                     <td className="px-4 py-2 text-center border-r-3 border-white min-w-[250px]">{row.email}</td>
@@ -195,7 +278,7 @@ const StudentTable = () => {
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300"
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition"
           >
             Previous
           </button>
@@ -205,7 +288,7 @@ const StudentTable = () => {
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300"
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition"
           >
             Next
           </button>
@@ -216,4 +299,3 @@ const StudentTable = () => {
 };
 
 export default StudentTable;
-
