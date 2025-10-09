@@ -1,7 +1,7 @@
 // src/components/AdminNavBar.jsx
 import React, { useState } from "react";
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
-import logo from "../../assets/Ellipse.png";
+import logo from "../../assets/sylla4.png";
 import { Link, useLocation } from "react-router-dom";
 import Logout from "../admin/popups/Logout"; // Desktop logout (modal + proper clearing)
 

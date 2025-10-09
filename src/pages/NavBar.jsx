@@ -47,7 +47,7 @@ const NavBar = () => {
             to="/"
             className="text-2xl font-bold tracking-wide text-gray-800 transition-colors duration-300 hover:text-blue-700"
           >
-            College Guide
+        Syllabridge
           </Link>
 
           {/* Navigation Links for Desktop */}

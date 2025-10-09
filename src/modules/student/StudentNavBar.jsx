@@ -2,14 +2,13 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
-import logo from "../../assets/Ellipse.png"; // keep your existing path
+import logo from "../../assets/sylla4.png";
 import Logout from "../admin/popups/Logout"; // same path used in TeacherNavBar
 
 const StudentNavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
-  // map routes -> visible title (like teacher example)
   const pageTitles = {
     "/student/documents": "College Materials",
     "/student/dashboard": "Student Dashboard",
@@ -23,7 +22,8 @@ const StudentNavBar = () => {
   const pageTitle = pageTitles[location.pathname] || "Student Panel";
 
   // A component for menu items to avoid repetition
-  const MenuItems = ({ isMobile = false }) => (
+  // Now accepts an 'onCloseMenu' prop to close the menu after an action
+  const MenuItems = ({ isMobile = false, onCloseMenu }) => (
     <div
       className={`flex ${
         isMobile ? "flex-col space-y-4 px-6 pt-8 text-lg" : "flex-col space-y-3 p-6"
@@ -39,19 +39,21 @@ const StudentNavBar = () => {
       <Link
         to="/request-report"
         className="block rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-100"
-        onClick={() => setIsMenuOpen(false)}
+        onClick={onCloseMenu} // Close menu on click
       >
         Help & Support
       </Link>
 
-      {/* keep a simple logout entry inside the menu (this link will behave like a fallback).
-          Desktop shows the proper Logout component (with modal & proper clearing). */}
-      <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-        <button className="flex w-full items-center justify-center space-x-2 rounded-lg bg-yellow-400 py-3 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
-          <span>Log out</span>
-          <FiLogOut className="h-5 w-5" />
-        </button>
-      </Link>
+      {/*
+        Integrate the Logout component here.
+        It will handle its own modal and logic.
+        We pass a className prop to allow styling for mobile vs desktop.
+      */}
+      <Logout
+        buttonClassName={`flex w-full items-center justify-center space-x-2 rounded-lg bg-yellow-400 py-3 px-4 font-bold text-white transition-colors hover:bg-yellow-500`}
+        // Optionally, you might want the Logout modal to close the nav menu too
+        onLogoutSuccess={onCloseMenu}
+      />
     </div>
   );
 
@@ -62,7 +64,7 @@ const StudentNavBar = () => {
           {/* Left Section */}
           <div className="flex items-center gap-4 lg:gap-8">
             <div className="flex flex-shrink-0 items-center gap-3">
-              <img src={logo} alt="Vidya Sarthi Logo" className="h-14 w-14" />
+              <img src={logo} alt="Vidya Sarthi Logo" className="h-14 w-14 " />
               <div>
                 <span className="block text-lg font-bold text-gray-800">Student Panel</span>
                 <span className="hidden text-sm font-semibold text-gray-600 sm:block">E-learning</span>
@@ -87,7 +89,7 @@ const StudentNavBar = () => {
               Help & Support
             </Link>
 
-            {/* Desktop logout uses the Logout component (shows modal and clears auth properly) */}
+            {/* Desktop logout - now uses the same Logout component as in MenuItems */}
             <Logout />
           </div>
 
@@ -125,7 +127,8 @@ const StudentNavBar = () => {
           </button>
         </div>
         <div className="hidden md:block">
-          <MenuItems />
+          {/* Pass onCloseMenu to MenuItems for tablet view */}
+          <MenuItems onCloseMenu={() => setIsMenuOpen(false)} />
         </div>
       </div>
 
@@ -139,7 +142,8 @@ const StudentNavBar = () => {
             </button>
           </div>
           <div className="mt-4">
-            <MenuItems isMobile={true} />
+            {/* Pass onCloseMenu to MenuItems for mobile view */}
+            <MenuItems isMobile={true} onCloseMenu={() => setIsMenuOpen(false)} />
           </div>
         </div>
       )}

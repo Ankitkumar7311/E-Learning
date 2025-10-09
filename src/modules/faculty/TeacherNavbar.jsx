@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
-import logo from "../../assets/Ellipse.png"; // Make sure this path is correct
-import Logout from "../admin/popups/Logout";
+import logo from "../../assets/sylla4.png"; // Make sure this path is correct
+import Logout from "../admin/popups/Logout"; // Ensure this path is correct
+
 const TeacherNavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -17,7 +18,8 @@ const TeacherNavBar = () => {
   const pageTitle = pageTitles[location.pathname] || "Teacher Section";
 
   // A component for menu items to avoid repetition
-  const MenuItems = ({ isMobile = false }) => (
+  // Now accepts an 'onCloseMenu' prop to close the menu after an action
+  const MenuItems = ({ isMobile = false, onCloseMenu }) => (
     <div
       className={`flex ${
         isMobile
@@ -34,16 +36,20 @@ const TeacherNavBar = () => {
       <Link
         to="/request-report"
         className="block rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-100"
-        onClick={() => setIsMenuOpen(false)}
+        onClick={onCloseMenu} // Close menu on click
       >
         Help & Support
       </Link>
-      <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-        <button className="flex w-full items-center justify-center space-x-2 rounded-lg bg-yellow-400 py-3 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
-          <span>Log out</span>
-          <FiLogOut className="h-5 w-5" />
-        </button>
-      </Link>
+      {/*
+        Integrate the Logout component here.
+        It will handle its own modal and logic.
+        We pass a className prop to allow styling for mobile vs desktop.
+      */}
+      <Logout
+        buttonClassName={`flex w-full items-center justify-center space-x-2 rounded-lg bg-yellow-400 py-3 px-4 font-bold text-white transition-colors hover:bg-yellow-500`}
+        // Optionally, you might want the Logout modal to close the nav menu too
+        onLogoutSuccess={onCloseMenu}
+      />
     </div>
   );
 
@@ -83,6 +89,7 @@ const TeacherNavBar = () => {
             >
               Help & Support
             </Link>
+            {/* Desktop logout - now uses the same Logout component as in MenuItems */}
             <Logout />
           </div>
 
@@ -123,7 +130,8 @@ const TeacherNavBar = () => {
           </button>
         </div>
         <div className="hidden md:block">
-          <MenuItems />
+          {/* Pass onCloseMenu to MenuItems for tablet view */}
+          <MenuItems onCloseMenu={() => setIsMenuOpen(false)} />
         </div>
       </div>
 
@@ -131,13 +139,14 @@ const TeacherNavBar = () => {
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 flex h-full w-full flex-col bg-white md:hidden">
           <div className="flex items-center justify-between p-4">
-             <span className="font-bold text-gray-800">Menu</span>
-             <button onClick={() => setIsMenuOpen(false)}>
-                <FiX className="h-6 w-6 text-gray-600" />
-             </button>
+            <span className="font-bold text-gray-800">Menu</span>
+            <button onClick={() => setIsMenuOpen(false)}>
+              <FiX className="h-6 w-6 text-gray-600" />
+            </button>
           </div>
           <div className="mt-4">
-            <MenuItems isMobile={true} />
+            {/* Pass onCloseMenu to MenuItems for mobile view */}
+            <MenuItems isMobile={true} onCloseMenu={() => setIsMenuOpen(false)} />
           </div>
         </div>
       )}
