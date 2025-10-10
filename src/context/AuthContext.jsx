@@ -1,4 +1,4 @@
-// src/auth/AuthContext.jsx
+
 import { createContext, useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
