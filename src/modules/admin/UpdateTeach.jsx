@@ -1,4 +1,3 @@
-// src/modules/faculty/profile/UpdateTeach.jsx
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import teacher from "../../assets/teacher.jpg";
@@ -121,7 +120,7 @@ const UpdateTeach = () => {
 
       // try multiple commonly used endpoint shapes; adjust if your backend differs
       const endpointsToTry = [
-        `${API_BASE}/faculty/getPic/${encodeURIComponent(facultyId)}`,       // /faculty/getPic/{id}
+        `${API_BASE}/faculty/getPic/${encodeURIComponent(facultyId)}`, // /faculty/getPic/{id}
       ];
 
       for (const url of endpointsToTry) {
@@ -351,11 +350,12 @@ const UpdateTeach = () => {
   return (
     <div className="flex justify-center items-start min-h-screen bg-gray-100 p-4">
       <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6 md:p-8 w-full max-w-2xl space-y-4" noValidate>
-        <div className="flex gap-6 items-start">
+        {/* Responsive: Stacks vertically on small screens */}
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start">
           <img
             src={imageSrc}
             alt="Teacher"
-            className="h-32 w-32 rounded-xl object-cover"
+            className="h-32 w-32 rounded-xl object-cover flex-shrink-0"
             onError={() => {
               // if object URL or remote img fails, fallback to online placeholder then local teacher.jpg
               if (imageSrc !== ONLINE_PLACEHOLDER) {
@@ -366,12 +366,12 @@ const UpdateTeach = () => {
               }
             }}
           />
-          <div className="flex-1">
+          <div className="w-full sm:flex-1">
             <input readOnly value={facultyId || ""} className="bg-gray-200 p-2 rounded w-full mb-2 cursor-not-allowed" aria-label="Faculty ID" />
             <label className="block mb-2" aria-hidden>
               <input accept="image/*" type="file" onChange={handleFileChange} />
             </label>
-            <div className="text-sm text-gray-600">Profile photo (optional, max 5MB)</div>
+            <div className="text-sm text-gray-600 text-center sm:text-left">Profile photo (optional, max 5MB)</div>
           </div>
         </div>
 
@@ -414,15 +414,16 @@ const UpdateTeach = () => {
 
         {/* Subject multi-select */}
         <div className="border rounded p-3 bg-gray-50">
-          <div className="flex items-center justify-between mb-2">
+          {/* Responsive: Stacks vertically on small screens */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-2">
             <input
               placeholder="Search subjects..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="p-2 rounded border"
+              className="p-2 rounded border w-full sm:w-auto"
               aria-label="Search subjects"
             />
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center self-end sm:self-center">
               <button
                 type="button"
                 onClick={() => {
@@ -502,7 +503,7 @@ const UpdateTeach = () => {
           </div>
         </div>
 
-        <button disabled={loading} type="submit" className="w-full bg-yellow-500 text-white p-3 rounded">
+        <button disabled={loading} type="submit" className="w-full bg-yellow-500 text-white p-3 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50 transition-colors disabled:bg-gray-400">
           {loading ? "Updating..." : "Update"}
         </button>
 
