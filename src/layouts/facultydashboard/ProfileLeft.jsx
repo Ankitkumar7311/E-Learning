@@ -1,36 +1,49 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaRegEdit } from "react-icons/fa";
-import teacher from "../../assets/teacher.jpg";
+import { FaRegEdit, FaRegIdCard, FaRegEnvelope, FaPhoneAlt } from "react-icons/fa";
+import teacher from "../../assets/teacher.jpg"; // Fallback image
 
-const ProfileLeft = ({ email }) => {
+// --- START: SVG Icon Components for a Cleaner UI ---
+// These are the new icons from React Icons for a more attractive look.
+const IconIdCard = ({ className = "w-5 h-5" }) => <FaRegIdCard className={className} />;
+const IconEmail = ({ className = "w-5 h-5" }) => <FaRegEnvelope className={className} />;
+const IconPhone = ({ className = "w-5 h-5" }) => <FaPhoneAlt className={className} />;
+// --- END: SVG Icon Components ---
+
+// This reusable component is what displays the icon, label, and value together.
+const InfoRow = ({ icon, label, value }) => (
+  <div className="flex items-start gap-3">
+    <div className="text-indigo-500 mt-1">{icon}</div>
+    <div>
+      <p className="text-xs text-gray-500 font-medium">{label}</p>
+      <p className="text-sm text-gray-800 break-words">{value || "N/A"}</p>
+    </div>
+  </div>
+);
+
+const ProfileLeft = ({ email, onNameFetched }) => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // local state for image src (data URL or object URL)
   const [imageSrc, setImageSrc] = useState(null);
+
+  useEffect(() => {
+    if (profile && profile.name && onNameFetched) {
+      onNameFetched(profile.name);
+    }
+  }, [profile, onNameFetched]);
 
   useEffect(() => {
     if (!email) {
       setLoading(false);
       return;
     }
-
     let active = true;
-    let objectUrlToRevoke = null;
-
     const fetchProfile = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("No token found");
-          setProfile(null);
-          setLoading(false);
-          return;
-        }
-
+        if (!token) throw new Error("No token found");
         const res = await fetch(
           "http://localhost:8080/VidyaSarthi/faculty/getFacultyDetail",
           {
@@ -42,75 +55,31 @@ const ProfileLeft = ({ email }) => {
             body: JSON.stringify({ email }),
           }
         );
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch profile details");
-        }
-
+        if (!res.ok) throw new Error("Failed to fetch profile details");
         const data = await res.json();
-
-        if (!active) return;
-
-        if (data && Object.keys(data).length > 0) {
+        if (active && data) {
           setProfile(data);
-          // process imageData if present
           if (data.imageData) {
-            // Case 1: backend sent base64 string (Jackson default serializes byte[] to Base64)
-            if (typeof data.imageData === "string") {
-              // Try to detect image MIME (if backend adds a mimeType field use that instead)
-              // We'll assume jpeg/png; if images look wrong, add a mime type in backend (recommended)
-              // If the string already contains data URI prefix, use as-is
-              if (data.imageData.startsWith("data:")) {
-                setImageSrc(data.imageData);
-              } else {
-                // default to jpeg
-                setImageSrc(`data:image/jpeg;base64,${data.imageData}`);
-              }
-            }
-            // Case 2: backend sent numeric array [137,80,78,...]
-            else if (Array.isArray(data.imageData)) {
-              const byteArray = new Uint8Array(data.imageData);
-              const blob = new Blob([byteArray]); // no mime info available
-              // Use FileReader to convert to data URL (works in all browsers)
+            if (typeof data.imageData === 'string') {
+              setImageSrc(data.imageData.startsWith("data:") ? data.imageData : `data:image/jpeg;base64,${data.imageData}`);
+            } else if (Array.isArray(data.imageData)) {
               const reader = new FileReader();
-              reader.onload = () => {
-                if (!active) return;
-                const result = reader.result; // data:*/*;base64,...
-                setImageSrc(result);
-              };
-              reader.onerror = (err) => {
-                console.error("Failed to convert image blob to data URL", err);
-              };
-              reader.readAsDataURL(blob);
+              reader.onload = () => { if (active) setImageSrc(reader.result) };
+              reader.readAsDataURL(new Blob([new Uint8Array(data.imageData)]));
             }
-            // other shapes: ignore and fallback to default
-            else {
-              setImageSrc(null);
-            }
-          } else {
-            setImageSrc(null);
           }
-        } else {
+        } else if (active) {
           setProfile(null);
-          setImageSrc(null);
         }
       } catch (err) {
         console.error("Error fetching profile:", err);
-        setProfile(null);
-        setImageSrc(null);
+        if (active) setProfile(null);
       } finally {
         if (active) setLoading(false);
       }
     };
-
     fetchProfile();
-
-    return () => {
-      active = false;
-      if (objectUrlToRevoke) {
-        URL.revokeObjectURL(objectUrlToRevoke);
-      }
-    };
+    return () => { active = false; };
   }, [email]);
 
   const handleUpdate = () => {
@@ -120,83 +89,81 @@ const ProfileLeft = ({ email }) => {
     });
   };
 
+  const CardShell = ({ children }) => (
+    <div className="w-full max-w-sm p-2">
+      <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full">
+        {children}
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="flex justify-center w-full md:w-1/2 px-3 py-5">
-        <div className="flex flex-col rounded-2xl bg-white shadow-lg w-full max-w-sm p-6">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading profile...</p>
-          </div>
+      <CardShell>
+        <div className="text-center py-10">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading Profile...</p>
         </div>
-      </div>
+      </CardShell>
     );
   }
 
   if (!profile) {
     return (
-      <div className="flex justify-center w-full md:w-1/2 px-3 py-5">
-        <div className="flex flex-col rounded-2xl bg-white shadow-lg w-full max-w-sm p-6">
-          <p className="text-center text-gray-500">No profile data found.</p>
+      <CardShell>
+        <div className="text-center py-10">
+          <p className="text-gray-500">No profile data found.</p>
         </div>
-      </div>
+      </CardShell>
     );
   }
 
   return (
-    <div className="flex justify-center w-full md:w-1/2 px-3 py-5">
-      <div className="flex flex-col rounded-2xl bg-white shadow-lg w-full max-w-sm p-6">
-        <div className="flex flex-col items-center gap-3">
-          {/* show imageSrc if available else fallback teacher */}
-          <img
-            src={imageSrc || teacher}
-            alt="Profile"
-            className="h-24 w-24 rounded-full object-cover shadow"
-          />
-          <h4 className="text-lg font-semibold text-gray-800">{profile.name}</h4>
-        </div>
+    <CardShell>
+      {/* --- Header Section --- */}
+      <div className="flex flex-col items-center text-center max-w-full">
+        <img
+          src={imageSrc || teacher}
+          alt="Profile"
+          className="w-28 h-28 rounded-full object-cover border-4 border-indigo-100 shadow-md mb-4"
+          onError={(e) => { e.currentTarget.src = teacher; }}
+        />
+        <h2 className="text-2xl font-bold text-gray-900 break-words">{profile.name}</h2>
+        <p className="text-sm font-medium text-indigo-500">{profile.designation || "Faculty"}</p>
+      </div>
 
-        <hr className="border-gray-300 my-4" />
+      {/* --- Details Section --- */}
+      <div className="border-t border-gray-200 my-6 pt-6">
+        <div className="space-y-4">
+          {/* This is where the new icons are added to your layout */}
+          <InfoRow icon={<IconIdCard />} label="Faculty ID" value={profile.facultyId} />
+          <InfoRow icon={<IconEmail />} label="Email Address" value={profile.email} />
+          <InfoRow icon={<IconPhone />} label="Phone Number" value={profile.phone} />
 
-        <div className="text-sm leading-6 space-y-3 text-gray-700">
+          {/* Subjects List */}
           <div>
-            <span className="font-semibold">Subjects:</span>
-            <ul className="list-disc list-inside mt-1">
+            <p className="text-xs text-gray-500 font-medium mb-1">Subjects</p>
+            <ul className="list-disc list-inside text-sm text-gray-800 space-y-1">
               {profile.subjects && profile.subjects.length > 0 ? (
                 profile.subjects.map((subject) => <li key={subject.id}>{subject.name}</li>)
               ) : (
-                <li>N/A</li>
+                <li>No subjects assigned.</li>
               )}
             </ul>
-            <br />
-            <span className="font-semibold">Faculty ID:</span> {profile.facultyId}
           </div>
-
-          <hr className="border-gray-200" />
-
-          <p>
-            <span className="font-semibold">Phone:</span> {profile.phone}
-            <br />
-            <span className="font-semibold">Email:</span> {profile.email}
-          </p>
-
-          <hr className="border-gray-200" />
-
-          <p>
-            <span className="font-semibold">Designation:</span> {profile.designation}
-          </p>
-        </div>
-
-        <div className="flex justify-center mt-6">
-          <button
-            onClick={handleUpdate}
-            className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-6 rounded-full transition-all duration-300"
-          >
-            <FaRegEdit size={18} /> Request
-          </button>
         </div>
       </div>
-    </div>
+
+      {/* --- Footer Button --- */}
+      <div className="mt-8">
+        <button
+          onClick={handleUpdate}
+          className="w-full flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-5 rounded-lg transition-all duration-300 shadow-lg hover:shadow-yellow-400/50 transform hover:-translate-y-1"
+        >
+          <FaRegEdit /> Update Profile
+        </button>
+      </div>
+    </CardShell>
   );
 };
 

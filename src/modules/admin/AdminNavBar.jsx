@@ -2,12 +2,25 @@
 import React, { useState } from "react";
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
 import logo from "../../assets/sylla4.png";
+// useNavigate is no longer needed for this fix
 import { Link, useLocation } from "react-router-dom";
 import Logout from "../admin/popups/Logout"; // Desktop logout (modal + proper clearing)
 
 const AdminNavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+
+  // FIX: This handler now forces a hard reload to ensure a complete logout.
+  const handleMenuLogout = () => {
+    // Clear all relevant session keys from local storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("vidyaSarthiAuth");
+
+    // Use window.location.assign to trigger a full page reload and navigate.
+    // This is more effective than client-side navigation for clearing all app state.
+    window.location.assign("/login");
+  };
 
   const buttons = {
     "/admin/dashboard": "Global Admin",
@@ -36,20 +49,21 @@ const AdminNavBar = () => {
       </button>
 
       <Link
-        to="/request-report"
+        to="/help-support"
         className="block rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-100"
         onClick={() => setIsMenuOpen(false)}
       >
         Help & Support
       </Link>
 
-      {/* Fallback logout entry for mobile/menu (keeps menu simple) */}
-      <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-        <button className="flex w-full items-center justify-center space-x-2 rounded-lg bg-yellow-400 py-3 px-4 font-bold text-white transition-colors hover:bg-yellow-500">
-          <span>Log out</span>
-          <FiLogOut className="h-5 w-5" />
-        </button>
-      </Link>
+      {/* The logout button now uses the corrected handler */}
+      <button
+        onClick={handleMenuLogout}
+        className="flex w-full items-center justify-center space-x-2 rounded-lg bg-yellow-400 py-3 px-4 font-bold text-white transition-colors hover:bg-yellow-500"
+      >
+        <span>Log out</span>
+        <FiLogOut className="h-5 w-5" />
+      </button>
     </div>
   );
 
@@ -76,7 +90,7 @@ const AdminNavBar = () => {
             {/* Right-aligned links */}
             <div className="flex items-center space-x-8">
               <Link
-                to="/request-report"
+                to="/help-support"
                 className="font-medium text-gray-700 transition duration-300 hover:text-blue-600"
               >
                 Help & Support

@@ -18,7 +18,7 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [loadingPreview, setLoadingPreview] = useState(true); 
-    const [previewError, setPreviewError] = useState(null);    
+    const [previewError, setPreviewError] = useState(null);      
     const [message, setMessage] = useState(null);
 
     const API_BASE = apiBase || 'http://localhost:8080/VidyaSarthi';
@@ -139,8 +139,8 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
         }
 
         if (selectedFile.type !== 'application/pdf') {
-             setMessage('Upload failed: Please select a PDF file.');
-             return;
+              setMessage('Upload failed: Please select a PDF file.');
+              return;
         }
 
         setUploading(true);
@@ -210,22 +210,24 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
             );
         }
         
-        const previewStyle = { width: '100%', maxWidth: 640, height: 480, border: '1px solid #e5e7eb' };
+        const previewStyle = { width: '100%', maxWidth: 640, height: '480px', border: '1px solid #e5e7eb' };
 
         if (fileType === 'pdf') {
             return (
-                <div style={previewStyle}>
-                    <iframe 
-                        src={fileUrl} 
-                        type="application/pdf" 
-                        width="100%" 
-                        height="100%"
-                        title={`PDF Preview for ${materialId}`}
-                        allow="fullscreen" 
-                        style={{ border: 'none' }}
+                <div style={previewStyle} className="w-full">
+                    <a 
+                        href={fileUrl} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="w-full h-full flex items-center justify-center bg-gray-100 hover:bg-gray-200 transition-colors duration-300"
                     >
-                        <p className="p-4 text-gray-700">PDF preview not available. <a href={fileUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline">Open in new tab</a></p>
-                    </iframe>
+                        <div className="text-center p-4">
+                            <svg className="mx-auto h-12 w-12 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zM6 4h7v5h5v11H6V4z" />
+                            </svg>
+                            <p className="mt-2 text-sm font-semibold text-blue-700">Click to View PDF</p>
+                        </div>
+                    </a>
                 </div>
             );
         } 
@@ -246,57 +248,62 @@ const Editmaterialedit = ({ materialId, selectedMaterialName, onBack, onReload, 
         if (fileType === 'word' || fileType === 'unknown') {
             const fileDescription = fileType === 'word' ? 'Word Document' : 'Unknown Type';
             return (
-                <div className="w-full flex items-center justify-center h-48 bg-yellow-50 border border-dashed border-yellow-200 text-yellow-800 p-4 text-center">
+                <div className="w-full flex flex-col items-center justify-center h-48 bg-yellow-50 border border-dashed border-yellow-200 text-yellow-800 p-4 text-center">
                     <p className='font-medium'>
                         Preview not available for **{filename}** ({fileDescription}). 
-                        <a href={fileUrl} download={filename} className="text-blue-600 underline ml-2">Click to Download</a>
                     </p>
+                    <a href={fileUrl} download={filename} className="text-blue-600 underline mt-2">Click to Download</a>
                 </div>
             );
         }
     };
 
     return (
-        <div className="bg-white p-8 rounded-lg shadow-lg max-w-3xl w-full mx-auto">
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold">Replace Material File</h2>
-                <div className="flex gap-2">
-                    <button className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300" onClick={onBack}>Back to Selection</button>
-                </div>
-            </div>
-
-            <div className="border border-gray-200 rounded p-4 mb-6">
-                <div className="mb-3 text-sm text-gray-600">Material ID: <strong>{materialId}</strong></div>
-                <div className="mb-4 text-sm text-gray-700">Current Filename: <strong>{filename}</strong></div>
-
-                <div className="w-full flex justify-center mb-4">
-                    {renderPreview()}
+        <div className="p-4 sm:p-6 bg-gray-50 min-h-screen flex items-center justify-center">
+            <div className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-3xl mx-auto">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4 sm:gap-2">
+                    <h2 className="text-xl font-semibold text-gray-800">Replace Material File</h2>
+                    <button 
+                        className="bg-gray-200 px-3 py-1 rounded-lg hover:bg-gray-300 text-sm font-medium transition-colors w-full sm:w-auto" 
+                        onClick={onBack}
+                    >
+                        Back to Selection
+                    </button>
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Replace / Upload New PDF</label>
-                    <div className="flex gap-3 items-center">
-                        <input 
-                            accept="application/pdf" 
-                            type="file" 
-                            onChange={handleFileSelect} 
-                            className="block" 
-                        />
-                        <button 
-                            onClick={handleReplace} 
-                            disabled={uploading || !selectedFile || selectedFile.type !== 'application/pdf'} 
-                            className="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 disabled:opacity-60"
-                        >
-                            {uploading ? 'Uploading...' : 'Upload Replacement'}
-                        </button>
+                <div className="border border-gray-200 rounded-lg p-4 sm:p-6 mb-6">
+                    <div className="mb-3 text-sm text-gray-600">Material ID: <strong>{materialId}</strong></div>
+                    <div className="mb-4 text-sm text-gray-700">Current Filename: <strong>{filename}</strong></div>
+
+                    <div className="w-full flex justify-center mb-4 overflow-hidden rounded-lg">
+                        {renderPreview()}
                     </div>
-                    {selectedFile && <p className="mt-2 text-sm text-gray-600">Selected: <strong>{selectedFile.name}</strong></p>}
-                    
-                    {message && (
-                        <p className={`mt-2 text-sm ${message.includes('success') ? 'text-green-700' : (message.includes('Warning') ? 'text-yellow-600' : 'text-red-600')}`}>
-                            {message}
-                        </p>
-                    )}
+
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Replace / Upload New PDF</label>
+                        <div className="flex flex-col sm:flex-row gap-3 items-center">
+                            <input 
+                                accept="application/pdf" 
+                                type="file" 
+                                onChange={handleFileSelect} 
+                                className="block w-full sm:w-auto text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                            />
+                            <button 
+                                onClick={handleReplace} 
+                                disabled={uploading || !selectedFile || selectedFile.type !== 'application/pdf'} 
+                                className="bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 disabled:opacity-60 transition-colors duration-300 w-full sm:w-auto"
+                            >
+                                {uploading ? 'Uploading...' : 'Upload Replacement'}
+                            </button>
+                        </div>
+                        {selectedFile && <p className="mt-2 text-sm text-gray-600">Selected: <strong>{selectedFile.name}</strong></p>}
+                        
+                        {message && (
+                            <p className={`mt-2 text-sm ${message.includes('success') ? 'text-green-700' : (message.includes('Warning') ? 'text-yellow-600' : 'text-red-600')}`}>
+                                {message}
+                            </p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

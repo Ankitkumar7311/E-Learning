@@ -1,46 +1,66 @@
 import React from "react";
+// "Link" is no longer needed, so the import has been removed.
 
-// A reusable card component for displaying each course
-const CourseCard = ({ title, abbreviation, intake }) => (
-  <div className="bg-blue-100 rounded-lg shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out p-6 text-center">
-    <h3 className="text-xl font-bold text-gray-800">{title}</h3>
-    {abbreviation && (
+// A reusable card component for displaying each course's resources
+const CourseCard = ({ title, abbreviation, description }) => (
+  <div className="bg-white rounded-lg shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 ease-in-out p-6 flex flex-col text-center">
+    <div className="flex-grow">
+      <h3 className="text-xl font-bold text-gray-800">{title}</h3>
+      {abbreviation && (
         <p className="text-sm text-gray-500 mb-3">({abbreviation})</p>
-    )}
-    <div className="mt-4">
-      <span className="text-gray-600">Annual Intake: </span>
-      <span className="text-2xl font-bold text-blue-600">{intake}</span>
+      )}
+      <p className="text-sm text-gray-700 mt-3 leading-relaxed">
+        {description}
+      </p>
     </div>
+    {/* The div containing the "View Resources" button has been removed from here. */}
   </div>
 );
 
 // Main Courses component
 const Courses = () => {
-  // Data for all courses organized by category
-  const ugCourses = [
-    { title: "Civil Engineering", abbreviation: "Civil", intake: 30 },
-    { title: "Electrical & Electronics Engineering", abbreviation: "EEE", intake: 30 },
-    { title: "Electronics & Communication Engineering", abbreviation: "ECE", intake: 180 },
-    { title: "Computer Science & Engineering", abbreviation: "CSE", intake: 420 },
-    { title: "CSE (Data Science)", abbreviation: "CSD", intake: 180 },
-    { title: "CSE (AI & Machine Learning)", abbreviation: "CSM", intake: 180 },
-    { title: "Information Technology", abbreviation: "IT", intake: 120 },
-    { title: "CSE (AI & ML)", abbreviation: null, intake: 270 },
-    { title: "CSE (DS)", abbreviation: null, intake: 210 },
-  ];
-
-  const pgCourses = [
-    { title: "Power Electronics", abbreviation: "EEE (P.E)", intake: 24 },
-    { title: "Computer Science & Engineering", abbreviation: "CSE", intake: 24 },
-    { title: "Master of Business Administration", abbreviation: "MBA", intake: 60 },
-  ];
-
-  const diplomaCourses = [
-    { title: "Diploma in Civil Engineering", abbreviation: "DCE", intake: 60 },
-    { title: "Diploma in Electrical & Electronics", abbreviation: "DEEE", intake: 120 },
-    { title: "Diploma in Mechanical Engineering", abbreviation: "DME", intake: 120 },
-    { title: "Diploma in Electronics & Communication", abbreviation: "DECE", intake: 120 },
-    { title: "Diploma in Computer Engineering", abbreviation: "DCME", intake: 60 },
+  // Data for the B.Tech courses that have resources available
+  const btechResources = [
+    { 
+      title: "Computer Science & Engineering", 
+      abbreviation: "CSE", 
+      description: "Access notes, materials, and question banks covering algorithms, software development, and computer architecture."
+    },
+    {
+      title: "Artificial Intelligence & Machine Learning",
+      abbreviation: "AI-ML",
+      description: "Find resources for intelligent systems, data-driven automation, and advanced analytics for your AI & ML coursework."
+    },
+    { 
+      title: "Data Science", 
+      abbreviation: "DS", 
+      description: "All the materials you need to master data extraction, analysis, and visualization to drive decision-making."
+    },
+    { 
+      title: "Electronics & Communication", 
+      abbreviation: "ECE", 
+      description: "Resources on electronic circuits, communication systems, and integrated circuits that power modern devices."
+    },
+    { 
+      title: "Information Technology", 
+      abbreviation: "IT", 
+      description: "Coursework materials covering networking, cybersecurity, databases, and modern system administration."
+    },
+    {
+      title: "Mechanical Engineering",
+      abbreviation: "MECH",
+      description: "A complete resource bank for designing, analyzing, and manufacturing complex mechanical systems."
+    },
+    { 
+      title: "Electrical & Electronics Engineering", 
+      abbreviation: "EEE", 
+      description: "Explore notes and question papers on power generation, transmission, and modern electronic control systems."
+    },
+    { 
+      title: "Civil Engineering", 
+      abbreviation: "Civil", 
+      description: "Get access to materials for designing and building the infrastructure of modern society, like bridges and buildings."
+    },
   ];
 
   return (
@@ -49,44 +69,20 @@ const Courses = () => {
         {/* --- Header --- */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">
-            Our Academic Programs
+            Your B.Tech Resource Hub
           </h1>
           <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-            Explore the diverse range of undergraduate, postgraduate, and diploma courses we offer.
+            Access comprehensive study materials, notes, and question banks for all your B.Tech subjects, organized by branch.
           </p>
         </div>
 
-        {/* --- Undergraduate (UG) Courses --- */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b-2 border-blue-500 pb-3">
-            Undergraduate Programs (B.Tech)
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {ugCourses.map((course) => (
-              <CourseCard key={course.title + course.intake} {...course} />
-            ))}
-          </div>
-        </div>
-
-        {/* --- Postgraduate (PG) Courses --- */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b-2 border-green-500 pb-3">
-            Postgraduate Programs
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {pgCourses.map((course) => (
-              <CourseCard key={course.title} {...course} />
-            ))}
-          </div>
-        </div>
-
-        {/* --- Diploma Courses --- */}
+        {/* --- B.Tech Resource Branches --- */}
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b-2 border-purple-500 pb-3">
-            Diploma Programs (2nd Shift)
+          <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b-2 border-blue-500 pb-3">
+            Select Your Branch
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {diplomaCourses.map((course) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {btechResources.map((course) => (
               <CourseCard key={course.title} {...course} />
             ))}
           </div>

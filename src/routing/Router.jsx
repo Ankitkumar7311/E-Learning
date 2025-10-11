@@ -30,11 +30,11 @@ import Signup from "../auth/Signup";
 
 import Profile from "../layouts/facultydashboard/Profile";
 
-import Documents from "../modules/student/Documents";
+// import Documents from "../modules/student/Documents";
 import StudentSection from "../layouts/studentdashboard/StudentSection";
 import UpdateStudent from "../modules/admin/UpdateStudent";
-import AcadamicCalender from "../modules/student/AcadamicCalender";
-import Encapsulation from "../modules/student/Encapsulation";
+// import AcadamicCalender from "../modules/student/AcadamicCalender";
+// import Encapsulation from "../modules/student/Encapsulation";
 import FindPYQ from "../modules/student/find/FindPYQ";
 import FindNotes from "../modules/student/find/FindNotes";
 import FindQB from "../modules/student/find/FindQB";
@@ -43,6 +43,7 @@ import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
 import RequestPopup from "../modules/student/find/RequestPopup";
 
 import EditMaterialPage from "../modules/faculty/upload/EditMaterialPage";
+import HelpAndSupportForm from "../pages/HelpAndSupportForm";
 
 // ---------------------- Layouts ----------------------
 const PublicLayout = () => (
@@ -170,8 +171,7 @@ const routes = createBrowserRouter([
       { path: "library", element: <CentralLibrary/> },
       { path: "facilities", element: <Facilities /> },
       { path: "news", element: <News /> },
-      { path: "about", element: <About /> },
-        
+      { path: "about", element: <About /> },       
       // Wrap login components with AuthRedirect
       { path: "login", element: <AuthRedirect><Login /></AuthRedirect> },
       { path: "student-login", element: <AuthRedirect><StudentLogin /></AuthRedirect> },
@@ -240,10 +240,10 @@ const routes = createBrowserRouter([
         ]
        }, 
       { path: "profile", element: <StudentProfile /> }, 
-      { path: "documents", element: <Documents /> },
-      { path: "academic-calendar", element: <AcadamicCalender /> },
-      { path: "subjects/encapsulation", element: <Encapsulation /> },
-      { path: "RequestPopup", element: <RequestPopup /> },
+      // { path: "documents", element: <Documents /> },
+      // { path: "academic-calendar", element: <AcadamicCalender /> },
+      // { path: "subjects/encapsulation", element: <Encapsulation /> },
+      // { path: "RequestPopup", element: <RequestPopup /> },
     ],
   },
 
@@ -252,6 +252,7 @@ const routes = createBrowserRouter([
   { path: "/profile", element: <Profile /> },
   { path: "/update-teach", element: <UpdateTeach /> },
   { path: "/edit-material", element: <EditMaterial /> },
+  {path:"help-support",element: <HelpAndSupportForm/>}, 
 
   // ---------------------- 404 Route ----------------------
   { path: "*", element: <h1>Page Not Found</h1> },

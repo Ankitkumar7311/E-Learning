@@ -82,7 +82,7 @@ const Logout = () => {
 
     // close modal and navigate to StudentSection
     setIsOpen(false);
-    navigate("/StudentSection", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   // src/components/Logout.jsx

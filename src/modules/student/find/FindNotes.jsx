@@ -282,7 +282,7 @@ const FindNotes = () => {
 
   return (
     <div className="flex flex-col gap-10 justify-center items-center px-4 py-6">
-      <section className="w-full max-w-3xl flex flex-col bg-white p-6 rounded-xl shadow">
+      <section className="w-full max-w-3xl flex flex-col bg-white p-6 ">
         <h2 className="text-2xl font-bold text-center mb-6">Find Notes</h2>
 
         {/* Regulation */}

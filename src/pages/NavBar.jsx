@@ -7,7 +7,7 @@ const NavBar = () => {
  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
  const navLinks = [
-   { to: '/library', label: 'Library' },
+  //  { to: '/library', label: 'Library' },
    { to: '/courses', label: 'Courses' },
    { to: '/facilities', label: 'Facilities' },
    { to: '/news', label: 'News' },

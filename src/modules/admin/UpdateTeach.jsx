@@ -349,32 +349,37 @@ const UpdateTeach = () => {
   const imageSrc = previewUrl === null ? ONLINE_PLACEHOLDER : (previewUrl || teacher);
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-gray-100 p-4">
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6 md:p-8 w-full max-w-2xl space-y-4" noValidate>
-        <div className="flex gap-6 items-start">
+    <div className="flex justify-center items-start min-h-screen bg-gray-100 p-4 sm:p-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6 md:p-8 w-full max-w-2xl space-y-6" noValidate>
+        {/* UPDATED: Added responsive classes to stack vertically on mobile */}
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center md:items-start">
           <img
             src={imageSrc}
             alt="Teacher"
-            className="h-32 w-32 rounded-xl object-cover"
+            className="h-32 w-32 rounded-xl object-cover flex-shrink-0"
             onError={() => {
-              // if object URL or remote img fails, fallback to online placeholder then local teacher.jpg
               if (imageSrc !== ONLINE_PLACEHOLDER) {
-                setPreviewUrl(null); // try online placeholder next render
+                setPreviewUrl(null);
               } else {
-                // placeholder failed — fallback to local file
                 setPreviewUrl(undefined);
               }
             }}
           />
-          <div className="flex-1">
-            <input readOnly value={facultyId || ""} className="bg-gray-200 p-2 rounded w-full mb-2 cursor-not-allowed" aria-label="Faculty ID" />
-            <label className="block mb-2" aria-hidden>
-              <input accept="image/*" type="file" onChange={handleFileChange} />
+          {/* UPDATED: Added w-full to ensure it takes available width in column layout */}
+          <div className="flex-1 w-full">
+            <label htmlFor="facultyId" className="sr-only">Faculty ID</label>
+            <input id="facultyId" readOnly value={facultyId || ""} className="bg-gray-200 p-2 rounded w-full mb-2 cursor-not-allowed" />
+            
+            <label htmlFor="file-upload" className="cursor-pointer text-sm text-blue-600 hover:underline">
+              Choose a different photo...
             </label>
-            <div className="text-sm text-gray-600">Profile photo (optional, max 5MB)</div>
+            <input id="file-upload" accept="image/*" type="file" onChange={handleFileChange} className="sr-only" />
+            
+            <div className="text-sm text-gray-600 mt-1">Profile photo (optional, max 5MB)</div>
           </div>
         </div>
 
+        {/* This grid is already responsive */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Address <span className="text-red-500">*</span></label>
@@ -414,15 +419,16 @@ const UpdateTeach = () => {
 
         {/* Subject multi-select */}
         <div className="border rounded p-3 bg-gray-50">
-          <div className="flex items-center justify-between mb-2">
+          {/* UPDATED: Added responsive classes to stack search and buttons on small screens */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center sm:justify-between gap-2 mb-2">
             <input
               placeholder="Search subjects..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="p-2 rounded border"
+              className="p-2 rounded border w-full sm:w-auto flex-grow"
               aria-label="Search subjects"
             />
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center justify-end flex-shrink-0">
               <button
                 type="button"
                 onClick={() => {
@@ -431,7 +437,7 @@ const UpdateTeach = () => {
                   setFieldErrors((prev) => ({ ...prev, subjectCodes: "" }));
                   setMsg("");
                 }}
-                className="text-sm text-blue-600 underline"
+                className="text-sm text-blue-600 hover:underline"
               >
                 Select visible
               </button>
@@ -442,34 +448,36 @@ const UpdateTeach = () => {
                   setFieldErrors((prev) => ({ ...prev, subjectCodes: "" }));
                   setMsg("");
                 }}
-                className="text-sm text-red-600 underline"
+                className="text-sm text-red-600 hover:underline"
               >
                 Clear
               </button>
             </div>
           </div>
 
-          <div className="max-h-48 overflow-auto">
+          <div className="max-h-48 overflow-auto border-t pt-2">
             {visibleSubjects.length === 0 ? (
-              <div className="text-sm text-gray-500">No subjects found.</div>
+              <div className="text-sm text-gray-500 p-2">No subjects found.</div>
             ) : (
               visibleSubjects.map((s) => (
-                <label key={s.code} className="flex items-center gap-3 py-1">
+                <label key={s.code} className="flex items-center gap-3 py-1 px-2 rounded hover:bg-blue-50 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={selectedCodes.includes(s.code)}
                     onChange={() => toggleCode(s.code)}
                     aria-checked={selectedCodes.includes(s.code)}
+                    className="h-4 w-4"
                   />
                   <span className="font-medium">{s.code}</span>
-                  <span className="text-gray-500">— {s.name}</span>
+                  <span className="text-gray-600">— {s.name}</span>
                 </label>
               ))
             )}
             {fieldErrors.subjectCodes && <div className="text-xs text-red-600 mt-2">{fieldErrors.subjectCodes}</div>}
           </div>
         </div>
-
+        
+        {/* This grid is already responsive */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Designation <span className="text-red-500">*</span></label>
@@ -502,12 +510,12 @@ const UpdateTeach = () => {
           </div>
         </div>
 
-        <button disabled={loading} type="submit" className="w-full bg-yellow-500 text-white p-3 rounded">
-          {loading ? "Updating..." : "Update"}
+        <button disabled={loading} type="submit" className="w-full bg-yellow-500 text-white p-3 rounded font-bold hover:bg-yellow-600 disabled:bg-gray-400 transition-colors">
+          {loading ? "Updating..." : "Update Profile"}
         </button>
 
         {/* Global message area */}
-        {msg && <p className={`${Object.keys(fieldErrors).length > 0 ? "text-red-600" : "text-green-700"} text-center mt-2`}>{msg}</p>}
+        {msg && <p className={`${Object.keys(fieldErrors).length > 0 ? "text-red-600" : "text-green-700"} text-center mt-2 font-medium`}>{msg}</p>}
       </form>
     </div>
   );

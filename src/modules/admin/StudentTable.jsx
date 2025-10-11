@@ -38,7 +38,6 @@ const StudentTable = () => {
   const deletingSpeed = 60;
   const delayBetweenPhrases = 1500;
 
-  // Animated placeholder effect
   useEffect(() => {
     if (!isSearchActive) {
       setPlaceholder("");
@@ -77,14 +76,12 @@ const StudentTable = () => {
     return () => clearTimeout(timeoutId);
   }, [isSearchActive]);
 
-  // Fetch students with improved token handling
   const fetchStudents = useCallback(async () => {
     setIsLoading(true);
     setError("");
-    
     try {
       const token = authToken || readToken();
-      
+
       if (!token) {
         throw new Error("Authentication token not found. Please login again.");
       }
@@ -114,12 +111,10 @@ const StudentTable = () => {
     }
   }, [authToken]);
 
-  // Initial fetch
   useEffect(() => {
     fetchStudents();
   }, [fetchStudents]);
 
-  // Listen to "studentsUpdated" event for auto-refresh
   useEffect(() => {
     const handleUpdate = () => {
       console.log("Students updated event received");
@@ -152,11 +147,11 @@ const StudentTable = () => {
 
   if (error) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
           <p className="font-semibold">Error loading students</p>
           <p className="text-sm">{error}</p>
-          <button 
+          <button
             onClick={fetchStudents}
             className="mt-2 text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
           >
@@ -168,11 +163,12 @@ const StudentTable = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Student List</h2>
+    <div className="p-4 sm:p-6 w-full overflow-x-hidden">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Student List</h2>
 
-        <div className="relative h-11 w-64 [perspective:1000px]">
+        <div className="relative h-11 w-full sm:w-64 [perspective:1000px]">
           <div
             className={`relative w-full h-full transition-transform duration-700 ease-in-out [transform-style:preserve-3d] ${
               isSearchActive ? "[transform:rotateY(180deg)]" : ""
@@ -204,7 +200,7 @@ const StudentTable = () => {
                   onBlur={() => {
                     if (!searchQuery) setIsSearchActive(false);
                   }}
-                  className="w-full h-11 pl-5 pr-12 rounded-full outline-none bg-blue-100 placeholder:text-black border-2 border-yellow-500 shadow-md"
+                  className="w-full h-11 pl-5 pr-12 rounded-full outline-none bg-blue-100 placeholder:text-black border-2 border-yellow-500 shadow-md text-sm sm:text-base"
                 />
                 <button
                   onClick={() => setIsSearchActive(false)}
@@ -221,15 +217,16 @@ const StudentTable = () => {
         </div>
       </div>
 
+      {/* Table */}
       <div className="w-full overflow-x-auto rounded-lg shadow-lg">
-        <div className="min-w-[700px]">
-          <table className="w-full table-fixed">
+        <div className="min-w-[600px] sm:min-w-[700px]">
+          <table className="w-full table-fixed text-sm sm:text-base">
             <thead className="bg-yellow-500 text-white">
               <tr>
                 {columns.map((col, index) => (
                   <th
                     key={col}
-                    className={`p-3 text-center font-semibold ${
+                    className={`p-2 sm:p-3 text-center font-semibold ${
                       index < columns.length - 1 ? "border-r-3 border-white" : ""
                     }`}
                   >
@@ -260,11 +257,11 @@ const StudentTable = () => {
                     key={row.studentId || idx}
                     className={`${idx % 2 === 0 ? "bg-blue-100" : "bg-blue-50"} hover:bg-blue-200 transition`}
                   >
-                    <td className="px-4 py-2 text-center border-r-3 border-white min-w-[120px]">{row.studentId}</td>
-                    <td className="px-4 py-2 text-center border-r-3 border-white min-w-[200px]">{row.name}</td>
-                    <td className="px-4 py-2 text-center border-r-3 border-white min-w-[250px]">{row.email}</td>
-                    <td className="px-4 py-2 text-center border-r-3 border-white min-w-[120px]">{row.branch}</td>
-                    <td className="px-4 py-2 text-center border-r-3 border-white min-w-[80px]">{row.year}</td>
+                    <td className="px-3 sm:px-4 py-2 text-center border-r-3 border-white">{row.studentId}</td>
+                    <td className="px-3 sm:px-4 py-2 text-center border-r-3 border-white">{row.name}</td>
+                    <td className="px-3 sm:px-4 py-2 text-center border-r-3 border-white break-all">{row.email}</td>
+                    <td className="px-3 sm:px-4 py-2 text-center border-r-3 border-white">{row.branch}</td>
+                    <td className="px-3 sm:px-4 py-2 text-center border-r-3 border-white">{row.year}</td>
                   </tr>
                 ))
               )}
@@ -273,22 +270,23 @@ const StudentTable = () => {
         </div>
       </div>
 
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition"
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition w-full sm:w-auto"
           >
             Previous
           </button>
-          <span className="font-semibold">
+          <span className="font-semibold text-center">
             Page {currentPage} of {totalPages}
           </span>
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition"
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition w-full sm:w-auto"
           >
             Next
           </button>

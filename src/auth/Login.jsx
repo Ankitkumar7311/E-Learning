@@ -178,7 +178,7 @@ export default function Login() {
 
         <div className="hidden md:flex w-full md:w-1/2 bg-gradient-to-br from-blue-500 to-yellow-500 text-white p-12 flex-col justify-center items-center md:items-start text-center md:text-left">
           <h1 className="font-julius text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white">
-            Welcome to <br />your Dashboard.
+            Welcome to Syllabridge Dashboard.
           </h1>
           <p className="font-montserrat text-indigo-200 max-w-md">
             Enter credentials to access a personalized workspace.

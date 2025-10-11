@@ -37,7 +37,7 @@ const StudentNavBar = () => {
       </button>
 
       <Link
-        to="/request-report"
+        to="/help-support"
         className="block rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-100"
         onClick={onCloseMenu} // Close menu on click
       >
@@ -83,7 +83,7 @@ const StudentNavBar = () => {
           {/* Right Section for DESKTOP */}
           <div className="hidden items-center space-x-8 lg:flex">
             <Link
-              to="/request-report"
+              to="/help-support"
               className="font-medium text-gray-700 transition duration-300 hover:text-blue-600"
             >
               Help & Support

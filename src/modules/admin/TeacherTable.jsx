@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const TeacherTable = ({ faculty, isLoading }) => {
-  // State for UI interactions (pagination and search)
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
-  const [placeholder, setPlaceholder] = useState('');
-  
-  // Constants for UI behavior
+  const [placeholder, setPlaceholder] = useState("");
+
   const rowsPerPage = 10;
   const typingSpeed = 120;
   const deletingSpeed = 60;
   const delayBetweenPhrases = 1500;
 
-  // --- Effect for Search Bar Typing Animation (UI Enhancement) ---
+  // Typing animation for placeholder
   useEffect(() => {
     if (!isSearchActive) {
-      setPlaceholder('');
+      setPlaceholder("");
       return;
     }
 
@@ -40,12 +38,12 @@ const TeacherTable = ({ faculty, isLoading }) => {
       if (!isDeleting && displayText === currentPhrase) {
         speed = delayBetweenPhrases;
         isDeleting = true;
-      } else if (isDeleting && displayText === '') {
+      } else if (isDeleting && displayText === "") {
         isDeleting = false;
         placeholderIndex = (placeholderIndex + 1) % placeholders.length;
         speed = 500;
       }
-      
+
       timeoutId = setTimeout(type, speed);
     };
 
@@ -53,21 +51,20 @@ const TeacherTable = ({ faculty, isLoading }) => {
     return () => clearTimeout(timeoutId);
   }, [isSearchActive]);
 
-  // --- Search and Pagination Logic ---
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
-    setCurrentPage(1); // Reset to first page on new search
+    setCurrentPage(1);
   };
 
-  const filteredFaculty = Array.isArray(faculty) ? faculty.filter(member => {
-    const query = searchQuery.toLowerCase();
-    // Ensure properties exist before calling toLowerCase()
-    const facultyId = String(member.facultyId || '').toLowerCase();
-    const email = String(member.email || '').toLowerCase();
-    return facultyId.includes(query) || email.includes(query);
-  }) : [];
+  const filteredFaculty = Array.isArray(faculty)
+    ? faculty.filter((member) => {
+        const query = searchQuery.toLowerCase();
+        const facultyId = String(member.facultyId || "").toLowerCase();
+        const email = String(member.email || "").toLowerCase();
+        return facultyId.includes(query) || email.includes(query);
+      })
+    : [];
 
-  // ✅ UPDATED: Added Address and Designation columns
   const columns = ["Faculty ID", "Name", "Email", "Address", "Designation"];
   const totalPages = Math.ceil(filteredFaculty.length / rowsPerPage);
   const paginatedData = filteredFaculty.slice(
@@ -76,27 +73,41 @@ const TeacherTable = ({ faculty, isLoading }) => {
   );
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow-lg">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-4 sm:p-6 w-full overflow-hidden">
+      {/* Header and Search */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
         <h2 className="text-2xl font-bold text-gray-800">Faculty List</h2>
-        
-        {/* --- 3D Flipping Search Bar --- */}
-        <div className="relative h-11 w-64 [perspective:1000px]">
-          <div 
-            className={`relative w-full h-full transition-transform duration-700 ease-in-out [transform-style:preserve-3d] ${isSearchActive ? '[transform:rotateY(180deg)]' : ''}`}
+
+        {/* 3D Search Bar */}
+        <div className="relative h-11 w-full sm:w-64 [perspective:1000px]">
+          <div
+            className={`relative w-full h-full transition-transform duration-700 ease-in-out [transform-style:preserve-3d] ${
+              isSearchActive ? "[transform:rotateY(180deg)]" : ""
+            }`}
           >
-            {/* Front Side: Search Icon */}
+            {/* Search Button Side */}
             <div className="absolute w-full h-full [backface-visibility:hidden]">
               <button
                 onClick={() => setIsSearchActive(true)}
-                className={`w-11 h-11 ml-auto flex items-center justify-center rounded-full bg-blue-100 text-gray-500 hover:text-yellow-600 focus:outline-none border-2 border-yellow-300 transition-colors duration-300`}
+                className="w-11 h-11 ml-auto flex items-center justify-center rounded-full bg-blue-100 text-gray-500 hover:text-yellow-600 focus:outline-none border-2 border-yellow-300 transition-colors duration-300"
                 aria-label="Open search bar"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" /></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clipRule="evenodd"
+                  />
+                </svg>
               </button>
             </div>
 
-            {/* Back Side: Search Input */}
+            {/* Input Side */}
             <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
               <div className="relative w-full h-full">
                 <input
@@ -104,49 +115,101 @@ const TeacherTable = ({ faculty, isLoading }) => {
                   placeholder={placeholder}
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  onBlur={() => { if (!searchQuery) setIsSearchActive(false); }}
-                  className={`w-full h-11 pl-5 pr-12 rounded-full outline-none bg-blue-100 placeholder:text-gray-500 border-2 border-yellow-500 shadow-md`}
+                  onBlur={() => {
+                    if (!searchQuery) setIsSearchActive(false);
+                  }}
+                  className="w-full h-11 pl-5 pr-12 rounded-full outline-none bg-blue-100 placeholder:text-black border-2 border-yellow-500 shadow-md"
                 />
                 <button
                   onClick={() => setIsSearchActive(false)}
-                  className="absolute right-0 top-0 h-11 w-11 flex items-center justify-center text-yellow-500 hover:text-red-500"
+                  className="absolute right-0 top-0 h-11 w-11 flex items-center justify-center text-gray-500 hover:text-blue-500"
                   aria-label="Close search bar"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="w-full">
+
+      {/* Table Section */}
+      <div className="w-full overflow-x-auto rounded-lg shadow-lg bg-white">
+        <table className="w-full min-w-[700px] border-collapse">
           <thead className="bg-yellow-500 text-white">
             <tr>
-              {columns.map((col) => (
-                <th key={col} className="p-3 text-left font-semibold tracking-wider">
+              {columns.map((col, index) => (
+                <th
+                  key={col}
+                  className={`p-3 text-center font-semibold text-sm sm:text-base ${
+                    index < columns.length - 1 ? "border-r-2 border-yellow-400" : ""
+                  }`}
+                >
                   {col}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody>
             {isLoading ? (
-              <tr><td colSpan={columns.length} className="p-4 text-center text-gray-500">Loading faculty data...</td></tr>
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="p-4 text-center text-gray-500"
+                >
+                  <div className="flex justify-center items-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+                    <span className="ml-3">Loading faculty...</span>
+                  </div>
+                </td>
+              </tr>
             ) : paginatedData.length === 0 ? (
-              <tr><td colSpan={columns.length} className="p-4 text-center text-gray-500">
-                {searchQuery ? `No results for "${searchQuery}"` : "No faculty data available."}
-              </td></tr>
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="p-4 text-center text-gray-500"
+                >
+                  {searchQuery
+                    ? `No results found for "${searchQuery}".`
+                    : "No faculty data available."}
+                </td>
+              </tr>
             ) : (
               paginatedData.map((row, idx) => (
-                // ✅ UPDATED: Added cells for Address and Designation
-                <tr key={row.facultyId || idx} className="hover:bg-blue-50 transition-colors">
-                  <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{row.facultyId}</td>
-                  <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{row.name}</td>
-                  <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{row.email}</td>
-                  <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{row.address}</td>
-                  <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{row.designation}</td>
+                <tr
+                  key={row.facultyId || idx}
+                  className={`${
+                    idx % 2 === 0 ? "bg-blue-100" : "bg-blue-50"
+                  } hover:bg-blue-200 transition`}
+                >
+                  <td className="px-3 py-2 text-center border-r-2 border-white break-words">
+                    {row.facultyId}
+                  </td>
+                  <td className="px-3 py-2 text-center border-r-2 border-white break-words">
+                    {row.name}
+                  </td>
+                  <td className="px-3 py-2 text-center border-r-2 border-white break-words">
+                    {row.email}
+                  </td>
+                  <td className="px-3 py-2 text-center border-r-2 border-white break-words">
+                    {row.address}
+                  </td>
+                  <td className="px-3 py-2 text-center break-words">
+                    {row.designation}
+                  </td>
                 </tr>
               ))
             )}
@@ -154,15 +217,30 @@ const TeacherTable = ({ faculty, isLoading }) => {
         </table>
       </div>
 
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-between items-center mt-4">
-            <span className="text-sm text-gray-600">
-                Showing {paginatedData.length} of {filteredFaculty.length} results
-            </span>
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3">
+          <span className="text-sm text-gray-600">
+            Showing {paginatedData.length} of {filteredFaculty.length} results
+          </span>
           <div className="flex items-center gap-2">
-            <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1} className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 text-sm">Previous</button>
-            <span className="font-semibold text-sm">Page {currentPage} of {totalPages}</span>
-            <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 text-sm">Next</button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition"
+            >
+              Previous
+            </button>
+            <span className="font-semibold text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition"
+            >
+              Next
+            </button>
           </div>
         </div>
       )}
