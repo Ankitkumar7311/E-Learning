@@ -255,16 +255,14 @@
 // };
 
 // export default SectionLeft;
-
 // src/modules/student/SectionLeft.jsx
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { FaRegEdit } from "react-icons/fa";
-import teacher from "../../assets/teacher.jpg";
+import { useNavigate } from "react-router-dom";
+import { FaRegEdit, FaUserCircle } from "react-icons/fa"; // add this
+// remove the teacher.jpg import if not needed
 
 const API_BASE = "http://localhost:8080/VidyaSarthi";
 
-// helper to read studentId/token from localStorage (supports different shapes)
 const getAuthFromLocalStorage = () => {
   try {
     const token = localStorage.getItem("token") || null;
@@ -273,18 +271,14 @@ const getAuthFromLocalStorage = () => {
       try {
         const u = JSON.parse(userRaw);
         return { studentId: u?.studentId || u?.userId || null, token };
-      } catch {
-        // ignore parse error
-      }
+      } catch {}
     }
     const vsRaw = localStorage.getItem("vidyaSarthiAuth");
     if (vsRaw) {
       try {
         const p = JSON.parse(vsRaw || "{}");
         return { studentId: p?.studentId || null, token: p?.token || token };
-      } catch {
-        //
-      }
+      } catch {}
     }
     return { studentId: null, token };
   } catch (err) {
@@ -299,7 +293,8 @@ const SectionLeft = () => {
 
   const [loading, setLoading] = useState(true);
   const [student, setStudent] = useState(null);
-  const [imageSrc, setImageSrc] = useState(null); // data URL or object URL
+  const [imageSrc, setImageSrc] = useState(null);
+  const [imgError, setImgError] = useState(false); // track load failure
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -308,6 +303,7 @@ const SectionLeft = () => {
     const fetchStudent = async () => {
       setLoading(true);
       setError("");
+      setImgError(false); // reset on every fetch
       if (!storedStudentId) {
         setError("Student ID not found in local storage.");
         setStudent(null);
@@ -317,10 +313,10 @@ const SectionLeft = () => {
       }
 
       try {
-        const res = await fetch(`${API_BASE}/searchByStudentId/${encodeURIComponent(storedStudentId)}`, {
-          method: "GET",
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
+        const res = await fetch(
+          `${API_BASE}/searchByStudentId/${encodeURIComponent(storedStudentId)}`,
+          { method: "GET", headers: token ? { Authorization: `Bearer ${token}` } : {} }
+        );
 
         if (!res.ok) {
           const txt = await res.text().catch(() => "");
@@ -338,7 +334,6 @@ const SectionLeft = () => {
 
         setStudent(data);
 
-        // Process imageData if present
         const img = data.imageData;
         if (!img) {
           setImageSrc(null);
@@ -371,10 +366,7 @@ const SectionLeft = () => {
     };
 
     fetchStudent();
-
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [storedStudentId, token]);
 
   const handleEdit = () => {
@@ -385,10 +377,8 @@ const SectionLeft = () => {
     navigate("/update-profile-student", { state: { studentId: student.studentId } });
   };
 
-  // Renderers
   if (loading) {
     return (
-      // RESPONSIVE CHANGE: Standardized padding for consistency with other states.
       <div className="flex justify-center w-full md:w-1/2 px-3 py-5">
         <div className="flex flex-col rounded-2xl bg-white shadow-lg w-full max-w-sm p-4">
           <div className="text-center">
@@ -402,23 +392,23 @@ const SectionLeft = () => {
 
   if (!student) {
     return (
-      // RESPONSIVE CHANGE: Standardized vertical padding (py-5) for consistency.
       <div className="h-full w-full md:w-1/2 flex justify-center py-5 shadow-sm">
-        {/* RESPONSIVE CHANGE: Standardized internal padding (p-4) for consistency. */}
         <div className="flex flex-col rounded-xl bg-white h-auto md:h-[525px] w-[90%] sm:w-72 md:w-60 p-4">
           <div className="flex flex-col items-center gap-2">
-            <img src={teacher} alt="no img" className="h-[70px] w-[70px] sm:h-[90px] sm:w-[90px] rounded-xl" />
+            {/* Fallback icon when no student */}
+            <FaUserCircle className="h-[90px] w-[90px] text-gray-300" aria-hidden="true" />
             <h4 className="text-center text-sm sm:text-base md:text-lg">No Student</h4>
           </div>
 
           <hr className="border-[#202020] border-[1.5px] w-full my-2" />
-
           <span className="text-[13px] sm:text-[15px]/[20px]">No details available.</span>
-
           <hr className="border-[#202020] border-[1.5px] w-full my-2" />
 
           <aside className="flex items-center justify-center mt-auto">
-            <button onClick={() => navigate("/update-profile-student")} className="flex items-center justify-evenly gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-5 rounded-full transition text-sm sm:text-base">
+            <button
+              onClick={() => navigate("/update-profile-student")}
+              className="flex items-center justify-evenly gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-5 rounded-full transition text-sm sm:text-base"
+            >
               <FaRegEdit size={18} /> Request
             </button>
           </aside>
@@ -427,22 +417,27 @@ const SectionLeft = () => {
     );
   }
 
-  // student exists
   const { name, studentId, branch, year, phone, email, address, semester, regulation } = student;
   const displayName = name || studentId || "Student";
 
   return (
-    // RESPONSIVE CHANGE: Standardized vertical padding (py-5) for consistency.
     <div className="h-full w-full md:w-1/2 flex justify-center py-5 shadow-sm">
-       {/* RESPONSIVE CHANGE: Standardized internal padding (p-4) for consistency. */}
       <div className="flex flex-col rounded-xl bg-[white] h-auto md:h-[525px] w-[90%] sm:w-72 md:w-60 p-4">
         <div className="flex flex-col items-center gap-2">
-          <img
-            src={imageSrc || teacher}
-            alt="profile"
-            className="h-[70px] w-[70px] sm:h-[90px] sm:w-[90px] rounded-xl object-cover"
-            onError={(e) => { e.currentTarget.src = teacher; }}
-          />
+          {/* Image or fallback icon */}
+          {imageSrc && !imgError ? (
+            <img
+              src={imageSrc}
+              alt={`${displayName} profile photo`}
+              className="h-[70px] w-[70px] sm:h-[90px] sm:w-[90px] rounded-xl object-cover"
+              onError={() => setImgError(true)} // switch to fallback on load failure
+            />
+          ) : (
+            <FaUserCircle
+              className="h-[70px] w-[70px] sm:h-[90px] sm:w-[90px] text-gray-300"
+              aria-hidden="true"
+            />
+          )}
           <h4 className="text-center text-sm sm:text-base md:text-lg break-words">{displayName}</h4>
         </div>
 
@@ -456,7 +451,6 @@ const SectionLeft = () => {
 
         <hr className="border-[#202020] border-[1.5px] w-full my-2" />
 
-        {/* RESPONSIVE CHANGE: Added 'break-words' to prevent long text from overflowing the card. */}
         <span className="text-sm sm:text-base break-words">
           Phone: <br />
           {phone || "N/A"} <br />
@@ -466,7 +460,6 @@ const SectionLeft = () => {
 
         <hr className="border-[#202020] border-[1.5px] w-full my-2" />
 
-        {/* RESPONSIVE CHANGE: Added 'break-words' to prevent long text from overflowing the card. */}
         <span className="text-sm sm:text-base break-words">
           Address: <br />
           {address || "N/A"} <br />
@@ -476,7 +469,10 @@ const SectionLeft = () => {
 
         <br />
         <aside className="flex items-center justify-center mt-auto">
-          <button onClick={handleEdit} className="flex items-center justify-evenly gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-5 rounded-full transition text-sm sm:text-base">
+          <button
+            onClick={handleEdit}
+            className="flex items-center justify-evenly gap-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-5 rounded-full transition text-sm sm:text-base"
+          >
             <FaRegEdit size={18} /> Request
           </button>
         </aside>

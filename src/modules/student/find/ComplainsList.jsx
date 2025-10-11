@@ -46,17 +46,20 @@ const ComplainsList = () => {
   const [err, setErr] = useState("");
   const [refreshCounter, setRefreshCounter] = useState(0);
 
-  // register complaint modal state
+  // modal + form state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form, setForm] = useState({
     comment: "",
     materialId: "",
     facultyId: "",
-    complainType: "REPORT", // default
+    complainType: "REPORT",
   });
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
+
+  // faculty lookup state
+  const [facultyLookup, setFacultyLookup] = useState({ loading: false, error: "" });
 
   const studentId = getStoredStudentId();
   const token = readToken();
@@ -94,10 +97,7 @@ const ComplainsList = () => {
     };
 
     fetchComplains();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [studentId, token, refreshCounter]);
 
   const refresh = () => setRefreshCounter((c) => c + 1);
@@ -111,6 +111,7 @@ const ComplainsList = () => {
       facultyId: "",
       complainType: "REPORT",
     });
+    setFacultyLookup({ loading: false, error: "" });
     setIsModalOpen(true);
   };
 
@@ -125,6 +126,52 @@ const ComplainsList = () => {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
+  // AUTO-FILL Faculty ID when Material ID changes
+  useEffect(() => {
+    const id = (form.materialId || "").trim();
+    if (!id) {
+      setFacultyLookup({ loading: false, error: "" });
+      setForm((f) => ({ ...f, facultyId: "" }));
+      return;
+    }
+
+    const ctrl = new AbortController();
+    setFacultyLookup({ loading: true, error: "" });
+
+    const t = setTimeout(async () => {
+      try {
+        const url = `${API_BASE}/student/getFacultyIdByMaterialId/${encodeURIComponent(id)}`;
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const res = await fetch(url, { method: "GET", headers, signal: ctrl.signal });
+
+        const text = await res.text().catch(() => "");
+        if (!res.ok) {
+          throw new Error(text || `Lookup failed (${res.status})`);
+        }
+
+        // Accept either JSON { facultyId: "..."} or plain text body
+        let facultyId = "";
+        try {
+          const json = JSON.parse(text);
+          facultyId = json?.facultyId ?? json?.id ?? json ?? "";
+        } catch {
+          facultyId = text ?? "";
+        }
+        setForm((f) => ({ ...f, facultyId: String(facultyId || "") }));
+        setFacultyLookup({ loading: false, error: "" });
+      } catch (e) {
+        if (e?.name === "AbortError") return;
+        setFacultyLookup({ loading: false, error: "Unable to fetch Faculty ID." });
+        setForm((f) => ({ ...f, facultyId: "" }));
+      }
+    }, 350); // debounce while typing
+
+    return () => {
+      clearTimeout(t);
+      ctrl.abort();
+    };
+  }, [form.materialId, token]);
+
   const submitComplaint = async (e) => {
     e && e.preventDefault();
     setFormError("");
@@ -135,7 +182,6 @@ const ComplainsList = () => {
       return;
     }
 
-    // basic validation
     if (!form.comment || !form.materialId) {
       setFormError("Please provide a comment and material ID.");
       return;
@@ -162,16 +208,13 @@ const ComplainsList = () => {
         body: JSON.stringify(payload),
       });
 
-      // try to extract body text for friendly messages
       const txt = await res.text().catch(() => "");
       if (!res.ok) {
         throw new Error(txt || `Status ${res.status}`);
       }
 
       setFormSuccess("Complaint registered successfully.");
-      // refresh list to show new complaint
       refresh();
-      // auto-close after a small delay
       setTimeout(() => {
         closeModal();
       }, 900);
@@ -201,13 +244,10 @@ const ComplainsList = () => {
           method: "GET",
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
-        if (!res.ok) {
-          continue;
-        }
+        if (!res.ok) continue;
 
         const contentType = (res.headers.get("content-type") || "").toLowerCase();
         if (contentType.includes("application/json") || contentType.includes("text/")) {
-          // maybe returned JSON with url or base64
           const text = await res.text();
           try {
             const json = JSON.parse(text);
@@ -226,20 +266,17 @@ const ComplainsList = () => {
               window.open(objUrl, "_blank");
               return;
             }
-          } catch (e) {
-            // ignore and try next candidate
+          } catch {
+            // try next
           }
           continue;
         }
 
-        // assume binary/pdf
         const blob = await res.blob();
         const objUrl = URL.createObjectURL(blob);
         window.open(objUrl, "_blank");
-        // don't revoke immediately (new tab needs to load). Browser will handle cleanup.
         return;
-      } catch (err) {
-        console.debug("viewMaterial failed for", url, err);
+      } catch {
         // try next
       }
     }
@@ -260,7 +297,6 @@ const ComplainsList = () => {
             Refresh
           </button>
 
-          {/* New button: Register Complaint */}
           <button
             onClick={openModal}
             className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
@@ -332,7 +368,6 @@ const ComplainsList = () => {
         </div>
       )}
 
-      {/* Modal for registering complaint */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
           <div className="w-full max-w-lg bg-white rounded-xl p-6 shadow-lg">
@@ -369,14 +404,23 @@ const ComplainsList = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Faculty ID (optional)</label>
-                  <input
-                    name="facultyId"
-                    value={form.facultyId}
-                    onChange={handleFormChange}
-                    placeholder="e.g. FAC1018"
-                    className="w-full p-2 rounded bg-blue-100"
-                  />
+                  <label className="block text-sm font-medium mb-1">Faculty ID</label>
+                  <div className="relative">
+                    <input
+                      name="facultyId"
+                      value={form.facultyId}
+                      readOnly
+                      className="w-full p-2 rounded bg-blue-100"
+                    />
+                    {facultyLookup.loading && (
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500">
+                        Loading…
+                      </span>
+                    )}
+                  </div>
+                  {facultyLookup.error && (
+                    <p className="mt-1 text-xs text-red-600">{facultyLookup.error}</p>
+                  )}
                 </div>
               </div>
 
@@ -393,7 +437,6 @@ const ComplainsList = () => {
                 </select>
               </div>
 
-              {/* Hidden student id (in case backend needs it explicitly) */}
               <input type="hidden" name="studentId" value={studentId || ""} />
 
               {formError && <div className="p-2 bg-red-50 text-red-700 rounded">{formError}</div>}
