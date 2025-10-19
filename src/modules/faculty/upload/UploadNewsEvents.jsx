@@ -414,7 +414,7 @@ const UploadNewsEvents = () => {
         <MessageModal message={messageModal.text} type={messageModal.type} onClose={closeModal} />
       )}
 
-      <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800 mb-6 border-b pb-3 text-blue-800">Upload Notice/Announcement</h2>
+      <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800 mb-6 border-b pb-3 ">Upload Notice/Announcement</h2>
       <p className="text-sm text-gray-500 mb-6 text-center sm:text-left">Posting as: <strong>{auth?.facultyId || readFacultyIdFromStorage() || "Loading ID..."}</strong></p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
