@@ -106,7 +106,7 @@ const SectionLeft = () => {
     }, [storedStudentId, token]);
 
     const handleEdit = () => {
-        navigate("/update-profile-student", { state: { studentId: student?.studentId } });
+        navigate("/student/update-profile-student", { state: { studentId: student?.studentId } });
     };
 
     // --- RENDER STATES ---
