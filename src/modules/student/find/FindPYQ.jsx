@@ -1,5 +1,6 @@
 // src/modules/student/FindPYQ.jsx
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Download } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 
 /**
  * FindPYQ
@@ -7,16 +8,16 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
  * - lets the user choose regulation -> branch -> semester (1..8)
  * - loads subjects for that triple (calls /student/getNewSubjectList POST)
  * - when a subject is chosen, calls /getMaterialListPYQ/{subjectCode} to get PYQ list
- * - displays material list and allows viewing (best-effort fetch & open)
+ * - displays material list and allows viewing/downloading
  */
 
+// --- API and LocalStorage Helpers (Unchanged) ---
 const API_BASE = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_BASE)
   ? process.env.REACT_APP_API_BASE
   : (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE)
     ? import.meta.env.VITE_API_BASE
     : 'http://localhost:8080/VidyaSarthi';
 
-// helper: read token and student id from localStorage (resilient)
 const getTokenFromLocalStorage = () => {
   try {
     const vs = localStorage.getItem('vidyaSarthiAuth');
@@ -48,7 +49,7 @@ const getStoredStudentId = () => {
   }
 };
 
-const SEMESTERS = [1,2,3,4,5,6,7,8];
+const SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
 const BRANCHES = ["CSE", "CIVIL", "EEE", "ECE", "ME"]; // extend as needed
 
 const FindPYQ = () => {
@@ -73,6 +74,7 @@ const FindPYQ = () => {
   const token = getTokenFromLocalStorage();
   const storedStudentId = getStoredStudentId();
 
+  // --- Data Fetching useEffects (Unchanged) ---
   // load regulations on mount
   useEffect(() => {
     let cancelled = false;
@@ -206,7 +208,7 @@ const FindPYQ = () => {
     return () => { cancelled = true; };
   }, [selectedSubjectCode, token]);
 
-  // handlers
+  // --- Handlers (Unchanged) ---
   const handleRegChange = useCallback((e) => {
     const id = e.target.value;
     const sel = regulations.find(r => String(r.regulationId) === String(id)) || null;
@@ -236,7 +238,7 @@ const FindPYQ = () => {
     setSelectedSubjectCode(e.target.value);
   };
 
-  // view/download logic (best-effort): attempt to GET a material file endpoint
+  // --- View/Download Logic (Unchanged) ---
   const viewMaterial = async (material) => {
     const candidates = [
       `${API_BASE}/faculty/getMaterialFile/${encodeURIComponent(material.materialId)}`,
@@ -292,6 +294,80 @@ const FindPYQ = () => {
     alert("Unable to open file. Backend may not expose a direct download endpoint for this material.");
   };
 
+  const downloadMaterial = async (material) => {
+    const candidates = [
+      `${API_BASE}/faculty/getMaterialFile/${encodeURIComponent(material.materialId)}`,
+      `${API_BASE}/faculty/getMaterial/${encodeURIComponent(material.materialId)}`,
+      `${API_BASE}/downloadMaterial/${encodeURIComponent(material.materialId)}`,
+      `${API_BASE}/getMaterial/${encodeURIComponent(material.materialId)}`,
+    ];
+
+    const triggerDownload = (blob, filename) => {
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename || 'download.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    };
+
+    for (const url of candidates) {
+      try {
+        const res = await fetch(url, {
+          method: "GET",
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        if (!res.ok) continue;
+        const ct = (res.headers.get("content-type") || "").toLowerCase();
+        if (ct.includes("application/json") || ct.includes("text/")) {
+          const text = await res.text();
+          try {
+            const json = JSON.parse(text);
+            if (json?.url) {
+              const a = document.createElement('a');
+              a.href = json.url;
+              a.download = material.pdfFilename || 'download';
+              a.target = '_blank';
+              a.rel = 'noopener noreferrer';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              return;
+            }
+            const b64 = json?.imageData || json?.data || json?.base64 || json?.file;
+            if (b64 && typeof b64 === "string") {
+              const cleaned = b64.replace(/^data:[^;]+;base64,/, "");
+              const byteCharacters = atob(cleaned);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+              const blob = new Blob([new Uint8Array(byteNumbers)], { type: json?.contentType || "application/pdf" });
+              triggerDownload(blob, material.pdfFilename || 'download.pdf');
+              return;
+            }
+          } catch (err) { /* not json, or json parse failed */ }
+          continue;
+        }
+        const blob = await res.blob();
+        const cd = res.headers.get('content-disposition');
+        let filename = material.pdfFilename || 'download.pdf';
+        if (cd) {
+          const match = cd.match(/filename="?([^"]+)"?/);
+          if (match && match[1]) {
+            filename = match[1];
+          }
+        }
+        triggerDownload(blob, filename);
+        return;
+      } catch (err) {
+        console.debug("downloadMaterial attempt failed for", url, err);
+      }
+    }
+    alert("Unable to download file. No valid download endpoint found.");
+  };
+
+  // --- JSX ---
   return (
     <div className="flex flex-col gap-10 justify-center items-center px-4 py-6">
       <section className="w-full max-w-3xl flex flex-col bg-white p-6">
@@ -299,6 +375,7 @@ const FindPYQ = () => {
 
         {/* Regulation */}
         <div className="mb-4 flex flex-col md:flex-row md:items-center md:gap-4">
+          {/* --- THIS LINE IS FIXED --- */}
           <label className="font-medium w-full md:w-1/3 mb-2 md:mb-0 text-sm">Choose Regulation:</label>
           <div className="w-full md:w-2/3">
             <select
@@ -362,46 +439,58 @@ const FindPYQ = () => {
           </div>
         </div>
 
-        {/* Materials Listing */}
+        {/* --- STYLED Materials Listing --- */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-semibold">PYQ List</h3>
-            <div className="text-sm text-gray-500">Student: <strong>{storedStudentId || "N/A"}</strong></div>
+            <div className="text-sm text-gray-500">Student: <b>{storedStudentId || "N/A"}</b></div>
           </div>
 
           {loadingMaterials && <p className="text-sm text-gray-600">Loading materials...</p>}
           {errorMaterials && <p className="text-sm text-red-600">{errorMaterials}</p>}
 
-          {!loadingMaterials && materials.length === 0 && !errorMaterials && (
+          {!loadingMaterials && materials.length === 0 && !errorMaterials && selectedSubjectCode && (
             <p className="text-sm text-gray-500">No PYQs found for the selected subject.</p>
+          )}
+          {!loadingMaterials && materials.length === 0 && !errorMaterials && !selectedSubjectCode && (
+             <p className="text-sm text-gray-500">Please select a subject to see the PYQ list.</p>
           )}
 
           {materials.length > 0 && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="text-left border-b">
-                    <th className="py-2 px-2">Filename</th>
-                    <th className="py-2 px-2">Material ID</th>
-                    <th className="py-2 px-2">Type</th>
-                    <th className="py-2 px-2">Regulation</th>
-                    <th className="py-2 px-2">Action</th>
+            <div className="overflow-x-auto rounded-lg border border-gray-200">
+              <table className="w-full text-sm text-left">
+                <thead className="border-b border-gray-200 bg-gray-50 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <tr>
+                    <th className="py-3 px-3">Filename</th>
+                    <th className="py-3 px-3">Material ID</th>
+                    <th className="py-3 px-3">Type</th>
+                    <th className="py-3 px-3">Regulation</th>
+                    <th className="py-3 px-3">Action</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-200 bg-white">
                   {materials.map((m) => (
-                    <tr key={m.materialId || m.id} className="border-b">
-                      <td className="py-2 px-2">{m.pdfFilename || "—"}</td>
-                      <td className="py-2 px-2 font-mono text-xs">{m.materialId}</td>
-                      <td className="py-2 px-2">{m.materialType ?? "—"}</td>
-                      <td className="py-2 px-2">{m.regulationId ?? "—"}</td>
-                      <td className="py-2 px-2">
-                        <button
-                          onClick={() => viewMaterial(m)}
-                          className="px-3 py-1 rounded bg-yellow-500 text-white text-xs hover:bg-yellow-600"
-                        >
-                          View
-                        </button>
+                    <tr key={m.materialId || m.id} className="hover:bg-gray-50">
+                      <td className="py-3 px-3 align-middle">{m.pdfFilename || "—"}</td>
+                      <td className="py-3 px-3 align-middle font-mono text-xs">{m.materialId}</td>
+                      <td className="py-3 px-3 align-middle">{m.materialType ?? "—"}</td>
+                      <td className="py-3 px-3 align-middle">{m.regulationId ?? "—"}</td>
+                      <td className="py-3 px-3 align-middle">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => viewMaterial(m)}
+                            className="px-3 py-1.5 rounded-md bg-yellow-500 text-white text-xs font-medium hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={() => downloadMaterial(m)}
+                            title="Download"
+                            className="p-1.5 rounded-md bg-green-500 text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                          >
+                            <Download className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

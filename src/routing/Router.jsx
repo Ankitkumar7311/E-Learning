@@ -579,6 +579,8 @@ import FindQB from "../modules/student/find/FindQB";
 import RegulationAddedpopup from "../modules/admin/popups/RegulationAddedpopup";
 import EditMaterialPage from "../modules/faculty/upload/EditMaterialPage";
 import HelpAndSupportForm from "../pages/HelpAndSupportForm";
+import FacultyFeedbackAnalysis from "../modules/admin/FacultyFeedbackAnalysis";
+import FinalFeedbackAnalysis from "../modules/admin/FinalFeedbackAnalysis";
 
 // --- Configuration ---
 const API_BASE_URL = import.meta.env.VITE_API_BASE || 'http://localhost:8080/VidyaSarthi';
@@ -749,7 +751,9 @@ const routes = createBrowserRouter([
           { path: "regulation", element: <RegulationForm />  },
           { path: "teacher-profile", element: <Teacherprofile /> },
           { path: "student-profile", element: <StudentProfile /> },
-          { path: "regulationpop", element: <RegulationAddedpopup /> }
+          { path: "regulationpop", element: <RegulationAddedpopup /> },
+          {path: "Students-feedback",element: <FacultyFeedbackAnalysis/>},
+          {path: "Final-feedback",element: <FinalFeedbackAnalysis/>}
         ],
       },
     ],

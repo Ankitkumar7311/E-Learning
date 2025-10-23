@@ -268,7 +268,7 @@ const News = () => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-white min-h-screen">
+    <div className="max-w-full mx-auto p-4 sm:p-6 bg-blue-50 min-h-screen">
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Latest News & Announcements</h1>
         <button
@@ -295,7 +295,7 @@ const News = () => {
           {newsList.map((news) => (
             <div
               key={news.id}
-              className="bg-blue-50 border border-blue-200 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 p-5 flex flex-col justify-between"
+              className="bg-white border border-blue-200 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 p-5 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
