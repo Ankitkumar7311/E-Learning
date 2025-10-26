@@ -1,5 +1,6 @@
-// src/modules/student/find/FacultyFeedback.jsx
-import React, { useEffect, useState, useMemo } from "react";
+
+
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 
 // --- API and LocalStorage Helpers ---
 const API_BASE = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_BASE)
@@ -21,15 +22,31 @@ const getTokenFromLocalStorage = () => {
     return null;
   }
 };
-// --- End Helpers ---
+
+const getStoredStudentId = () => {
+  try {
+    const vs = localStorage.getItem("vidyaSarthiAuth");
+    if (vs) {
+      const p = JSON.parse(vs || "{}");
+      if (p?.studentId) return p.studentId;
+      if (p?.user?.studentId) return p.user.studentId;
+    }
+    const u = localStorage.getItem("user");
+    if (u) {
+      const p = JSON.parse(u || "{}");
+      return p?.studentId || p?.userId || null;
+    }
+    return null;
+  } catch (e) {
+    console.warn("getStoredStudentId:", e);
+    return null;
+  }
+};
 
 // --- Hardcoded Data ---
-const REGULATIONS = ["R22", "R20", "R18"];
 const BRANCHES = ["CSE", "CSD", "CSM", "ECE", "EEE", "CIVIL", "MECH"];
-const SEMESTERS = [
-  "1-1", "1-2", "2-1", "2-2",
-  "3-1", "3-2", "4-1", "4-2",
-];
+const SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
+
 const FEEDBACK_QUESTIONS = [
   "1. Punctuality and regularity in attending classes.",
   "2. Preparation and organization for the class.",
@@ -47,12 +64,10 @@ const FEEDBACK_QUESTIONS = [
   "14. Availability and accessibility to students outside class hours.",
   "15. Overall attitude and professionalism towards students.",
 ];
-const FEEDBACK_OPTIONS = ["Good", "Average", "Not Good"];
-// --- End Hardcoded Data ---
 
-/**
- * A reusable star rating component with hover effect
- */
+const FEEDBACK_OPTIONS = ["Good", "Average", "Not Good"];
+
+// --- Star Rating Component ---
 const StarRating = ({ rating, onRatingChange }) => {
   const [hover, setHover] = useState(0);
 
@@ -75,132 +90,251 @@ const StarRating = ({ rating, onRatingChange }) => {
   );
 };
 
-
 const FacultyFeedback = () => {
-  const [filters, setFilters] = useState({
-    regulation: "",
-    branch: "",
-    semester: "",
-  });
-  
+  // --- State for Regulations ---
+  const [regulations, setRegulations] = useState([]);
+  const [loadingRegs, setLoadingRegs] = useState(false);
+  const [errorRegs, setErrorRegs] = useState("");
+
+  // --- State for Filters ---
+  const [selectedRegulation, setSelectedRegulation] = useState(null);
+  const [selectedBranch, setSelectedBranch] = useState("");
+  const [selectedSemester, setSelectedSemester] = useState("");
+
+  // --- State for Subjects ---
   const [subjects, setSubjects] = useState([]);
   const [loadingSubjects, setLoadingSubjects] = useState(false);
   const [errorSubjects, setErrorSubjects] = useState("");
-  
-  const [selectedSubjectId, setSelectedSubjectId] = useState("");
+
+  // --- State for Selected Subject ---
+  const [selectedSubjectCode, setSelectedSubjectCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [overallRating, setOverallRating] = useState(0); 
+
+  // --- State for Feedback Form ---
+  const [overallRating, setOverallRating] = useState(0);
   const [additionalComments, setAdditionalComments] = useState("");
-  
-  const [feedback, setFeedback] = useState(() => 
-    FEEDBACK_QUESTIONS.map(q => ({
-      question: q,
-      option: ""
-    }))
+  const [feedback, setFeedback] = useState(
+    FEEDBACK_QUESTIONS.map((q) => ({ question: q, option: "" }))
   );
-  
+
   const token = getTokenFromLocalStorage();
-  
+  const studentId = getStoredStudentId();
+
+  // Check if all filters are selected
   const allFiltersSelected = useMemo(() => {
-    return filters.regulation && filters.branch && filters.semester;
-  }, [filters]);
+    return selectedRegulation && selectedBranch && selectedSemester;
+  }, [selectedRegulation, selectedBranch, selectedSemester]);
 
-  // Reset function
-  const resetForm = () => {
-    setFeedback(FEEDBACK_QUESTIONS.map(q => ({
-      question: q,
-      option: ""
-    })));
-    setOverallRating(0); 
-    setAdditionalComments("");
-  };
+  // --- 1. Load Regulations on Mount ---
+  useEffect(() => {
+    let cancelled = false;
+    
+    const fetchRegs = async () => {
+      setLoadingRegs(true);
+      setErrorRegs("");
+      
+      try {
+        const res = await fetch(`${API_BASE}/student/getRegulationList`, {
+          method: "GET",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        
+        if (!res.ok) throw new Error(`Failed to load regulations (${res.status})`);
+        
+        const data = await res.json();
+        console.log("🔵 DEBUG: Regulations received:", data);
+        
+        let mapped = [];
+        
+        if (Array.isArray(data)) {
+          mapped = data.map(r => ({
+            regulationId: r.regulationId ?? r.id ?? String(r),
+            display: r.name ?? r.display ?? String(r),
+            raw: r
+          }));
+        } else if (data && data.regulations) {
+          mapped = Object.values(data.regulations).map((r, idx) => ({
+            regulationId: r.regulationId ?? r.id ?? String(idx),
+            display: r.name ?? r.display ?? String(r),
+            raw: r
+          }));
+        } else {
+          mapped = Object.keys(data || {}).map(k => ({ 
+            regulationId: k, 
+            display: String(data[k]) 
+          }));
+        }
+        
+        if (!cancelled) {
+          setRegulations(mapped);
+          console.log("✅ DEBUG: Regulations mapped:", mapped);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setErrorRegs(err.message || "Network error while loading regulations");
+          console.error("❌ DEBUG: Error fetching regulations:", err);
+        }
+      } finally {
+        if (!cancelled) setLoadingRegs(false);
+      }
+    };
 
-  // Fetch subjects when all filters are set
+    fetchRegs();
+    return () => { cancelled = true; };
+  }, [token]);
+
+  // --- 2. Fetch Subjects with Faculty when all filters are selected ---
   useEffect(() => {
     if (!allFiltersSelected) {
       setSubjects([]);
-      setSelectedSubjectId("");
+      setSelectedSubjectCode("");
       return;
     }
 
     let cancelled = false;
+
     const fetchSubjects = async () => {
       setLoadingSubjects(true);
       setErrorSubjects("");
       setSubjects([]);
-      setSelectedSubjectId("");
-      resetForm();
+      setSelectedSubjectCode("");
 
-      const { regulation, branch, semester } = filters;
-      const query = `regulation=${regulation}&branch=${branch}&semester=${semester}`;
-      
       try {
-        const res = await fetch(`${API_BASE}/student/getSubjectsAndFaculty?${query}`, {
-          method: "GET",
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        const dto = {
+          regulationId: selectedRegulation.regulationId ?? selectedRegulation,
+          branch: selectedBranch,
+          semester: Number(selectedSemester)
+        };
+
+        console.log("🔵 DEBUG: Fetching subjects with faculty:", dto);
+
+        const res = await fetch(`${API_BASE}/student/getSubjectsWithFaculty`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify(dto)
         });
 
         if (!res.ok) throw new Error(`Failed to load subjects (${res.status})`);
-        
-        const data = await res.json();
-        
-        let mapped = [];
-        if (Array.isArray(data)) {
-            mapped = data.map(s => ({
-                subjectId: s.subjectId,
-                subjectName: s.subjectName,
-                facultyId: s.facultyId,
-                facultyName: s.facultyName ?? "N/A"
-            }));
+
+        const result = await res.json();
+        console.log("🔵 DEBUG: Subjects with faculty response:", result);
+
+        let mappedSubjects = [];
+
+        if (Array.isArray(result)) {
+          mappedSubjects = result.map(s => ({
+            subjectCode: s.subjectCode,
+            subjectName: s.subjectName,
+            facultyId: s.facultyId,
+            facultyIdString: s.facultyIdString,
+            facultyName: s.facultyName || "N/A",
+            facultyEmail: s.facultyEmail,
+            facultyDesignation: s.facultyDesignation
+          }));
         }
-        
+
         if (!cancelled) {
-          setSubjects(mapped);
+          setSubjects(mappedSubjects);
+          console.log("✅ DEBUG: Subjects mapped:", mappedSubjects);
         }
       } catch (err) {
         if (!cancelled) {
-          setErrorSubjects(`API Error: ${err.message}. Using mock data.`);
-          // --- MOCK DATA FOR DEMONSTRATION ---
+          setErrorSubjects(err.message || "Network error fetching subjects");
+          console.error("❌ DEBUG: Error fetching subjects:", err);
+          
+          // MOCK DATA FOR DEMONSTRATION
           const mockData = [
-            { subjectId: 'CS411', subjectName: 'Database Management', facultyId: 'F101', facultyName: 'Dr. Priya Sharma' },
-            { subjectId: 'CS412', subjectName: 'Operating Systems', facultyId: 'F102', facultyName: 'Prof. Rajesh Kumar' },
-            { subjectId: 'AI413', subjectName: 'Machine Learning', facultyId: 'F103', facultyName: 'Dr. Anjali Singh' },
+            {
+              subjectCode: "CS411",
+              subjectName: "Database Management",
+              facultyId: 101,
+              facultyName: "Dr. Priya Sharma",
+            },
+            {
+              subjectCode: "CS412",
+              subjectName: "Operating Systems",
+              facultyId: 102,
+              facultyName: "Prof. Rajesh Kumar",
+            },
+            {
+              subjectCode: "AI413",
+              subjectName: "Machine Learning",
+              facultyId: 103,
+              facultyName: "Dr. Anjali Singh",
+            },
           ];
           setSubjects(mockData);
-          // --- End Mock Data ---
         }
       } finally {
-        if (!cancelled) {
-          setLoadingSubjects(false);
-        }
+        if (!cancelled) setLoadingSubjects(false);
       }
     };
 
     fetchSubjects();
     return () => { cancelled = true; };
-  }, [filters, allFiltersSelected, token]);
+  }, [selectedRegulation, selectedBranch, selectedSemester, allFiltersSelected, token]);
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
+  // --- Reset function ---
+  const resetForm = () => {
+    setFeedback(FEEDBACK_QUESTIONS.map((q) => ({ question: q, option: "" })));
+    setOverallRating(0);
+    setAdditionalComments("");
+  };
+
+  // --- Handlers ---
+  const handleRegChange = useCallback((e) => {
+    const id = e.target.value;
+    const sel = regulations.find(r => String(r.regulationId) === String(id)) || null;
+    console.log("🔵 DEBUG: Regulation selected:", sel);
+    setSelectedRegulation(sel);
+    setSelectedBranch("");
+    setSelectedSemester("");
+    setSelectedSubjectCode("");
+    setSubjects([]);
+  }, [regulations]);
+
+  const handleBranchChange = useCallback((e) => {
+    console.log("🔵 DEBUG: Branch selected:", e.target.value);
+    setSelectedBranch(e.target.value);
+    setSelectedSemester("");
+    setSelectedSubjectCode("");
+    setSubjects([]);
+  }, []);
+
+  const handleSemesterChange = useCallback((e) => {
+    console.log("🔵 DEBUG: Semester selected:", e.target.value);
+    setSelectedSemester(e.target.value);
+    setSelectedSubjectCode("");
+    setSubjects([]);
+  }, []);
+
+  const handleSubjectChange = (e) => {
+    console.log("🔵 DEBUG: Subject selected:", e.target.value);
+    setSelectedSubjectCode(e.target.value);
+    resetForm();
   };
 
   const handleFeedbackChange = (index, value) => {
-    setFeedback(prev => {
+    setFeedback((prev) => {
       const newFeedback = [...prev];
       newFeedback[index] = { ...newFeedback[index], option: value };
       return newFeedback;
     });
   };
 
-  const handleSubjectChange = (e) => {
-    setSelectedSubjectId(e.target.value);
-    resetForm();
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
-    if (!selectedSubjectId) {
+
+    if (!studentId) {
+      alert("❌ Student ID not found. Please login again.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!selectedSubjectCode) {
       alert("Please select a subject.");
       setIsSubmitting(false);
       return;
@@ -212,8 +346,20 @@ const FacultyFeedback = () => {
       return;
     }
 
-    const selectedSubject = subjects.find(s => s.subjectId === selectedSubjectId);
-    
+    const selectedSubject = subjects.find((s) => s.subjectCode === selectedSubjectCode);
+
+    if (!selectedSubject) {
+      alert("Selected subject not found.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!selectedSubject.facultyId) {
+      alert("No faculty assigned to this subject. Cannot submit feedback.");
+      setIsSubmitting(false);
+      return;
+    }
+
     for (const item of feedback) {
       if (!item.option) {
         alert(`Please provide an option for: "${item.question}"`);
@@ -221,84 +367,144 @@ const FacultyFeedback = () => {
         return;
       }
     }
-    
+
     const submissionData = {
-      filters,
-      subject: selectedSubject,
-      overallRating, 
+      studentId: String(studentId),
+      courseId: selectedSubjectCode,
+      facultyId: selectedSubject.facultyId,
+      regulation: selectedRegulation.regulationId ?? selectedRegulation.display,
+      branch: selectedBranch,
+      semester: String(selectedSemester),
+      overallRating,
       feedback,
       additionalComments,
     };
 
-    // Simulate API call delay
-    setTimeout(() => {
-      alert("Feedback submitted (UI only)!\n\n" + JSON.stringify(submissionData, null, 2));
-      
-      // Reset after successful submission
-      setSelectedSubjectId("");
-      resetForm();
+    console.log("🔵 DEBUG: Submitting feedback:", submissionData);
+
+    try {
+      const response = await fetch(`${API_BASE}/student/feedback/teacher`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(submissionData)
+      });
+
+      const result = await response.json();
+      console.log("🔵 DEBUG: Backend response:", result);
+
+      if (result.success) {
+        alert("✅ Feedback submitted successfully!");
+        setSelectedSubjectCode("");
+        resetForm();
+      } else {
+        alert(`⚠️ ${result.message || "Failed to submit feedback"}`);
+      }
+    } catch (err) {
+      console.error("❌ DEBUG: Error submitting feedback:", err);
+      alert("❌ Network error. Please try again.");
+    } finally {
       setIsSubmitting(false);
-    }, 500); 
+    }
   };
 
   return (
-    // Removed wrapper div. This component is now the "card" itself.
-    // This is better for placing inside a modal.
     <div className="w-full bg-white rounded-2xl p-6 sm:p-8 flex flex-col gap-6">
-      
       <div className="text-center">
-        {/* Responsive title */}
-        <h2 className="text-2xl sm:text-3xl font-bold text-blue-800">
-          Subject Feedback
-        </h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-blue-800">Subject Feedback</h2>
         <p className="text-base text-gray-600 mt-2 mb-4">
           Provide detailed feedback for a subject and its faculty.
         </p>
       </div>
 
-      {/* --- 1. Filters (Already Responsive) --- */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 border rounded-lg bg-blue-50 border-blue-200">
-        {[
-          { name: 'regulation', label: 'Regulation', options: REGULATIONS },
-          { name: 'branch', label: 'Branch', options: BRANCHES },
-          { name: 'semester', label: 'Semester', options: SEMESTERS },
-        ].map(filter => (
-          <div key={filter.name}>
-            <label className="font-semibold text-sm mb-1 block text-blue-900">
-              {filter.label}:
-            </label>
-            <select
-              name={filter.name}
-              value={filters[filter.name]}
-              onChange={handleFilterChange}
-              className="w-full h-11 bg-white border border-gray-300 rounded-lg p-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="">-- Select --</option>
-              {filter.options.map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
-          </div>
-        ))}
+      {/* 1. Regulation Selection */}
+      <div className="mb-4">
+        <label className="font-semibold text-sm mb-1 block text-blue-900">
+          Choose Regulation
+        </label>
+        <select
+          value={selectedRegulation?.regulationId || ""}
+          onChange={handleRegChange}
+          className="w-full h-11 bg-white border border-gray-300 rounded-lg p-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="">
+            {loadingRegs ? "Loading Regulations..." : "-- Select Regulation --"}
+          </option>
+          {regulations.map(r => (
+            <option key={r.regulationId} value={r.regulationId}>
+              {r.display}
+            </option>
+          ))}
+        </select>
+        {errorRegs && <p className="text-xs text-red-600 mt-1">{errorRegs}</p>}
       </div>
 
-      {/* --- 2. Subject Selection --- */}
+      {/* 2. Branch & Semester Selection */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="font-semibold text-sm mb-1 block text-blue-900">
+            Branch
+          </label>
+          <select
+            value={selectedBranch}
+            onChange={handleBranchChange}
+            className="w-full h-11 bg-white border border-gray-300 rounded-lg p-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            disabled={!selectedRegulation}
+          >
+            <option value="">
+              {selectedRegulation ? "-- Select Branch --" : "Select regulation first"}
+            </option>
+            {BRANCHES.map(b => (
+              <option key={b} value={b}>{b}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="font-semibold text-sm mb-1 block text-blue-900">
+            Semester
+          </label>
+          <select
+            value={selectedSemester}
+            onChange={handleSemesterChange}
+            className="w-full h-11 bg-white border border-gray-300 rounded-lg p-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            disabled={!selectedRegulation || !selectedBranch}
+          >
+            <option value="">
+              {selectedRegulation && selectedBranch ? "-- Select Semester --" : "Select branch first"}
+            </option>
+            {SEMESTERS.map(s => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* 3. Subject Selection */}
       {allFiltersSelected && (
         <div className="mb-2">
           <label className="font-semibold w-full text-sm mb-1 block text-gray-700">
-            Choose Subject & Faculty:
+            Choose Subject & Faculty
           </label>
           <div className="w-full">
             <select
-              value={selectedSubjectId}
+              value={selectedSubjectCode}
               onChange={handleSubjectChange}
               className="w-full h-11 bg-white border border-gray-300 rounded-lg p-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               disabled={loadingSubjects}
             >
               <option value="">
-                {loadingSubjects ? "Loading Subjects..." : (subjects.length > 0 ? "-- Select Subject --" : "-- No Subjects Found --")}
+                {loadingSubjects
+                  ? "Loading Subjects..."
+                  : subjects.length === 0
+                  ? "-- No Subjects Found --"
+                  : "-- Select Subject --"}
               </option>
-              {subjects.map(s => (
-                <option key={s.subjectId} value={s.subjectId}>
-                  {s.subjectName} (Faculty: {s.facultyName})
+              {subjects.map((s) => (
+                <option key={s.subjectCode} value={s.subjectCode}>
+                  {s.subjectName} - Faculty: {s.facultyName}
                 </option>
               ))}
             </select>
@@ -306,20 +512,20 @@ const FacultyFeedback = () => {
           </div>
         </div>
       )}
-      
-      {/* --- 3. Feedback Form --- */}
-      {selectedSubjectId && (
+
+      {/* 4. Feedback Form */}
+      {selectedSubjectCode && (
         <div className="flex flex-col gap-6 mt-4 border-t border-gray-200 pt-6">
           {feedback.map((item, index) => (
             <div key={index} className="p-5 rounded-xl bg-white shadow-lg border border-gray-100">
               <label className="font-semibold w-full text-base mb-4 block text-gray-800">
                 {item.question}
               </label>
-              
-              {/* "Pill" Radio Options (Already Responsive) */}
+
+              {/* Pill Radio Options */}
               <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
-                {FEEDBACK_OPTIONS.map(option => {
-                  const radioId = `q_${index}_option_${option}`;
+                {FEEDBACK_OPTIONS.map((option) => {
+                  const radioId = `q${index}_${option.replace(/\s/g, "")}`;
                   return (
                     <div key={option}>
                       <input
@@ -329,13 +535,11 @@ const FacultyFeedback = () => {
                         value={option}
                         checked={item.option === option}
                         onChange={(e) => handleFeedbackChange(index, e.target.value)}
-                        className="peer appearance-none" 
+                        className="peer appearance-none"
                       />
                       <label
                         htmlFor={radioId}
-                        className="block cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-all
-                                peer-checked:border-yellow-600 peer-checked:bg-yellow-600 peer-checked:text-white
-                                hover:bg-gray-50 peer-checked:hover:bg-blue-700"
+                        className="block cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-all peer-checked:border-yellow-600 peer-checked:bg-yellow-600 peer-checked:text-white hover:bg-gray-50 peer-checked:hover:bg-blue-700"
                       >
                         {option}
                       </label>
@@ -346,23 +550,23 @@ const FacultyFeedback = () => {
             </div>
           ))}
 
-          {/* --- Overall Rating --- */}
+          {/* Overall Rating */}
           <div className="p-5 rounded-xl bg-white shadow-lg border border-gray-100 mt-4">
             <label className="font-semibold w-full text-base mb-3 block text-gray-800">
-              Overall Rating for this Subject & Faculty:
+              Overall Rating for this Subject & Faculty
             </label>
             <div className="flex justify-center sm:justify-start">
-              <StarRating 
-                rating={overallRating}
-                onRatingChange={setOverallRating}
-              />
+              <StarRating rating={overallRating} onRatingChange={setOverallRating} />
             </div>
           </div>
 
-          {/* --- Additional Comments (Optional) --- */}
+          {/* Additional Comments */}
           <div className="p-5 rounded-xl bg-white shadow-lg border border-gray-100 mt-4">
-            <label htmlFor="additionalComments" className="font-semibold w-full text-base mb-3 block text-gray-800">
-              Additional Comments (Optional):
+            <label
+              htmlFor="additionalComments"
+              className="font-semibold w-full text-base mb-3 block text-gray-800"
+            >
+              Additional Comments (Optional)
             </label>
             <textarea
               id="additionalComments"
@@ -371,19 +575,16 @@ const FacultyFeedback = () => {
               placeholder="Share any other thoughts, suggestions, or specific examples..."
               value={additionalComments}
               onChange={(e) => setAdditionalComments(e.target.value)}
-            ></textarea>
+            />
           </div>
 
-          {/* Submit Button (Already Responsive) */}
+          {/* Submit Button */}
           <div className="flex justify-center mt-6">
             <button
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="w-full sm:w-auto rounded-lg bg-yellow-600 px-10 py-3 text-base font-semibold text-white shadow-md transition-all 
-                            hover:bg-blue-700 
-                            focus:outline-none focus:ring-4 focus:ring-yellow-400 
-                            disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto rounded-lg bg-yellow-600 px-10 py-3 text-base font-semibold text-white shadow-md transition-all hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-yellow-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Submitting..." : "Submit Feedback"}
             </button>
